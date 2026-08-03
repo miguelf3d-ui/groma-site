@@ -1,0 +1,1917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Convento de São Bento — Guided Visit</title>
+<meta name="description" content="An immersive guided visit to a 16th-century Portuguese monastery: cloister, refectory, chapter house, library, bell tower and chapel.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#07080A;
+  --shadow:#101318;
+  --stone:#C9BFA9;
+  --gold:#D8A657;
+  --serif:"Instrument Serif",Georgia,"Times New Roman",serif;
+  --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --s-90:rgba(201,191,169,.90);
+  --s-70:rgba(201,191,169,.70);
+  --s-52:rgba(201,191,169,.52);
+  --s-38:rgba(201,191,169,.38);
+  --s-22:rgba(201,191,169,.22);
+  --s-14:rgba(201,191,169,.14);
+  --s-08:rgba(201,191,169,.08);
+  --pane:rgba(16,19,24,.58);
+  --pane-solid:rgba(10,12,15,.86);
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --rail-h:112px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:var(--ink);color:var(--s-90);
+  font-family:var(--sans);font-size:15px;font-weight:300;line-height:1.5;
+  overflow:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+:focus{outline:none}
+:focus-visible{outline:1px solid var(--gold);outline-offset:3px;border-radius:2px}
+::selection{background:rgba(216,166,87,.28)}
+
+/* ── typography atoms ────────────────────────────────── */
+.mono{font-family:var(--mono);font-size:10px;font-weight:400;letter-spacing:.18em;text-transform:uppercase}
+.mono-xs{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--s-38)}
+.ser{font-family:var(--serif);font-weight:400;font-style:italic;letter-spacing:-.01em}
+
+/* ── stage ───────────────────────────────────────────── */
+#stage{position:fixed;inset:0;background:var(--ink);overflow:hidden;z-index:0}
+.scene{position:absolute;inset:0;opacity:0;transition:opacity 520ms var(--ease);will-change:opacity}
+.scene.on{opacity:1}
+.scene svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.pl{will-change:transform}
+
+/* atmosphere overlays */
+#vig{position:absolute;inset:0;pointer-events:none;z-index:3;
+  background:
+   radial-gradient(120% 90% at 50% 46%,rgba(7,8,10,0) 34%,rgba(7,8,10,.55) 78%,rgba(7,8,10,.92) 100%),
+   linear-gradient(to bottom,rgba(7,8,10,.72) 0%,rgba(7,8,10,0) 20%,rgba(7,8,10,0) 69%,rgba(7,8,10,.74) 100%);
+}
+#grain{position:absolute;inset:-10%;pointer-events:none;z-index:4;opacity:.16;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='180' height='180' filter='url(%23n)' opacity='.6'/></svg>");
+  animation:grainshift 3.2s steps(4) infinite}
+@keyframes grainshift{
+  0%{transform:translate(0,0)}25%{transform:translate(-2%,1%)}
+  50%{transform:translate(1%,-2%)}75%{transform:translate(-1%,-1%)}100%{transform:translate(0,0)}
+}
+
+/* ── chrome shell ────────────────────────────────────── */
+.chrome{position:fixed;z-index:20}
+
+/* header */
+#hdr{top:0;left:0;right:0;display:flex;align-items:flex-start;justify-content:space-between;
+  padding:26px 34px;pointer-events:none}
+#hdr>*{pointer-events:auto}
+.brand{display:flex;gap:13px;align-items:flex-start}
+.mark{width:34px;height:34px;flex:0 0 34px;opacity:.92}
+.brand h1{font-family:var(--serif);font-style:normal;font-weight:400;font-size:19px;line-height:1.05;
+  letter-spacing:.005em;color:var(--s-90)}
+.brand .sub{margin-top:3px;color:var(--s-38);font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase}
+.hdr-r{display:flex;align-items:center;gap:10px}
+.seg{display:flex;align-items:center;border:1px solid var(--s-14);border-radius:999px;overflow:hidden;
+  background:var(--pane);backdrop-filter:blur(14px) saturate(130%);-webkit-backdrop-filter:blur(14px) saturate(130%)}
+.seg button{padding:7px 13px 6px;font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;
+  color:var(--s-38);transition:color .25s var(--ease),background .25s var(--ease)}
+.seg button+button{border-left:1px solid var(--s-08)}
+.seg button[aria-pressed="true"]{color:var(--ink);background:var(--gold)}
+.seg button:hover{color:var(--s-90)}
+.seg button[aria-pressed="true"]:hover{color:var(--ink)}
+.iconbtn{display:flex;align-items:center;gap:8px;padding:6px 13px 6px 11px;border-radius:999px;
+  border:1px solid var(--s-14);background:var(--pane);backdrop-filter:blur(14px) saturate(130%);
+  -webkit-backdrop-filter:blur(14px) saturate(130%);
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;color:var(--s-52);
+  transition:color .25s var(--ease),border-color .25s var(--ease)}
+.iconbtn:hover{color:var(--s-90);border-color:var(--s-22)}
+.iconbtn svg{width:13px;height:13px;flex:0 0 13px}
+.iconbtn.off{color:var(--s-22)}
+
+/* ── narration panel ─────────────────────────────────── */
+#narr{left:34px;top:104px;width:414px;padding:26px 28px 24px;
+  border:1px solid var(--s-14);border-radius:3px;
+  background:var(--pane);backdrop-filter:blur(22px) saturate(140%);-webkit-backdrop-filter:blur(22px) saturate(140%);
+  box-shadow:0 34px 70px -30px rgba(0,0,0,.9);
+  transform:translateX(0);opacity:1;transition:transform 520ms var(--ease),opacity 380ms var(--ease)}
+#narr.out{transform:translateX(-26px);opacity:0}
+.n-top{display:flex;align-items:baseline;justify-content:space-between;gap:14px;
+  padding-bottom:12px;border-bottom:1px solid var(--s-08)}
+.n-num{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--gold)}
+.n-kicker{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--s-38);text-align:right}
+.n-title{font-family:var(--serif);font-style:italic;font-size:44px;line-height:1.02;letter-spacing:-.015em;
+  color:var(--s-90);margin:16px 0 14px}
+.n-body{font-size:14.5px;line-height:1.66;color:var(--s-70);max-width:63ch;font-weight:300}
+.n-meta{margin-top:18px;padding-top:13px;border-top:1px solid var(--s-08);
+  font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--s-38);
+  display:flex;flex-wrap:wrap;gap:6px 10px}
+.n-meta span{white-space:nowrap}
+.n-meta span+span::before{content:"·";margin-right:10px;color:var(--s-22)}
+.n-hint{margin-top:16px;font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--s-22);
+  display:flex;align-items:center;gap:7px}
+.n-hint kbd{border:1px solid var(--s-14);border-radius:2px;padding:1px 4px;font-family:var(--mono);font-size:9px}
+
+/* ── audio player ────────────────────────────────────── */
+#aud{left:34px;bottom:calc(var(--rail-h) + 26px);width:414px;
+  padding:15px 18px 14px;border:1px solid var(--s-14);border-radius:3px;
+  background:var(--pane);backdrop-filter:blur(22px) saturate(140%);-webkit-backdrop-filter:blur(22px) saturate(140%);
+  display:flex;align-items:center;gap:15px}
+#playBtn{width:36px;height:36px;flex:0 0 36px;border-radius:50%;border:1px solid var(--s-22);
+  display:grid;place-items:center;transition:border-color .3s var(--ease),background .3s var(--ease)}
+#playBtn:hover{border-color:var(--gold);background:rgba(216,166,87,.08)}
+#playBtn svg{width:12px;height:12px;fill:var(--stone)}
+#playBtn.playing svg{fill:var(--gold)}
+.a-body{flex:1;min-width:0}
+.a-line{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:9px}
+.a-name{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--s-52);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.a-time{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--s-38);font-variant-numeric:tabular-nums}
+.a-track{position:relative;height:14px;display:flex;align-items:center;cursor:pointer}
+.a-track::before{content:"";position:absolute;left:0;right:0;height:1px;background:var(--s-14)}
+#aFill{position:absolute;left:0;height:1px;width:0;background:var(--gold)}
+#aKnob{position:absolute;left:0;width:5px;height:5px;border-radius:50%;background:var(--gold);
+  transform:translateX(-2.5px);box-shadow:0 0 10px rgba(216,166,87,.7)}
+.a-wave{display:flex;align-items:flex-end;gap:2px;height:16px;flex:0 0 auto}
+.a-wave i{width:2px;background:var(--s-22);height:4px;display:block}
+#aud.playing .a-wave i{background:var(--gold);animation:vu .9s ease-in-out infinite}
+#aud.playing .a-wave i:nth-child(2){animation-delay:.12s}
+#aud.playing .a-wave i:nth-child(3){animation-delay:.28s}
+#aud.playing .a-wave i:nth-child(4){animation-delay:.4s}
+@keyframes vu{0%,100%{height:3px;opacity:.5}50%{height:14px;opacity:1}}
+
+/* ── minimap ─────────────────────────────────────────── */
+#plan{right:34px;top:104px;width:186px;padding:14px 14px 11px;
+  border:1px solid var(--s-14);border-radius:3px;
+  background:var(--pane);backdrop-filter:blur(22px) saturate(140%);-webkit-backdrop-filter:blur(22px) saturate(140%)}
+.plan-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.plan-h .t{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--s-38)}
+.plan-h .n{font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--gold)}
+#plan svg{width:100%;height:auto;display:block}
+.pdot{cursor:pointer}
+.pdot circle.hit{fill:transparent}
+.pdot .core{fill:var(--stone);opacity:.34;transition:opacity .3s var(--ease)}
+.pdot:hover .core{opacity:.8}
+.pdot.cur .core{fill:var(--gold);opacity:1}
+.pdot.cur .halo{opacity:1}
+.pdot .halo{opacity:0;transition:opacity .4s var(--ease)}
+.plan-cap{margin-top:9px;padding-top:8px;border-top:1px solid var(--s-08);
+  font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--s-38)}
+
+/* ── hotspots ────────────────────────────────────────── */
+#spots{position:fixed;inset:0;z-index:10;pointer-events:none;transition:opacity .3s var(--ease)}
+.spot{position:absolute;width:44px;height:44px;margin:-22px 0 0 -22px;pointer-events:auto;
+  display:grid;place-items:center;opacity:0;animation:spotin .7s var(--ease) forwards}
+@keyframes spotin{to{opacity:1}}
+.spot .ring{position:absolute;width:38px;height:38px;border:1px solid var(--s-38);border-radius:50%;
+  transition:border-color .3s var(--ease),transform .3s var(--ease)}
+.spot .pulse{position:absolute;width:38px;height:38px;border:1px solid var(--gold);border-radius:50%;
+  animation:pulse 2.8s var(--ease) infinite;opacity:0}
+.spot .dot{position:absolute;width:5px;height:5px;border-radius:50%;background:var(--stone);
+  transition:background .3s var(--ease),transform .3s var(--ease)}
+.spot:hover .ring,.spot.open .ring{border-color:var(--gold);transform:scale(1.12)}
+.spot:hover .dot,.spot.open .dot{background:var(--gold);transform:scale(1.5)}
+.spot .lbl{position:absolute;left:30px;white-space:nowrap;font-family:var(--mono);font-size:9px;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--s-52);opacity:0;transform:translateX(-6px);
+  transition:opacity .3s var(--ease),transform .3s var(--ease);text-shadow:0 2px 10px rgba(0,0,0,.9)}
+.spot:hover .lbl,.spot:focus-visible .lbl{opacity:1;transform:translateX(0)}
+@keyframes pulse{0%{transform:scale(.7);opacity:.85}70%{transform:scale(2.1);opacity:0}100%{opacity:0}}
+
+/* ── detail card ─────────────────────────────────────── */
+#card{position:fixed;right:34px;top:352px;width:330px;z-index:24;
+  border:1px solid var(--s-14);border-radius:3px;overflow:hidden;
+  background:var(--pane-solid);backdrop-filter:blur(24px) saturate(140%);-webkit-backdrop-filter:blur(24px) saturate(140%);
+  box-shadow:0 40px 80px -34px rgba(0,0,0,.95);
+  opacity:0;transform:translateY(10px) scale(.985);pointer-events:none;
+  transition:opacity .34s var(--ease),transform .34s var(--ease)}
+#card.on{opacity:1;transform:none;pointer-events:auto}
+.c-illus{height:148px;position:relative;border-bottom:1px solid var(--s-08);
+  background:radial-gradient(120% 120% at 50% 34%,rgba(201,191,169,.075),rgba(7,8,10,0) 70%)}
+.c-illus svg{position:absolute;inset:0;width:100%;height:100%}
+.c-body{padding:17px 19px 19px}
+.c-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.c-kick{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+.c-close{width:22px;height:22px;flex:0 0 22px;display:grid;place-items:center;color:var(--s-38);
+  border:1px solid transparent;border-radius:2px;transition:color .25s,border-color .25s}
+.c-close:hover{color:var(--s-90);border-color:var(--s-14)}
+.c-close svg{width:9px;height:9px;stroke:currentColor;stroke-width:1.4}
+.c-title{font-family:var(--serif);font-style:italic;font-size:25px;line-height:1.1;margin:9px 0 10px;color:var(--s-90)}
+.c-text{font-size:13.5px;line-height:1.62;color:var(--s-52);font-weight:300}
+.c-foot{margin-top:14px;padding-top:11px;border-top:1px solid var(--s-08);
+  font-family:var(--mono);font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--s-22)}
+
+/* ── edge nav ────────────────────────────────────────── */
+.edge{position:fixed;top:50%;transform:translateY(-50%);z-index:18;width:46px;height:74px;
+  display:grid;place-items:center;color:var(--s-22);
+  transition:color .3s var(--ease),background .3s var(--ease)}
+.edge:hover{color:var(--gold);background:radial-gradient(60% 60% at 50% 50%,rgba(216,166,87,.08),transparent 70%)}
+.edge[disabled]{opacity:.18;pointer-events:none}
+.edge svg{width:16px;height:16px;stroke:currentColor;stroke-width:1;fill:none}
+#prev{left:8px}#next{right:8px}
+
+/* ── chapter rail ────────────────────────────────────── */
+#rail{left:0;right:0;bottom:0;height:var(--rail-h);z-index:22;
+  border-top:1px solid var(--s-08);
+  background:linear-gradient(to top,rgba(7,8,10,.94),rgba(7,8,10,.55) 62%,rgba(7,8,10,0));
+  backdrop-filter:blur(20px) saturate(130%);-webkit-backdrop-filter:blur(20px) saturate(130%);
+  display:flex;align-items:stretch}
+#prog{position:absolute;top:0;left:0;height:1px;background:var(--gold);width:0;
+  box-shadow:0 0 12px rgba(216,166,87,.55);transition:width .5s var(--ease)}
+.stop{position:relative;flex:1 1 0;min-width:0;display:flex;flex-direction:column;justify-content:center;
+  gap:5px;padding:0 20px;text-align:left;border-left:1px solid var(--s-08);
+  transition:flex-grow .55s var(--ease),background .4s var(--ease)}
+.stop:nth-child(2){border-left:none}
+.stop:hover{background:rgba(201,191,169,.035)}
+.stop .sn{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;color:var(--s-22);transition:color .4s var(--ease)}
+.stop .st{font-family:var(--serif);font-style:italic;font-size:17px;line-height:1.12;color:var(--s-38);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color .4s var(--ease),font-size .5s var(--ease)}
+.stop .sd{font-family:var(--mono);font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--s-22);
+  max-height:0;opacity:0;overflow:hidden;transition:max-height .5s var(--ease),opacity .4s var(--ease)}
+.stop.cur{flex-grow:2.1;background:linear-gradient(to top,rgba(216,166,87,.07),transparent 76%)}
+.stop.cur .sn{color:var(--gold)}
+.stop.cur .st{color:var(--s-90);font-size:22px}
+.stop.cur .sd{max-height:18px;opacity:1}
+.stop .tick{position:absolute;top:-1px;left:0;height:1px;width:0;background:var(--s-22)}
+.stop.done .tick{width:100%}
+.stop.cur::before{content:"";position:absolute;top:-1px;left:0;right:0;height:1px;background:var(--gold);opacity:.35}
+
+/* ── intro veil ──────────────────────────────────────── */
+#veil{position:fixed;inset:0;z-index:60;background:var(--ink);display:grid;place-items:center;
+  transition:opacity .9s var(--ease),visibility .9s}
+#veil.gone{opacity:0;visibility:hidden}
+.veil-in{text-align:center;max-width:520px;padding:0 30px}
+.veil-in .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.28em;text-transform:uppercase;color:var(--s-38)}
+.veil-in h2{font-family:var(--serif);font-style:italic;font-weight:400;font-size:58px;line-height:1;
+  margin:20px 0 18px;color:var(--s-90)}
+.veil-in p{font-size:14px;line-height:1.65;color:var(--s-38);max-width:46ch;margin:0 auto 30px}
+#enter{border:1px solid var(--s-22);border-radius:999px;padding:11px 26px;font-family:var(--mono);
+  font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--s-70);
+  transition:color .3s var(--ease),border-color .3s var(--ease),background .3s var(--ease)}
+#enter:hover{color:var(--ink);background:var(--gold);border-color:var(--gold)}
+
+/* ── responsive ──────────────────────────────────────── */
+@media (max-width:1240px){
+  #narr{width:352px;top:96px;padding:22px 23px 20px}
+  .n-title{font-size:37px}
+  .n-body{font-size:13.8px}
+  #aud{width:352px}
+  #card{width:300px;top:322px}
+  #plan{width:164px}
+}
+@media (max-width:1080px){
+  :root{--rail-h:98px}
+  #hdr{padding:20px 22px}
+  #narr,#aud{left:22px;width:322px}
+  #narr{top:88px}
+  .n-title{font-size:33px}
+  .n-hint{display:none}
+  #plan,#card{right:22px}
+  #plan{width:150px;top:88px}
+  #card{width:286px;top:316px}
+  .stop{padding:0 14px}
+  .stop .st{font-size:15px}
+  .stop.cur .st{font-size:19px}
+}
+@media (max-height:820px){
+  #narr{padding:19px 21px 17px;max-height:calc(100vh - var(--rail-h) - 150px);overflow:hidden}
+  #narr .n-hint{display:none}
+  .n-title{font-size:32px;margin:11px 0 10px}
+  .n-body{font-size:13px;line-height:1.56}
+  .n-meta{margin-top:13px;padding-top:10px}
+  #aud{padding:12px 16px 11px}
+}
+@media (max-height:760px){ #plan{display:none} }
+
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms !important;animation-iteration-count:1 !important;
+    transition-duration:.06s !important}
+  #grain{animation:none}
+  .spot .pulse{display:none}
+}
+</style>
+</head>
+<body>
+
+<div id="stage" aria-hidden="true">
+  <div class="scene" id="sceneA"></div>
+  <div class="scene" id="sceneB"></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+
+<div id="spots"></div>
+
+<!-- ── header ─────────────────────────────────────────── -->
+<header class="chrome" id="hdr">
+  <div class="brand">
+    <svg class="mark" viewBox="0 0 40 40" aria-hidden="true">
+      <path d="M20 3 L34 12 V32 H26 V22 a6 6 0 0 0-12 0 v10 H6 V12 Z" fill="none" stroke="#C9BFA9" stroke-width="1.1" opacity=".8"/>
+      <path d="M20 3 L34 12 V32 H26 V22 a6 6 0 0 0-12 0 v10 H6 V12 Z" fill="#C9BFA9" opacity=".07"/>
+      <path d="M20 9.5 v9 M15.5 14 h9" stroke="#D8A657" stroke-width="1.1"/>
+      <circle cx="20" cy="14" r="6.4" fill="none" stroke="#D8A657" stroke-width=".7" opacity=".55"/>
+    </svg>
+    <div>
+      <h1>Convento de São Bento</h1>
+      <div class="sub" id="brandSub">Guided Visit · Alentejo, Portugal</div>
+    </div>
+  </div>
+  <div class="hdr-r">
+    <div class="seg" role="group" aria-label="Language">
+      <button type="button" data-lang="pt" aria-pressed="false">PT</button>
+      <button type="button" data-lang="en" aria-pressed="true">EN</button>
+    </div>
+    <button type="button" class="iconbtn" id="sndBtn" aria-pressed="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+        <path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor" stroke="none"/>
+        <path class="w1" d="M16.5 8.8a4.4 4.4 0 0 1 0 6.4"/>
+        <path class="w2" d="M19.2 6.2a8 8 0 0 1 0 11.6"/>
+        <path class="x" d="M17 9.5l5 5M22 9.5l-5 5" style="display:none"/>
+      </svg>
+      <span id="sndLbl">Audio on</span>
+    </button>
+  </div>
+</header>
+
+<!-- ── narration ──────────────────────────────────────── -->
+<section class="chrome" id="narr" aria-live="polite">
+  <div class="n-top">
+    <span class="n-num" id="nNum">01 / 06</span>
+    <span class="n-kicker" id="nKick">The Lower Cloister</span>
+  </div>
+  <h2 class="n-title" id="nTitle">O Claustro</h2>
+  <p class="n-body" id="nBody"></p>
+  <div class="n-meta" id="nMeta"></div>
+  <div class="n-hint"><kbd>←</kbd><kbd>→</kbd><span id="nHint">to travel between stops</span></div>
+</section>
+
+<!-- ── audio ──────────────────────────────────────────── -->
+<section class="chrome" id="aud">
+  <button type="button" id="playBtn" aria-label="Play narration" aria-pressed="false">
+    <svg id="pIcon" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 1l8 5-8 5z"/></svg>
+  </button>
+  <div class="a-body">
+    <div class="a-line">
+      <span class="a-name" id="aName">Narration · 01 The Cloister</span>
+      <span class="a-time"><span id="aCur">00:00</span> / <span id="aDur">02:14</span></span>
+    </div>
+    <div class="a-track" id="aTrack" role="slider" tabindex="0" aria-label="Narration progress"
+         aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+      <div id="aFill"></div><div id="aKnob"></div>
+    </div>
+  </div>
+  <div class="a-wave" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+</section>
+
+<!-- ── plan ───────────────────────────────────────────── -->
+<aside class="chrome" id="plan">
+  <div class="plan-h"><span class="t" id="planT">Plan</span><span class="n">N ↑</span></div>
+  <svg viewBox="0 0 200 200" id="planSvg" aria-hidden="true"></svg>
+  <div class="plan-cap" id="planCap">Lower cloister · West range</div>
+</aside>
+
+<!-- ── detail card ────────────────────────────────────── -->
+<article id="card" role="dialog" aria-modal="false" aria-labelledby="cTitle">
+  <div class="c-illus" id="cIllus"></div>
+  <div class="c-body">
+    <div class="c-top">
+      <span class="c-kick" id="cKick">Detail</span>
+      <button type="button" class="c-close" id="cClose" aria-label="Close detail">
+        <svg viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M1 1l8 8M9 1l-8 8"/></svg>
+      </button>
+    </div>
+    <h3 class="c-title" id="cTitle"></h3>
+    <p class="c-text" id="cText"></p>
+    <div class="c-foot" id="cFoot"></div>
+  </div>
+</article>
+
+<button type="button" class="edge" id="prev" aria-label="Previous stop">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4L7 12l8 8"/></svg>
+</button>
+<button type="button" class="edge" id="next" aria-label="Next stop">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4l8 8-8 8"/></svg>
+</button>
+
+<!-- ── rail ───────────────────────────────────────────── -->
+<nav class="chrome" id="rail" aria-label="Chapters"><div id="prog"></div></nav>
+
+<!-- ── intro ──────────────────────────────────────────── -->
+<div id="veil">
+  <div class="veil-in">
+    <div class="k" id="vK">Six stops · 14 minutes</div>
+    <h2>Convento de São Bento</h2>
+    <p id="vP">A guided visit through the cloister, refectory, chapter house, library, bell tower and chapel of a Benedictine house founded in 1541.</p>
+    <button type="button" id="enter">Begin the visit</button>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+/* ═══════════════════════════════════════════════════════
+   1 · COPY  ·  Convento de São Bento
+   ═══════════════════════════════════════════════════════ */
+
+const UI = {
+  en:{
+    sub:"Guided Visit · Alentejo, Portugal", audioOn:"Audio on", audioOff:"Audio off",
+    plan:"Plan", detail:"Detail", narration:"Narration", hint:"to travel between stops",
+    of:"/", enter:"Begin the visit", stops:"Six stops · 14 minutes",
+    intro:"A guided visit through the cloister, refectory, chapter house, library, bell tower and chapel of a Benedictine house founded in 1541.",
+    foot:"Convento de São Bento · Guided visit"
+  },
+  pt:{
+    sub:"Visita Guiada · Alentejo, Portugal", audioOn:"Som ligado", audioOff:"Som desligado",
+    plan:"Planta", detail:"Pormenor", narration:"Narração", hint:"para percorrer as paragens",
+    of:"/", enter:"Começar a visita", stops:"Seis paragens · 14 minutos",
+    intro:"Uma visita guiada ao claustro, refeitório, casa do capítulo, biblioteca, torre sineira e capela de uma casa beneditina fundada em 1541.",
+    foot:"Convento de São Bento · Visita guiada"
+  }
+};
+
+const STOPS = [
+{
+  key:"cloister", num:"01", dur:134, wing:"West range",
+  en:{
+    kicker:"The Lower Cloister", title:"O Claustro",
+    body:"Begun in 1541 under the master mason Diogo Ferreira, the lower cloister encloses a garden of box hedge and bitter orange. Its round-headed arcade rests on paired columns of Ançã limestone — soft enough to carve at the quarry, hardening in the air. The community walked this ambulatory in silence between the offices, reading from wax tablets. A channel cut into the pavement still drains the arcade roof into the cistern, which supplied the kitchen by lead pipe until 1834.",
+    meta:["1541–1558","Ançã limestone","Attr. Diogo Ferreira"], wing:"West range"
+  },
+  pt:{
+    kicker:"Claustro Inferior", title:"O Claustro",
+    body:"Iniciado em 1541 sob a direcção do mestre pedreiro Diogo Ferreira, o claustro inferior encerra um jardim de buxo e laranjeira amarga. A arcada de volta perfeita assenta em colunas geminadas de pedra de Ançã — branda ao sair da pedreira e endurecendo ao ar. A comunidade percorria esta ambulatória em silêncio entre as horas, lendo em tábuas de cera. Um rego aberto no pavimento ainda conduz a água do telhado à cisterna, que abasteceu a cozinha por cano de chumbo até 1834.",
+    meta:["1541–1558","Pedra de Ançã","Atrib. Diogo Ferreira"], wing:"Ala poente"
+  },
+  spots:[
+    {x:1186,y:492,ill:"capital",
+     en:{t:"Paired capital",b:"Every capital is carved from a single block and no two repeat. This one shows acanthus turning into vine, with a mason's mark cut on the hidden face — a chevron used by the Ferreira workshop between 1541 and 1556.",f:"North walk · bay 4"},
+     pt:{t:"Capitel geminado",b:"Cada capitel é lavrado num só bloco e nenhum se repete. Neste, o acanto transforma-se em videira, com uma sigla de canteiro na face oculta — um chevron usado pela oficina Ferreira entre 1541 e 1556.",f:"Ala norte · tramo 4"}},
+    {x:398,y:634,ill:"lavabo",
+     en:{t:"The lavabo",b:"A shallow basin let into the south wall, where the community washed before entering the refectory. Water arrived by gravity from the cistern; the bronze spout, in the form of a lion's head, was replaced in 1719 after the original was stolen.",f:"South walk"},
+     pt:{t:"O lavabo",b:"Uma bacia embutida na parede sul, onde a comunidade se lavava antes de entrar no refeitório. A água chegava por gravidade da cisterna; a bica de bronze, em cabeça de leão, foi refeita em 1719 depois de a original ter sido roubada.",f:"Ala sul"}},
+    {x:688,y:722,ill:"channel",
+     en:{t:"The rain channel",b:"A groove cut along the pavement carries water from the arcade roof to the cistern beneath the garden. Its fall is one in ninety — steep enough to run clear, gentle enough to stay silent during the night office.",f:"Pavement · original"},
+     pt:{t:"O rego pluvial",b:"Um sulco aberto no pavimento leva a água do telhado da arcada à cisterna sob o jardim. A pendente é de um para noventa — bastante para correr limpa, suave que chegue para não se ouvir durante as matinas.",f:"Pavimento · original"}}
+  ]
+},
+{
+  key:"refectory", num:"02", dur:118, wing:"South range",
+  en:{
+    kicker:"The Refectory", title:"O Refeitório",
+    body:"Meals were taken in silence while a reader intoned scripture from the stone pulpit set into the north wall. The barrel vault carries the voice the length of the hall — a deliberate acoustic, tested by the builders with handbells before the plaster went on. Beneath the windows runs a dado of blue-and-white azulejos of 1698 showing the miracle of the loaves. The tables, of Brazilian rosewood, seated fifty-two brothers.",
+    meta:["Hall 1560","Azulejos 1698","Oficina de Gabriel del Barco"], wing:"South range"
+  },
+  pt:{
+    kicker:"O Refeitório", title:"O Refeitório",
+    body:"As refeições faziam-se em silêncio enquanto um leitor entoava a escritura do púlpito de pedra embutido na parede norte. A abóbada de berço leva a voz até ao fundo da sala — uma acústica deliberada, ensaiada pelos construtores com campainhas antes de rebocar. Sob as janelas corre um silhar de azulejos azuis e brancos de 1698 com o milagre dos pães. As mesas, de jacarandá do Brasil, sentavam cinquenta e dois monges.",
+    meta:["Sala 1560","Azulejos 1698","Oficina de Gabriel del Barco"], wing:"Ala sul"
+  },
+  spots:[
+    {x:1136,y:404,ill:"pulpit",
+     en:{t:"Reader's pulpit",b:"A stone pulpit corbelled out of the wall and reached by seven steps cut within the masonry. The reader stood level with the springing of the vault, where the barrel carries a speaking voice to the far end of the hall without effort.",f:"North wall · c.1566"},
+     pt:{t:"Púlpito do leitor",b:"Um púlpito de pedra em mísula, alcançado por sete degraus abertos na espessura do muro. O leitor ficava ao nível do arranque da abóbada, onde o berço leva a voz falada até ao fundo da sala sem esforço.",f:"Parede norte · c.1566"}},
+    {x:1184,y:600,ill:"azulejo",
+     en:{t:"Azulejo panel",b:"Tiles laid in 1698, each fourteen centimetres square, painted in a workshop that supplied half the convents of the Alentejo. The border of scrolling acanthus conceals two signatures and one deliberate error: a single tile set upside down.",f:"South dado · 1698"},
+     pt:{t:"Painel de azulejos",b:"Azulejos assentes em 1698, de catorze centímetros de lado, pintados numa oficina que abastecia metade dos conventos do Alentejo. A cercadura de acantos esconde duas assinaturas e um erro deliberado: um azulejo colocado ao contrário.",f:"Silhar sul · 1698"}},
+    {x:700,y:646,ill:"table",
+     en:{t:"The abbot's table",b:"Set crosswise on a raised step at the east end, so that the community faced it down the length of the hall. Its rosewood top, in a single piece 4.2 metres long, was shipped from Pernambuco in 1691 and has never been refinished.",f:"East end · 1691"},
+     pt:{t:"A mesa do abade",b:"Colocada de través sobre um degrau na cabeceira nascente, de modo a que a comunidade a tivesse de frente ao longo da sala. O tampo de jacarandá, de uma só peça com 4,2 metros, veio de Pernambuco em 1691 e nunca foi refeito.",f:"Cabeceira nascente · 1691"}}
+  ]
+},
+{
+  key:"chapter", num:"03", dur:152, wing:"East range",
+  en:{
+    kicker:"The Chapter House", title:"A Casa do Capítulo",
+    body:"The community met here each morning to hear a chapter of the Rule, confess faults and elect officers. A stone bench runs all four walls; the abbot's seat faces the door beneath a Manueline portal of twisted rope moulding and armillary spheres. Eight ribs spring from clustered corbels to a single carved boss, gilded in 1573 and never since retouched. The room favours a speaking voice at its centre and swallows whispers at the edge.",
+    meta:["Room c.1520","Vault 1573","Manueline portal"], wing:"East range"
+  },
+  pt:{
+    kicker:"Casa do Capítulo", title:"A Casa do Capítulo",
+    body:"A comunidade reunia-se aqui todas as manhãs para ouvir um capítulo da Regra, confessar faltas e eleger ofícios. Um banco de pedra corre as quatro paredes; a cadeira do abade fica de frente para a porta, sob um portal manuelino de cordame torcido e esferas armilares. Oito nervuras arrancam de mísulas em feixe para um único fecho lavrado, dourado em 1573 e nunca mais retocado. A sala favorece a voz ao centro e engole os murmúrios junto às paredes.",
+    meta:["Sala c.1520","Abóbada 1573","Portal manuelino"], wing:"Ala nascente"
+  },
+  spots:[
+    {x:718,y:250,ill:"boss",
+     en:{t:"The vault boss",b:"Eight ribs meet in a boss carved with the Agnus Dei, painted and gilded in 1573. Traces of the original azurite survive in the deepest cuts; the gold is water-gilt over a red bole ground, laid by a workshop from Coimbra.",f:"Crown of the vault"},
+     pt:{t:"O fecho da abóbada",b:"Oito nervuras encontram-se num fecho lavrado com o Agnus Dei, pintado e dourado em 1573. Nos cortes mais fundos sobrevivem vestígios da azurite original; o ouro é brunido sobre bolo arménio, aplicado por uma oficina de Coimbra.",f:"Chave da abóbada"}},
+    {x:716,y:442,ill:"portal",
+     en:{t:"Manueline portal",b:"The doorway is framed in a rope moulding cut to imitate ship's cable and knotted at the springing. Two armillary spheres, the device of King Manuel I, sit at the haunches. The composition is of about 1520 — a generation older than the vault above it.",f:"West door · c.1520"},
+     pt:{t:"Portal manuelino",b:"A porta é emoldurada por um cordame lavrado à imitação de cabo de navio, atado no arranque. Duas esferas armilares, divisa de D. Manuel I, assentam nos rins do arco. A composição é de cerca de 1520 — uma geração mais velha que a abóbada.",f:"Porta poente · c.1520"}},
+    {x:1054,y:612,ill:"bench",
+     en:{t:"The stone bench",b:"A continuous bench runs the four walls, worn into shallow hollows by seating. The order was fixed: the abbot opposite the door, the prior at his right hand, the novices nearest the threshold and furthest from the light.",f:"North wall"},
+     pt:{t:"O banco de pedra",b:"Um banco contínuo percorre as quatro paredes, gasto em covas rasas pelo uso. A ordem era fixa: o abade em frente à porta, o prior à sua direita, os noviços junto à soleira e o mais longe possível da luz.",f:"Parede norte"}},
+    {x:1136,y:472,ill:"corbel",
+     en:{t:"Clustered corbel",b:"Each rib lands on a corbel of three engaged shafts, carved with a different plant: fig, vine, and the strawberry tree whose fruit the community distilled. The stone is harder here than in the cloister and was quarried at Estremoz.",f:"South-east angle"},
+     pt:{t:"Mísula em feixe",b:"Cada nervura assenta numa mísula de três colunelos, lavrada com uma planta diferente: figueira, videira e medronheiro, cujo fruto a comunidade destilava. A pedra é aqui mais dura que a do claustro e veio das pedreiras de Estremoz.",f:"Ângulo sudeste"}}
+  ]
+},
+{
+  key:"library", num:"04", dur:125, wing:"Upper east range",
+  en:{
+    kicker:"The Library", title:"A Biblioteca",
+    body:"Twelve thousand volumes stand in tiers of gilded shelving, arranged not by author but by discipline: canon law nearest the light, alchemy and cosmography in the shadowed bays. An upper gallery is reached by a stair concealed in the thickness of the wall. A colony of small bats, tolerated for three centuries, still hunts the insects that would otherwise eat the bindings. The windows face north, so that no direct sun falls on a page.",
+    meta:["1728–1740","Gilt jacaranda","12,000 volumes"], wing:"Upper east range"
+  },
+  pt:{
+    kicker:"A Livraria", title:"A Biblioteca",
+    body:"Doze mil volumes erguem-se em estantes douradas de dois corpos, ordenados não por autor mas por matéria: direito canónico junto à luz, alquimia e cosmografia nos tramos sombrios. A galeria superior alcança-se por uma escada oculta na espessura do muro. Uma colónia de morcegos, tolerada há três séculos, ainda caça os insectos que de outro modo comeriam as encadernações. As janelas voltam-se a norte, para que o sol não bata directamente na página.",
+    meta:["1728–1740","Jacarandá dourado","12 000 volumes"], wing:"Ala nascente superior"
+  },
+  spots:[
+    {x:1150,y:432,ill:"shelf",
+     en:{t:"The gilded press",b:"Two storeys of jacaranda shelving finished in gold leaf over red bole, with pierced cresting above. The shelves sit on brass pins and can be moved — an unusual refinement for 1734, letting folios and octavos share a single bay.",f:"Bay 3 · 1734"},
+     pt:{t:"A estante dourada",b:"Dois corpos de estante em jacarandá, acabados a folha de ouro sobre bolo vermelho, com sanefa vazada no coroamento. As prateleiras assentam em pinos de latão e podem mover-se — refinamento raro em 1734, que permite fólios e oitavos no mesmo tramo.",f:"Tramo 3 · 1734"}},
+    {x:722,y:556,ill:"book",
+     en:{t:"The choir book",b:"A parchment antiphonal of 1602, large enough to be read by twenty singers at once. The notation is square, on four lines; the initials are painted in vermilion and shell gold. The clasps are original, the binding renewed in 1811.",f:"Lectern · 1602"},
+     pt:{t:"O livro de coro",b:"Um antifonário em pergaminho de 1602, grande o bastante para ser lido por vinte cantores ao mesmo tempo. A notação é quadrada, em quatro linhas; as iniciais são pintadas a vermelhão e ouro de concha. Os fechos são originais, a encadernação refeita em 1811.",f:"Estante · 1602"}},
+    {x:1182,y:302,ill:"bat",
+     en:{t:"The bat colony",b:"A dozen pipistrelles roost behind the cornice by day and hunt the room at dusk, taking the beetles and silverfish that destroy leather bindings. Leather covers are laid over the reading tables each evening — the only maintenance the arrangement requires.",f:"Cornice · north wall"},
+     pt:{t:"A colónia de morcegos",b:"Uma dúzia de morcegos-anões abriga-se atrás da cornija de dia e caça a sala ao anoitecer, comendo os carunchos e traças que destroem as encadernações. Todas as noites se estendem coberturas de coiro sobre as mesas — a única manutenção que o arranjo exige.",f:"Cornija · parede norte"}}
+  ]
+},
+{
+  key:"tower", num:"05", dur:107, wing:"North-west corner",
+  en:{
+    kicker:"The Bell Tower", title:"A Torre Sineira",
+    body:"One hundred and forty-one steps rise through the shaft to the bell chamber. Three bells hang from an oak headstock: the great bell of 1604, cast on site from a mould sunk into the cloister floor, and two smaller bells recast after the earthquake of 1755 cracked their crowns. The largest carries a founder's prayer against lightning and hail. Louvred openings throw the sound outward and keep rain off the timbers.",
+    meta:["Shaft 1587","Great bell 1604","Manuel Rodrigues, founder"], wing:"North-west corner"
+  },
+  pt:{
+    kicker:"A Torre Sineira", title:"A Torre Sineira",
+    body:"Cento e quarenta e um degraus sobem pelo fuste até à câmara dos sinos. Três sinos pendem de um cabeçalho de carvalho: o sino grande de 1604, fundido no local a partir de um molde aberto no chão do claustro, e dois menores refundidos depois de o terramoto de 1755 lhes ter fendido a coroa. O maior traz uma oração do fundidor contra o raio e o granizo. As frestas lançam o som para fora e resguardam os madeiramentos da chuva.",
+    meta:["Fuste 1587","Sino grande 1604","Manuel Rodrigues, fundidor"], wing:"Ângulo noroeste"
+  },
+  spots:[
+    {x:720,y:402,ill:"bell",
+     en:{t:"The great bell",b:"Cast on site in 1604 from a mould sunk into the cloister floor: 980 kilograms of bell metal, four parts copper to one of tin. It sounds a low B flat. The inscription asks protection from lightning, hail and sudden death.",f:"Bell chamber · 1604"},
+     pt:{t:"O sino grande",b:"Fundido no local em 1604 a partir de um molde aberto no chão do claustro: 980 quilos de bronze, quatro partes de cobre para uma de estanho. Dá um si bemol grave. A inscrição pede protecção contra o raio, o granizo e a morte súbita.",f:"Câmara dos sinos · 1604"}},
+    {x:720,y:250,ill:"headstock",
+     en:{t:"The oak headstock",b:"The bell hangs from a headstock of green oak, chosen because it moves with the bell rather than against it. Wrought-iron straps and a single oak wedge hold the crown — no glue, no bolts. It has been replaced twice, in 1788 and 1936.",f:"Above the chamber"},
+     pt:{t:"O cabeçalho de carvalho",b:"O sino pende de um cabeçalho de carvalho verde, escolhido por acompanhar o movimento do sino em vez de lhe resistir. Cintas de ferro forjado e uma única cunha de carvalho seguram a coroa — sem cola nem parafusos. Foi substituído duas vezes, em 1788 e 1936.",f:"Acima da câmara"}},
+    {x:1128,y:520,ill:"louvre",
+     en:{t:"The louvres",b:"Angled slats of chestnut throw the sound outward and downward while keeping rain off the timbers. Their pitch was set by ear: the mason raised or dropped each slat until the bell could be heard clearly in the village, two kilometres east.",f:"East opening"},
+     pt:{t:"As frestas",b:"Palas inclinadas de castanho lançam o som para fora e para baixo, resguardando os madeiramentos da chuva. A inclinação foi acertada de ouvido: o mestre subia ou descia cada pala até o sino se ouvir com nitidez na aldeia, a dois quilómetros a nascente.",f:"Vão nascente"}}
+  ]
+},
+{
+  key:"chapel", num:"06", dur:141, wing:"Church · north nave",
+  en:{
+    kicker:"The Chapel", title:"A Capela",
+    body:"The chapel was reoriented in 1602 to admit the rose window, whose tracery of twelve petals stands for the apostles and whose glass — mostly original — was buried in the kitchen garden during the French invasions and reset in 1816. On clear afternoons in October the light crosses the nave and comes to rest exactly on the founder's tomb slab, an alignment the builders are thought to have intended.",
+    meta:["1602","Glass reset 1816","Founder's tomb"], wing:"Church · north nave"
+  },
+  pt:{
+    kicker:"A Capela", title:"A Capela",
+    body:"A capela foi reorientada em 1602 para receber a rosácea, cujo tracejado de doze pétalas representa os apóstolos e cujo vidro — quase todo original — foi enterrado na horta durante as invasões francesas e reposto em 1816. Nas tardes claras de Outubro a luz atravessa a nave e vem pousar exactamente sobre a lápide do fundador, alinhamento que se julga ter sido intencional.",
+    meta:["1602","Vitral reposto em 1816","Túmulo do fundador"], wing:"Igreja · nave norte"
+  },
+  spots:[
+    {x:718,y:300,ill:"rose",
+     en:{t:"The rose window",b:"Twelve petals radiate from a central oculus, the tracery cut in Ançã limestone and assembled dry before the mortar was run in. The outer ring carries thirty-six cusps. The stonework is of 1602; roughly two thirds of the glass is original.",f:"West front · 1602"},
+     pt:{t:"A rosácea",b:"Doze pétalas irradiam de um óculo central, com o tracejado lavrado em pedra de Ançã e montado a seco antes de correr a argamassa. O anel exterior traz trinta e seis lóbulos. A cantaria é de 1602; cerca de dois terços do vidro é original.",f:"Fachada poente · 1602"}},
+    {x:1198,y:432,ill:"glass",
+     en:{t:"The glass",b:"Pot-metal glass in amber, ruby and grisaille, leaded into panels a single man could carry. Buried in the kitchen garden in 1808 to keep it from the French, it was dug up nine years later with only four panels broken beyond repair.",f:"South lancet"},
+     pt:{t:"O vitral",b:"Vidro de massa em âmbar, rubi e grisalha, chumbado em painéis que um só homem podia carregar. Enterrado na horta em 1808 para o salvar dos franceses, foi desenterrado nove anos depois com apenas quatro painéis irrecuperáveis.",f:"Fresta sul"}},
+    {x:700,y:722,ill:"tomb",
+     en:{t:"The founder's tomb",b:"A plain slab of black limestone lettered in Roman capitals marks the grave of the founder, who asked to be buried where the community would walk over him. On clear October afternoons the light of the rose window falls across it.",f:"Nave floor · 1559"},
+     pt:{t:"O túmulo do fundador",b:"Uma lápide lisa de calcário negro, gravada a capitais romanas, assinala a sepultura do fundador, que pediu para ser enterrado onde a comunidade lhe passasse por cima. Nas tardes claras de Outubro a luz da rosácea atravessa-a.",f:"Chão da nave · 1559"}}
+  ]
+}
+];
+
+/* ═══════════════════════════════════════════════════════
+   2 · GEOMETRY + COLOUR
+   ═══════════════════════════════════════════════════════ */
+
+const VW = 1440, VH = 900;
+const INK = "#07080A", SHADOW = "#101318", STONE = "#C9BFA9", GOLD = "#D8A657";
+
+const hx = c => [parseInt(c.slice(1,3),16), parseInt(c.slice(3,5),16), parseInt(c.slice(5,7),16)];
+const h2 = n => Math.max(0,Math.min(255,Math.round(n))).toString(16).padStart(2,"0");
+function mix(a,b,t){ const A=hx(a), B=hx(b); return "#"+h2(A[0]+(B[0]-A[0])*t)+h2(A[1]+(B[1]-A[1])*t)+h2(A[2]+(B[2]-A[2])*t); }
+function rgba(c,a){ const A=hx(c); return "rgba("+A[0]+","+A[1]+","+A[2]+","+a+")"; }
+const lerp = (a,b,t) => a+(b-a)*t;
+function seeded(s){ let x=s; return ()=>{ x=(x*1664525+1013904223)%4294967296; return x/4294967296; }; }
+const n2 = v => Math.round(v*10)/10;
+
+/* one-point perspective: every point of a "near plane" figure is
+   scaled toward the vanishing point by s = 1/(1+i·gap)             */
+function geo(c,i){
+  const s = 1/(1 + i*c.gap), vp = c.vp, o = c.op;
+  const px = x => vp.x + (x-vp.x)*s, py = y => vp.y + (y-vp.y)*s;
+  const L=px(o.L), R=px(o.R), top=py(o.top), base=py(o.base);
+  return { i, s, L, R, top, base,
+    spring: py(o.spring !== undefined ? o.spring : o.top),
+    floor: py(o.floor), cx:(L+R)/2, w:R-L,
+    x0:px(o.L-1400), x1:px(o.R+1400), y0:py(o.top-1200), y1:base };
+}
+
+/* opening profiles ------------------------------------------------ */
+function opening(g,kind){
+  const L=n2(g.L), R=n2(g.R), b=n2(g.base), t=n2(g.top), cx=n2(g.cx), sp=n2(g.spring), w=g.w;
+  const ry = Math.max(4, g.spring - g.top);
+  if(kind==="round"){   /* elliptical barrel — springs from the impost line */
+    return "M"+L+","+b+" L"+L+","+sp+" A"+n2(w/2)+","+n2(ry)+" 0 0 1 "+R+","+sp+" L"+R+","+b+" Z";
+  }
+  if(kind==="pointed"){ /* gothic, apex on the axis */
+    return "M"+L+","+b+" L"+L+","+sp+
+           " Q"+n2(g.L+w*0.14)+","+n2(g.top+ry*0.26)+" "+cx+","+t+
+           " Q"+n2(g.R-w*0.14)+","+n2(g.top+ry*0.26)+" "+R+","+sp+" L"+R+","+b+" Z";
+  }
+  if(kind==="seg"){     /* shallow segmental crown */
+    return "M"+L+","+b+" L"+L+","+sp+" Q"+cx+","+n2(2*g.top-g.spring)+" "+R+","+sp+" L"+R+","+b+" Z";
+  }
+  if(kind==="oct"){ /* bell-tower shaft, looking up */
+    const k = w*0.29, ty=t, by=b;
+    return "M"+n2(L+k)+","+n2(ty)+" L"+n2(R-k)+","+n2(ty)+" L"+R+","+n2(ty+k)+
+           " L"+R+","+n2(by-k)+" L"+n2(R-k)+","+by+" L"+n2(L+k)+","+by+
+           " L"+L+","+n2(by-k)+" L"+L+","+n2(ty+k)+" Z";
+  }
+  /* flat-headed with cut corners (library ceiling) */
+  return "M"+L+","+b+" L"+L+","+sp+" L"+n2(g.L+w*0.07)+","+t+" L"+n2(g.R-w*0.07)+","+t+" L"+R+","+sp+" L"+R+","+b+" Z";
+}
+const outerRect = g => "M"+n2(g.x0)+","+n2(g.y0)+" H"+n2(g.x1)+" V"+n2(g.y1)+" H"+n2(g.x0)+" Z";
+
+/* bilinear point on a bay wall quad.  u: 0 = far → 1 = near, v: 0 = top → 1 = bottom */
+function wall(gf,gn,side){
+  const xf = side==="L" ? gf.L : gf.R, xn = side==="L" ? gn.L : gn.R;
+  return (u,v) => [ lerp(xf,xn,u), lerp(lerp(gf.spring,gn.spring,u), lerp(gf.floor,gn.floor,u), v) ];
+}
+const poly = pts => "M" + pts.map(p=>n2(p[0])+","+n2(p[1])).join(" L") + " Z";
+
+/* ═══════════════════════════════════════════════════════
+   3 · SCENE BUILDER
+   ═══════════════════════════════════════════════════════ */
+
+function buildScene(idx){
+  const c = SCENE[idx], P = "s"+idx+"_";
+  const G = []; for(let i=0;i<=c.n;i++) G.push(geo(c,i));
+  const L = { far:[], mid:[], near:[], fg:[] };
+  const farCut = Math.ceil(c.n*0.55), midCut = 2;
+
+  L.far.push(c.bg(P,G,c));
+
+  for(let i=c.n-1;i>=0;i--){
+    const g = G[i];
+    const t = c.n>1 ? Math.pow(1 - i/(c.n-1), 0.82) : 1;
+    const fill = mix(c.colFar, c.colNear, t);
+    const bucket = i>=farCut ? "far" : (i>=midCut ? "mid" : "near");
+    const hole = opening(g,c.kind);
+    let s = '<path d="'+outerRect(g)+" "+hole+'" fill="'+fill+'" fill-rule="evenodd"/>';
+    /* soffit shadow + hairline arris on the arch mouth */
+    s += '<path d="'+hole+'" fill="none" stroke="'+INK+'" stroke-width="'+n2(9*g.s)+'" opacity="'+n2(0.10+0.22*t)+'"/>';
+    s += '<path d="'+hole+'" fill="none" stroke="'+rgba(STONE, n2(0.30-0.16*t))+'" stroke-width="'+n2(1.3*g.s)+'"/>';
+    L[bucket].push(s);
+    if(i>0 && c.bay) L[bucket].push(c.bay(G[i], G[i-1], P, c, i));
+  }
+
+  if(c.fx)  L.mid.push(c.fx(P,G,c));
+  if(c.fore) L.fg.push(c.fore(P,G,c));
+
+  /* airborne dust, caught in the light */
+  const r = seeded(97+idx*613); let dust="";
+  for(let k=0;k<26;k++){
+    const x=n2(r()*VW), y=n2(120+r()*640), rad=n2(0.7+r()*1.9), o=n2(0.10+r()*0.30);
+    dust += '<circle cx="'+x+'" cy="'+y+'" r="'+rad+'" fill="'+STONE+'" opacity="'+o+'">'+
+      '<animate attributeName="opacity" values="'+o+';'+n2(o*0.15)+';'+o+'" dur="'+n2(4+r()*7)+'s" repeatCount="indefinite" begin="'+n2(r()*6)+'s"/>'+
+      '<animateTransform attributeName="transform" type="translate" values="0 0;'+n2(-6+r()*12)+' '+n2(-14-r()*20)+';0 0" dur="'+n2(14+r()*16)+'s" repeatCount="indefinite"/></circle>';
+  }
+  L.fg.push('<g class="dust">'+dust+'</g>');
+
+  const defs = (c.defs?c.defs(P,G,c):"") + `
+    <filter id="${P}bl" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="22"/></filter>
+    <filter id="${P}bls" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="7"/></filter>
+    <radialGradient id="${P}glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="${rgba(GOLD,.55)}"/><stop offset="45%" stop-color="${rgba(GOLD,.16)}"/>
+      <stop offset="100%" stop-color="${rgba(GOLD,0)}"/></radialGradient>
+    <linearGradient id="${P}fl" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="${mix(SHADOW,STONE,.30)}"/>
+      <stop offset="38%" stop-color="${mix(SHADOW,STONE,.12)}"/>
+      <stop offset="100%" stop-color="${INK}"/></linearGradient>
+    <radialGradient id="${P}flv" cx="50%" cy="-8%" r="96%">
+      <stop offset="0%" stop-color="${rgba(INK,0)}"/>
+      <stop offset="52%" stop-color="${rgba(INK,.20)}"/>
+      <stop offset="100%" stop-color="${rgba(INK,.94)}"/></radialGradient>`;
+
+  return '<svg viewBox="0 0 '+VW+' '+VH+'" preserveAspectRatio="xMidYMid slice">'+
+    '<defs>'+defs+'</defs>'+
+    '<rect width="'+VW+'" height="'+VH+'" fill="'+INK+'"/>'+
+    '<g class="pl" data-d="0.14">'+L.far.join("")+'</g>'+
+    '<g class="pl" data-d="0.46">'+L.mid.join("")+'</g>'+
+    '<g class="pl" data-d="0.86">'+L.near.join("")+'</g>'+
+    '<g class="pl" data-d="1.35">'+L.fg.join("")+'</g>'+
+  '</svg>';
+}
+
+/* shared background furniture ------------------------------------- */
+function floorPlate(P,G,c,gridN){
+  const vp=c.vp, near=G[0];
+  let s = '<rect x="0" y="'+n2(vp.y-4)+'" width="'+VW+'" height="'+n2(VH-vp.y+4)+'" fill="url(#'+P+'fl)"/>';
+  /* orthogonals */
+  let rays="";
+  for(let k=-9;k<=9;k++){
+    const x = vp.x + k*118;
+    rays += '<line x1="'+n2(vp.x)+'" y1="'+n2(vp.y)+'" x2="'+n2(x)+'" y2="'+VH+'" stroke="'+rgba(STONE,.10)+'" stroke-width="1"/>';
+  }
+  /* transversals, spaced in true perspective */
+  let tr="";
+  for(let k=1;k<(gridN||13);k++){
+    const s2 = 1/(1+k*c.gap*0.62);
+    const y = vp.y + (c.op.floor-vp.y)*s2;
+    tr += '<line x1="0" y1="'+n2(y)+'" x2="'+VW+'" y2="'+n2(y)+'" stroke="'+rgba(STONE,.085)+'" stroke-width="'+n2(0.6+s2)+'"/>';
+  }
+  return s+rays+tr+
+    '<rect x="0" y="'+n2(vp.y-4)+'" width="'+VW+'" height="'+n2(VH-vp.y+4)+'" fill="url(#'+P+'flv)"/>';
+}
+function haze(P,c,col,op){
+  return '<ellipse cx="'+n2(c.vp.x)+'" cy="'+n2(c.vp.y)+'" rx="470" ry="330" fill="'+rgba(col||STONE,op||.06)+'" filter="url(#'+P+'bl)"/>';
+}
+
+function foreArch(c,op,at){
+  const g = geo(c, at===undefined ? 0.92 : at);
+  return '<path d="'+outerRect(g)+" "+opening(g,c.kind)+'" fill="'+INK+'" fill-rule="evenodd" opacity="'+(op||.55)+'"/>';
+}
+function shaft(P,pts,op){
+  return '<path d="'+poly(pts)+'" fill="'+rgba(STONE,op||.10)+'" filter="url(#'+P+'bl)"/>';
+}
+
+/* ═══════════════════════════════════════════════════════
+   4 · THE SIX SCENES
+   ═══════════════════════════════════════════════════════ */
+
+const SCENE = [
+
+/* ── 01 · CLOISTER ─────────────────────────────────────
+   A vaulted ambulatory; the garth opens through a paired
+   arcade on the right, full of flat midday light.        */
+{
+  vp:{x:648,y:470}, n:13, gap:0.44, kind:"round",
+  op:{L:-330,R:1700,top:-350,spring:172,base:2200,floor:848},
+  colFar: mix(SHADOW,STONE,.50), colNear: mix(SHADOW,STONE,.05),
+  defs(P,G,c){ return `
+    <linearGradient id="${P}court" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="${mix(SHADOW,STONE,.95)}"/>
+      <stop offset="46%" stop-color="${mix(SHADOW,STONE,.82)}"/>
+      <stop offset="63%" stop-color="${mix(SHADOW,STONE,.44)}"/>
+      <stop offset="100%" stop-color="${mix(SHADOW,STONE,.24)}"/></linearGradient>
+    <linearGradient id="${P}end" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="${mix(SHADOW,STONE,.88)}"/>
+      <stop offset="100%" stop-color="${mix(SHADOW,STONE,.34)}"/></linearGradient>`;
+  },
+  bg(P,G,c){
+    const vp = c.vp;
+    let s = floorPlate(P,G,c,14);
+    /* the walk turns the corner: a blank wall, and one lit doorway */
+    s += '<rect x="'+n2(vp.x-620)+'" y="'+n2(vp.y-560)+'" width="1240" height="700" fill="'+mix(SHADOW,STONE,.125)+'"/>';
+    const dw=76, dh=150, by=vp.y+74;
+    s += '<path d="M'+(vp.x-dw/2)+','+by+' L'+(vp.x-dw/2)+','+(by-dh*0.6)+
+         ' A'+(dw/2)+','+(dh*0.4)+' 0 0 1 '+(vp.x+dw/2)+','+(by-dh*0.6)+' L'+(vp.x+dw/2)+','+by+' Z" fill="url(#'+P+'end)"/>';
+    s += '<path d="'+poly([[vp.x-dw/2,by],[vp.x+dw/2,by],[vp.x+dw*1.9,VH],[vp.x-dw*1.9,VH]])+
+         '" fill="'+rgba(STONE,.055)+'" filter="url(#'+P+'bl)"/>';
+    s += '<ellipse cx="'+n2(vp.x)+'" cy="'+n2(by-60)+'" rx="150" ry="126" fill="url(#'+P+'glow)" opacity=".42"/>';
+    return s + haze(P,c,STONE,.07);
+  },
+  bay(gf,gn,P,c,i){
+    const R = wall(gf,gn,"R"), L = wall(gf,gn,"L");
+    const dim = Math.min(1, 0.16 + i*0.13);
+    let s = "";
+    /* the pier faces, lit from the garth */
+    s += '<path d="'+poly([R(0,0),R(1,0),R(1,1),R(0,1)])+'" fill="'+mix(SHADOW,STONE,n2(0.20-i*0.014))+'"/>';
+    s += '<path d="'+poly([L(0,0),L(1,0),L(1,1),L(0,1)])+'" fill="'+mix(SHADOW,STONE,n2(0.11-i*0.008))+'"/>';
+    /* garth arcade — paired round arches opening to the light */
+    const a0=0.07, a1=0.93, vT=0.54, vB=0.88;
+    const half = (u0,u1) => {
+      const p0=R(u0,vB), s0=R(u0,vT), p1=R(u1,vB), s1=R(u1,vT);
+      const mx=(s0[0]+s1[0])/2, my=(s0[1]+s1[1])/2;
+      const rise=Math.abs(s1[0]-s0[0])*0.58;
+      return "M"+n2(p0[0])+","+n2(p0[1])+" L"+n2(s0[0])+","+n2(s0[1])+
+        " Q"+n2(mx)+","+n2(my-2*rise)+" "+n2(s1[0])+","+n2(s1[1])+
+        " L"+n2(p1[0])+","+n2(p1[1])+" Z";
+    };
+    /* the impost course the arches spring from */
+    s += '<path d="'+poly([R(0,vT-0.03),R(1,vT-0.03),R(1,vT),R(0,vT)])+'" fill="'+rgba(STONE,.22)+'"/>';
+    s += '<path d="'+half(a0,0.48)+'" fill="url(#'+P+'court)" opacity="'+n2(1-dim*0.55)+'"/>';
+    s += '<path d="'+half(0.52,a1)+'" fill="url(#'+P+'court)" opacity="'+n2(1-dim*0.55)+'"/>';
+    /* the shared shaft between them, with capital and base */
+    const cTop=R(0.5,vT-0.03), cBot=R(0.5,vB), cap=R(0.5,vT+0.04);
+    s += '<line x1="'+n2(cTop[0])+'" y1="'+n2(cTop[1])+'" x2="'+n2(cBot[0])+'" y2="'+n2(cBot[1])+
+         '" stroke="'+mix(SHADOW,STONE,.18)+'" stroke-width="'+n2(9*gn.s)+'"/>';
+    s += '<rect x="'+n2(cap[0]-8*gn.s)+'" y="'+n2(cap[1]-5*gn.s)+'" width="'+n2(16*gn.s)+'" height="'+n2(7*gn.s)+
+         '" fill="'+mix(SHADOW,STONE,.34)+'"/>';
+    /* arch mouldings catching the outside light */
+    s += '<path d="'+half(a0,0.48)+'" fill="none" stroke="'+rgba(STONE,.34)+'" stroke-width="'+n2(1.6*gn.s)+'"/>';
+    s += '<path d="'+half(0.52,a1)+'" fill="none" stroke="'+rgba(STONE,.34)+'" stroke-width="'+n2(1.6*gn.s)+'"/>';
+    /* light spilling across the pavement */
+    s += '<path d="'+poly([R(a0,vB),R(a1,vB),
+          [lerp(R(a1,vB)[0],c.vp.x,-0.42), R(a1,vB)[1]+34*gn.s],
+          [lerp(R(a0,vB)[0],c.vp.x,-0.42), R(a0,vB)[1]+34*gn.s]])+
+          '" fill="'+rgba(STONE,n2(0.16*(1-dim)))+'" filter="url(#'+P+'bls)"/>';
+    /* plinth and step under the arcade */
+    s += '<path d="'+poly([R(0,0.90),R(1,0.90),R(1,1),R(0,1)])+'" fill="'+mix(SHADOW,STONE,.13)+'"/>';
+    s += '<path d="'+poly([R(0,0.88),R(1,0.88),R(1,0.90),R(0,0.90)])+'" fill="'+rgba(STONE,.26)+'"/>';
+    /* inner wall: blind arcading and a low bench */
+    for(let k=0;k<2;k++){
+      const u0=0.10+0.44*k, u1=u0+0.36, m=(u0+u1)/2;
+      s += '<path d="M'+n2(L(u0,0.92)[0])+','+n2(L(u0,0.92)[1])+
+           " L"+n2(L(u0,0.40)[0])+","+n2(L(u0,0.40)[1])+
+           " Q"+n2(L(m,0.20)[0])+","+n2(L(m,0.20)[1])+" "+n2(L(u1,0.40)[0])+","+n2(L(u1,0.40)[1])+
+           " L"+n2(L(u1,0.92)[0])+","+n2(L(u1,0.92)[1])+
+           '" fill="'+rgba(INK,.42)+'" stroke="'+rgba(STONE,.12)+'" stroke-width="1"/>';
+    }
+    s += '<path d="'+poly([L(0.02,0.86),L(0.98,0.86),L(0.98,0.92),L(0.02,0.92)])+'" fill="'+mix(SHADOW,STONE,.16)+'"/>';
+    /* longitudinal ribs along the vault springing */
+    s += '<line x1="'+n2(gf.L)+'" y1="'+n2(gf.spring)+'" x2="'+n2(gn.L)+'" y2="'+n2(gn.spring)+
+         '" stroke="'+rgba(STONE,.13)+'" stroke-width="1.2"/>';
+    s += '<line x1="'+n2(gf.R)+'" y1="'+n2(gf.spring)+'" x2="'+n2(gn.R)+'" y2="'+n2(gn.spring)+
+         '" stroke="'+rgba(STONE,.13)+'" stroke-width="1.2"/>';
+    return s;
+  },
+  fx(P,G,c){
+    let s="";
+    for(let i=1;i<=4;i++){
+      const gn=G[i-1], gf=G[i], R=wall(gf,gn,"R");
+      const a=R(0.1,0.42), b=R(0.9,0.42);
+      s += shaft(P,[a,b,[b[0]-300*gn.s,gn.floor+40*gn.s],[a[0]-300*gn.s,gn.floor+40*gn.s]], .085);
+    }
+    return s;
+  },
+  fore(P,G,c){ return foreArch(c,.5); }
+},
+
+/* ── 02 · REFECTORY ────────────────────────────────────
+   A long barrel-vaulted hall; high windows on the north
+   wall, azulejo dado opposite, one table down the axis.  */
+{
+  vp:{x:714,y:452}, n:11, gap:0.42, kind:"seg",
+  op:{L:-300,R:1740,top:-230,spring:150,base:2200,floor:866},
+  colFar: mix(SHADOW,STONE,.42), colNear: mix(SHADOW,STONE,.04),
+  defs(P,G,c){ return `
+    <linearGradient id="${P}win" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="${mix(SHADOW,STONE,.92)}"/>
+      <stop offset="70%" stop-color="${mix(SHADOW,STONE,.58)}"/>
+      <stop offset="100%" stop-color="${mix(SHADOW,STONE,.30)}"/></linearGradient>
+    <linearGradient id="${P}tile" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="${mix(SHADOW,STONE,.36)}"/>
+      <stop offset="100%" stop-color="${mix(SHADOW,STONE,.14)}"/></linearGradient>
+    <linearGradient id="${P}wood" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="${mix(SHADOW,STONE,.30)}"/>
+      <stop offset="100%" stop-color="${mix(SHADOW,STONE,.09)}"/></linearGradient>`;
+  },
+  bg(P,G,c){
+    const gd = geo(c,c.n-0.6);
+    return floorPlate(P,G,c,16) +
+      /* the door at the far end, standing open on a lit stair */
+      '<rect x="'+n2(c.vp.x-620)+'" y="'+n2(c.vp.y-520)+'" width="1240" height="700" fill="'+mix(SHADOW,STONE,.145)+'"/>' +
+      '<path d="'+opening(geo(c,c.n-1.4),"seg")+'" fill="'+mix(SHADOW,STONE,.22)+'"/>' +
+      '<path d="M'+n2(c.vp.x-32)+','+n2(c.vp.y+46)+' L'+n2(c.vp.x-32)+','+n2(c.vp.y-10)+
+       ' A32,40 0 0 1 '+n2(c.vp.x+32)+','+n2(c.vp.y-10)+' L'+n2(c.vp.x+32)+','+n2(c.vp.y+46)+
+       ' Z" fill="'+mix(SHADOW,STONE,.66)+'"/>' +
+      '<path d="M'+n2(c.vp.x-32)+','+n2(c.vp.y+46)+' L'+n2(c.vp.x-32)+','+n2(c.vp.y-10)+
+       ' A32,40 0 0 1 '+n2(c.vp.x+32)+','+n2(c.vp.y-10)+' L'+n2(c.vp.x+32)+','+n2(c.vp.y+46)+
+       ' Z" fill="none" stroke="'+rgba(INK,.5)+'" stroke-width="2.5"/>' +
+      '<ellipse cx="'+n2(c.vp.x)+'" cy="'+n2(c.vp.y)+'" rx="180" ry="150" fill="url(#'+P+'glow)" opacity=".42"/>' +
+      haze(P,c,STONE,.055);
+  },
+  bay(gf,gn,P,c,i){
+    const L = wall(gf,gn,"L"), R = wall(gf,gn,"R");
+    const dim = Math.min(1, 0.10 + i*0.11);
+    let s = "";
+    /* plastered wall above the dado */
+    s += '<path d="'+poly([R(0,0),R(1,0),R(1,1),R(0,1)])+'" fill="'+mix(SHADOW,STONE,n2(0.17-i*0.011))+'"/>';
+    s += '<path d="'+poly([L(0,0),L(1,0),L(1,1),L(0,1)])+'" fill="'+mix(SHADOW,STONE,n2(0.09-i*0.006))+'"/>';
+    /* clerestory windows, north wall (the lit side) */
+    const w0=0.16,w1=0.84,vT=0.08,vB=0.42;
+    const wp = "M"+n2(R(w0,vB)[0])+","+n2(R(w0,vB)[1])+" L"+n2(R(w0,vT)[0])+","+n2(R(w0,vT)[1])+
+      " Q"+n2(R(0.5,vT-0.08)[0])+","+n2(R(0.5,vT-0.08)[1])+" "+n2(R(w1,vT)[0])+","+n2(R(w1,vT)[1])+
+      " L"+n2(R(w1,vB)[0])+","+n2(R(w1,vB)[1])+" Z";
+    s += '<path d="'+wp+'" fill="url(#'+P+'win)" opacity="'+n2(1-dim*0.55)+'"/>';
+    s += '<path d="'+wp+'" fill="none" stroke="'+rgba(STONE,.30)+'" stroke-width="'+n2(1.8*gn.s)+'"/>';
+    for(let k=1;k<3;k++){
+      const a=R(w0+(w1-w0)*k/3, vT+0.02), b=R(w0+(w1-w0)*k/3, vB);
+      s += '<line x1="'+n2(a[0])+'" y1="'+n2(a[1])+'" x2="'+n2(b[0])+'" y2="'+n2(b[1])+
+           '" stroke="'+rgba(INK,.55)+'" stroke-width="'+n2(2.6*gn.s)+'"/>';
+    }
+    const mb = R(0.5,(vT+vB)/2 - 0.02);
+    s += '<line x1="'+n2(R(w0,0.26)[0])+'" y1="'+n2(R(w0,0.26)[1])+'" x2="'+n2(R(w1,0.26)[0])+'" y2="'+n2(R(w1,0.26)[1])+
+         '" stroke="'+rgba(INK,.55)+'" stroke-width="'+n2(2*gn.s)+'"/>';
+    /* azulejo dado, both walls */
+    for(const W of [R,L]){
+      s += '<path d="'+poly([W(0.03,0.52),W(0.97,0.52),W(0.97,0.93),W(0.03,0.93)])+'" fill="url(#'+P+'tile)"/>';
+      for(let k=0;k<=6;k++){
+        const u=0.03+0.94*k/6, a=W(u,0.52), b=W(u,0.93);
+        s += '<line x1="'+n2(a[0])+'" y1="'+n2(a[1])+'" x2="'+n2(b[0])+'" y2="'+n2(b[1])+'" stroke="'+rgba(INK,.34)+'" stroke-width="1"/>';
+      }
+      for(let k=1;k<3;k++){
+        const v=0.52+0.41*k/3, a=W(0.03,v), b=W(0.97,v);
+        s += '<line x1="'+n2(a[0])+'" y1="'+n2(a[1])+'" x2="'+n2(b[0])+'" y2="'+n2(b[1])+'" stroke="'+rgba(INK,.34)+'" stroke-width="1"/>';
+      }
+      if(i<5){
+        for(let k=0;k<6;k++){
+          const u=0.03+0.94*(k+0.5)/6, p=W(u,0.70), r=6.5*gn.s;
+          s += '<path d="M'+n2(p[0]-r)+','+n2(p[1])+' q'+n2(r)+','+n2(-r)+' '+n2(r*2)+',0 q'+n2(-r)+','+n2(r)+' '+n2(-r*2)+',0 Z" fill="'+rgba(STONE,.30)+'"/>';
+        }
+      }
+      s += '<path d="'+poly([W(0.03,0.50),W(0.97,0.50),W(0.97,0.53),W(0.03,0.53)])+'" fill="'+rgba(STONE,.22)+'"/>';
+      s += '<path d="'+poly([W(0,0.93),W(1,0.93),W(1,1),W(0,1)])+'" fill="'+rgba(INK,.5)+'"/>';
+    }
+    /* transverse rib and wall arris */
+    s += '<line x1="'+n2(gf.L)+'" y1="'+n2(gf.spring)+'" x2="'+n2(gn.L)+'" y2="'+n2(gn.spring)+'" stroke="'+rgba(STONE,.12)+'" stroke-width="1.2"/>';
+    s += '<line x1="'+n2(gf.R)+'" y1="'+n2(gf.spring)+'" x2="'+n2(gn.R)+'" y2="'+n2(gn.spring)+'" stroke="'+rgba(STONE,.12)+'" stroke-width="1.2"/>';
+    return s;
+  },
+  fx(P,G,c){
+    let s="";
+    /* shafts of window light falling across the hall */
+    for(let i=2;i<=5;i++){
+      const gn=G[i-1], gf=G[i], R=wall(gf,gn,"R");
+      const a=R(0.2,0.12), b=R(0.85,0.12);
+      s += shaft(P,[a,b,[b[0]-560*gn.s,gn.floor+30*gn.s],[a[0]-560*gn.s,gn.floor+30*gn.s]], .075);
+    }
+    /* the community table, running the length of the hall */
+    const pt=(i,dx,dy)=>{ const s2=1/(1+i*c.gap);
+      return [c.vp.x+((c.vp.x+dx)-c.vp.x)*s2, c.vp.y+((c.op.floor+dy)-c.vp.y)*s2]; };
+    const top=[], front=[];
+    for(let i=1;i<=7;i++){ top.push(pt(i,-150,-96)); }
+    for(let i=7;i>=1;i--){ top.push(pt(i,150,-96)); }
+    s += '<path d="'+poly(top)+'" fill="url(#'+P+'wood)"/>';
+    s += '<path d="'+poly([pt(1,-150,-96),pt(1,150,-96),pt(1,150,-80),pt(1,-150,-80)])+'" fill="'+INK+'" opacity=".55"/>';
+    s += '<path d="'+poly(top)+'" fill="none" stroke="'+rgba(STONE,.20)+'" stroke-width="1.2"/>';
+    /* a run of light down the boards, from the lamp */
+    const runner=[]; for(let i=1;i<=7;i++) runner.push(pt(i,-54,-97));
+    for(let i=7;i>=1;i--) runner.push(pt(i,54,-97));
+    s += '<path d="'+poly(runner)+'" fill="'+rgba(STONE,.09)+'"/>';
+    for(const i of [1.6,3.2,5.2]){
+      for(const sgn of [-1,1]){
+        const a=pt(i,sgn*118,-92), b=pt(i,sgn*104,0);
+        s += '<line x1="'+n2(a[0])+'" y1="'+n2(a[1])+'" x2="'+n2(b[0])+'" y2="'+n2(b[1])+
+             '" stroke="'+mix(SHADOW,STONE,.11)+'" stroke-width="'+n2(9/(1+i*c.gap))+'"/>';
+      }
+    }
+    /* benches either side */
+    for(const sgn of [-1,1]){
+      const b=[];
+      for(let i=1;i<=7;i++) b.push(pt(i,sgn*198,-52));
+      for(let i=7;i>=1;i--) b.push(pt(i,sgn*240,-52));
+      s += '<path d="'+poly(b)+'" fill="'+mix(SHADOW,STONE,.17)+'"/>';
+      s += '<path d="'+poly(b)+'" fill="none" stroke="'+rgba(STONE,.14)+'" stroke-width="1"/>';
+    }
+    /* a single lamp over the abbot's place */
+    const lp = pt(5,0,-330);
+    s += '<line x1="'+n2(lp[0])+'" y1="'+n2(lp[1]-90)+'" x2="'+n2(lp[0])+'" y2="'+n2(lp[1])+'" stroke="'+rgba(STONE,.22)+'" stroke-width="1"/>';
+    s += '<circle cx="'+n2(lp[0])+'" cy="'+n2(lp[1]+4)+'" r="5" fill="'+GOLD+'" opacity=".85"/>';
+    s += '<circle cx="'+n2(lp[0])+'" cy="'+n2(lp[1]+4)+'" r="46" fill="url(#'+P+'glow)" opacity=".7"/>';
+    return s;
+  },
+  fore(P,G,c){ return foreArch(c,.45); }
+},
+
+/* ── 03 · CHAPTER HOUSE ────────────────────────────────
+   A short, tall room. Eight ribs to a gilded boss; the
+   Manueline portal glows at the far end.                 */
+{
+  vp:{x:716,y:440}, n:6, gap:0.78, kind:"pointed",
+  op:{L:-250,R:1690,top:-520,spring:70,base:2200,floor:842},
+  colFar: mix(SHADOW,STONE,.40), colNear: mix(SHADOW,STONE,.045),
+  defs(P,G,c){ return `
+    <linearGradient id="${P}door" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="${mix(SHADOW,STONE,.86)}"/>
+      <stop offset="55%" stop-color="${mix(SHADOW,STONE,.52)}"/>
+      <stop offset="100%" stop-color="${mix(SHADOW,STONE,.20)}"/></linearGradient>
+    <radialGradient id="${P}boss" cx="42%" cy="36%" r="70%">
+      <stop offset="0%" stop-color="${GOLD}"/>
+      <stop offset="55%" stop-color="${mix(GOLD,SHADOW,.45)}"/>
+      <stop offset="100%" stop-color="${mix(GOLD,INK,.78)}"/></radialGradient>`;
+  },
+  bg(P,G,c){
+    const vp=c.vp;
+    let s = floorPlate(P,G,c,10);
+    /* far wall */
+    s += '<rect x="'+n2(vp.x-620)+'" y="'+n2(vp.y-560)+'" width="1240" height="700" fill="'+mix(SHADOW,STONE,.135)+'"/>';
+    /* Manueline portal, opening on daylight */
+    const dw=118, dh=210, bx=vp.x, by=vp.y+72;
+    const dpath = "M"+(bx-dw/2)+","+by+" L"+(bx-dw/2)+","+(by-dh*0.62)+
+      " Q"+(bx-dw*0.16)+","+(by-dh*0.94)+" "+bx+","+(by-dh)+
+      " Q"+(bx+dw*0.16)+","+(by-dh*0.94)+" "+(bx+dw/2)+","+(by-dh*0.62)+" L"+(bx+dw/2)+","+by+" Z";
+    s += '<path d="'+dpath+'" fill="url(#'+P+'door)"/>';
+    s += '<path d="'+dpath+'" fill="none" stroke="'+rgba(STONE,.42)+'" stroke-width="7" stroke-dasharray="6 5" stroke-linecap="round"/>';
+    s += '<path d="'+dpath+'" fill="none" stroke="'+rgba(INK,.55)+'" stroke-width="2"/>';
+    /* armillary spheres at the haunches */
+    for(const sx of [-1,1]){
+      const ax=bx+sx*(dw/2+26), ay=by-dh*0.60;
+      s += '<g opacity=".62"><circle cx="'+ax+'" cy="'+ay+'" r="15" fill="none" stroke="'+GOLD+'" stroke-width="1.2"/>'+
+           '<ellipse cx="'+ax+'" cy="'+ay+'" rx="15" ry="5.5" fill="none" stroke="'+GOLD+'" stroke-width="1"/>'+
+           '<ellipse cx="'+ax+'" cy="'+ay+'" rx="5.5" ry="15" fill="none" stroke="'+GOLD+'" stroke-width="1"/>'+
+           '<line x1="'+(ax-15)+'" y1="'+ay+'" x2="'+(ax+15)+'" y2="'+ay+'" stroke="'+GOLD+'" stroke-width="1"/></g>';
+    }
+    s += '<ellipse cx="'+bx+'" cy="'+n2(by-40)+'" rx="200" ry="170" fill="url(#'+P+'glow)" opacity=".45"/>';
+    s += '<path d="'+poly([[bx-dw/2,by],[bx+dw/2,by],[bx+dw*1.5,VH],[bx-dw*1.5,VH]])+'" fill="'+rgba(STONE,.075)+'" filter="url(#'+P+'bl)"/>';
+    return s + haze(P,c,STONE,.05);
+  },
+  bay(gf,gn,P,c,i){
+    const L = wall(gf,gn,"L"), R = wall(gf,gn,"R");
+    let s = "";
+    for(const [W,side] of [[L,"L"],[R,"R"]]){
+      /* blind arcading */
+      for(let k=0;k<3;k++){
+        const u0=0.06+0.30*k, u1=u0+0.24, m=(u0+u1)/2;
+        s += '<path d="M'+n2(W(u0,0.80)[0])+','+n2(W(u0,0.80)[1])+
+             " L"+n2(W(u0,0.34)[0])+","+n2(W(u0,0.34)[1])+
+             " Q"+n2(W(m,0.16)[0])+","+n2(W(m,0.16)[1])+" "+n2(W(u1,0.34)[0])+","+n2(W(u1,0.34)[1])+
+             " L"+n2(W(u1,0.80)[0])+","+n2(W(u1,0.80)[1])+
+             '" fill="'+rgba(INK,.34)+'" stroke="'+rgba(STONE,.13)+'" stroke-width="1"/>';
+      }
+      /* the stone bench, and its shadow beneath */
+      s += '<path d="'+poly([W(0.02,0.80),W(0.98,0.80),W(0.98,0.845),W(0.02,0.845)])+'" fill="'+mix(SHADOW,STONE,.26)+'"/>';
+      s += '<path d="'+poly([W(0.02,0.845),W(0.98,0.845),W(0.98,1.0),W(0.02,1.0)])+'" fill="'+rgba(INK,.62)+'"/>';
+      /* clustered corbel where the rib lands */
+      const cb = W(0.5,0.30);
+      s += '<path d="M'+n2(cb[0]-7*gn.s)+','+n2(cb[1])+' l'+n2(14*gn.s)+',0 l'+n2(-4*gn.s)+','+n2(20*gn.s)+' l'+n2(-6*gn.s)+',0 Z" fill="'+mix(SHADOW,STONE,.30)+'"/>';
+    }
+    return s;
+  },
+  fx(P,G,c){
+    /* eight ribs springing to the boss */
+    const bx=c.vp.x, by=250;
+    let s = "";
+    /* the vault web, springing from the wall heads */
+    s += '<path d="M40,600 Q'+bx+',-210 1400,600 L1400,120 L40,120 Z" fill="'+rgba(STONE,.055)+'"/>';
+    s += '<path d="M40,600 Q'+bx+',-210 1400,600" fill="none" stroke="'+rgba(STONE,.09)+'" stroke-width="2"/>';
+    /* eight ribs, each landing on a wall head */
+    const ends = [];
+    for(let i=1;i<=4;i++){
+      ends.push([G[i].L - bx, G[i].spring - by]);
+      ends.push([G[i].R - bx, G[i].spring - by]);
+    }
+    for(const e of ends){
+      const ex=bx+e[0], ey=by+e[1];
+      const mx=(bx+ex)/2 + (e[0]>0?-56:56), my=(by+ey)/2 - 86;
+      s += '<path d="M'+bx+','+by+' Q'+n2(mx)+','+n2(my)+' '+n2(ex)+','+n2(ey)+
+           '" fill="none" stroke="'+rgba(STONE,.07)+'" stroke-width="15"/>';
+      s += '<path d="M'+bx+','+by+' Q'+n2(mx)+','+n2(my)+' '+n2(ex)+','+n2(ey)+
+           '" fill="none" stroke="'+rgba(STONE,.15)+'" stroke-width="5"/>';
+      s += '<circle cx="'+n2(ex)+'" cy="'+n2(ey)+'" r="7" fill="'+mix(SHADOW,STONE,.24)+'"/>';
+    }
+    s += '<circle cx="'+bx+'" cy="'+by+'" r="46" fill="url(#'+P+'glow)" opacity=".55"/>';
+    s += '<circle cx="'+bx+'" cy="'+by+'" r="21" fill="url(#'+P+'boss)"/>';
+    s += '<circle cx="'+bx+'" cy="'+by+'" r="21" fill="none" stroke="'+rgba(GOLD,.55)+'" stroke-width="1"/>';
+    s += '<circle cx="'+bx+'" cy="'+by+'" r="11" fill="none" stroke="'+rgba(INK,.5)+'" stroke-width="1.5"/>';
+    return s;
+  },
+  fore(P,G,c){ return foreArch(c,.42); }
+},
+
+/* ── 04 · LIBRARY ──────────────────────────────────────
+   Two storeys of gilded shelving in perspective, north
+   light, a chequered floor.                              */
+{
+  vp:{x:722,y:456}, n:10, gap:0.45, kind:"flat",
+  op:{L:-290,R:1730,top:-150,spring:40,base:2200,floor:860},
+  colFar: mix(SHADOW,STONE,.34), colNear: mix(SHADOW,STONE,.035),
+  defs(P,G,c){ return `
+    <linearGradient id="${P}shelf" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="${mix(SHADOW,GOLD,.24)}"/>
+      <stop offset="100%" stop-color="${mix(SHADOW,GOLD,.07)}"/></linearGradient>
+    <linearGradient id="${P}nwin" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="${mix(SHADOW,STONE,.90)}"/>
+      <stop offset="100%" stop-color="${mix(SHADOW,STONE,.42)}"/></linearGradient>`;
+  },
+  bg(P,G,c){
+    const vp=c.vp;
+    let s = floorPlate(P,G,c,15);
+    s += '<rect x="'+n2(vp.x-580)+'" y="'+n2(vp.y-520)+'" width="1160" height="660" fill="'+mix(SHADOW,STONE,.125)+'"/>';
+    /* the north window at the end of the room */
+    const ww=104, wh=190, wx=vp.x, wy=vp.y+46;
+    s += '<path d="M'+(wx-ww/2)+','+wy+' L'+(wx-ww/2)+','+(wy-wh*0.7)+' Q'+wx+','+(wy-wh*1.06)+' '+(wx+ww/2)+','+(wy-wh*0.7)+' L'+(wx+ww/2)+','+wy+' Z" fill="url(#'+P+'nwin)"/>';
+    for(let k=1;k<4;k++)
+      s += '<line x1="'+n2(wx-ww/2+ww*k/4)+'" y1="'+n2(wy)+'" x2="'+n2(wx-ww/2+ww*k/4)+'" y2="'+n2(wy-wh*0.86)+'" stroke="'+rgba(INK,.42)+'" stroke-width="2"/>';
+    for(let k=1;k<5;k++)
+      s += '<line x1="'+n2(wx-ww/2)+'" y1="'+n2(wy-wh*0.72*k/5)+'" x2="'+n2(wx+ww/2)+'" y2="'+n2(wy-wh*0.72*k/5)+'" stroke="'+rgba(INK,.42)+'" stroke-width="1.4"/>';
+    s += '<ellipse cx="'+wx+'" cy="'+n2(wy-60)+'" rx="210" ry="180" fill="url(#'+P+'glow)" opacity=".38"/>';
+    return s + haze(P,c,STONE,.045);
+  },
+  bay(gf,gn,P,c,i){
+    const r = seeded(311+i*77);
+    const L = wall(gf,gn,"L"), R = wall(gf,gn,"R");
+    let s = "";
+    for(const W of [L,R]){
+      /* carcase */
+      s += '<path d="'+poly([W(0.02,0.06),W(0.98,0.06),W(0.98,0.97),W(0.02,0.97)])+'" fill="'+rgba(INK,.55)+'"/>';
+      /* five shelves, and the books on them */
+      const rows = 5, detail = i < 5;
+      for(let k=0;k<rows;k++){
+        const vT = 0.10 + (0.84/rows)*k, vB = vT + 0.84/rows - 0.018;
+        s += '<path d="'+poly([W(0.03,vB),W(0.97,vB),W(0.97,vB+0.016),W(0.03,vB+0.016)])+'" fill="url(#'+P+'shelf)"/>';
+        if(!detail){
+          s += '<path d="'+poly([W(0.05,vT+0.02),W(0.95,vT+0.02),W(0.95,vB),W(0.05,vB)])+
+               '" fill="'+mix(SHADOW,STONE,.14)+'"/>';
+          for(let q=1;q<5;q++){
+            const a=W(0.05+0.90*q/5,vT+0.02), b=W(0.05+0.90*q/5,vB);
+            s += '<line x1="'+n2(a[0])+'" y1="'+n2(a[1])+'" x2="'+n2(b[0])+'" y2="'+n2(b[1])+'" stroke="'+rgba(INK,.4)+'" stroke-width="1"/>';
+          }
+          continue;
+        }
+        let u = 0.05;
+        while(u < 0.94){
+          const bw = 0.030 + r()*0.042;
+          const h  = 0.72 + r()*0.26;            /* fraction of the row height */
+          const vTop = vB - (vB-vT)*h;
+          const tone = 0.09 + r()*0.26;
+          s += '<path d="'+poly([W(u,vTop),W(Math.min(u+bw,0.95),vTop),W(Math.min(u+bw,0.95),vB),W(u,vB)])+
+               '" fill="'+mix(SHADOW,STONE,tone)+'"/>';
+          if(r()>0.66 && i<5){
+            const gy = vTop + (vB-vTop)*0.30;
+            s += '<path d="'+poly([W(u+bw*0.2,gy),W(Math.min(u+bw*0.8,0.95),gy),W(Math.min(u+bw*0.8,0.95),gy+0.012),W(u+bw*0.2,gy+0.012)])+
+                 '" fill="'+rgba(GOLD,.42)+'"/>';
+          }
+          u += bw + 0.004;
+        }
+      }
+      /* gilt cornice and the gallery rail */
+      s += '<path d="'+poly([W(0.0,0.03),W(1.0,0.03),W(1.0,0.075),W(0.0,0.075)])+'" fill="url(#'+P+'shelf)"/>';
+      s += '<path d="'+poly([W(0.0,0.485),W(1.0,0.485),W(1.0,0.515),W(0.0,0.515)])+'" fill="'+rgba(GOLD,.20)+'"/>';
+      for(let k=0;k<7;k++){
+        const u=0.05+0.90*k/6, a=W(u,0.515), b=W(u,0.585);
+        s += '<line x1="'+n2(a[0])+'" y1="'+n2(a[1])+'" x2="'+n2(b[0])+'" y2="'+n2(b[1])+'" stroke="'+rgba(GOLD,.16)+'" stroke-width="'+n2(1.4*gn.s)+'"/>';
+      }
+    }
+    /* coffered ceiling band */
+    s += '<path d="'+poly([[gf.L,gf.spring],[gf.R,gf.spring],[gn.R,gn.spring],[gn.L,gn.spring]])+
+         '" fill="none" stroke="'+rgba(STONE,.10)+'" stroke-width="1.2"/>';
+    return s;
+  },
+  fx(P,G,c){
+    const pt=(i,dx,dy)=>{ const s2=1/(1+i*c.gap);
+      return [c.vp.x+dx*s2, c.vp.y+((c.op.floor+dy)-c.vp.y)*s2]; };
+    let s = "";
+    /* reading tables down the middle */
+    for(const i of [2.2,4.4]){
+      const a=pt(i,-190,-104), b=pt(i,190,-104), a2=pt(i+0.75,-190,-104), b2=pt(i+0.75,190,-104);
+      s += '<path d="'+poly([a2,b2,b,a])+'" fill="'+mix(SHADOW,STONE,.15)+'"/>';
+      s += '<path d="'+poly([a,b,[b[0],b[1]+14],[a[0],a[1]+14]])+'" fill="'+INK+'" opacity=".6"/>';
+      s += '<path d="'+poly([a2,b2,b,a])+'" fill="none" stroke="'+rgba(GOLD,.16)+'" stroke-width="1"/>';
+    }
+    /* the lectern and its open book */
+    const lp = pt(3.1,0,-150);
+    s += '<path d="M'+n2(lp[0]-58)+','+n2(lp[1])+' L'+n2(lp[0])+','+n2(lp[1]-16)+' L'+n2(lp[0]+58)+','+n2(lp[1])+
+         ' L'+n2(lp[0])+','+n2(lp[1]+13)+' Z" fill="'+mix(SHADOW,STONE,.44)+'"/>';
+    s += '<line x1="'+n2(lp[0])+'" y1="'+n2(lp[1]-16)+'" x2="'+n2(lp[0])+'" y2="'+n2(lp[1]+13)+'" stroke="'+rgba(INK,.55)+'" stroke-width="1.4"/>';
+    s += '<line x1="'+n2(lp[0])+'" y1="'+n2(lp[1]+8)+'" x2="'+n2(lp[0])+'" y2="'+n2(lp[1]+74)+'" stroke="'+mix(SHADOW,STONE,.18)+'" stroke-width="9"/>';
+    s += '<ellipse cx="'+n2(lp[0])+'" cy="'+n2(lp[1]-6)+'" rx="120" ry="70" fill="url(#'+P+'glow)" opacity=".34"/>';
+    /* dim shafts from the north windows */
+    for(let i=1;i<=2;i++){
+      const gn=G[i], gf=G[i+1], L=wall(gf,gn,"L");
+      const a=L(0.25,0.02), b=L(0.8,0.02);
+      s += shaft(P,[a,b,[b[0]+460*gn.s,gn.floor],[a[0]+460*gn.s,gn.floor]], .055);
+    }
+    return s;
+  },
+  fore(P,G,c){ return foreArch(c,.4); }
+},
+
+/* ── 05 · BELL TOWER ───────────────────────────────────
+   Looking straight up the shaft: eight receding stages,
+   louvres, the headstock and the great bell.             */
+{
+  vp:{x:720,y:298}, n:9, gap:0.40, kind:"oct",
+  op:{L:-110,R:1550,top:-360,spring:-360,base:1240,floor:1240},
+  colFar: mix(SHADOW,STONE,.44), colNear: mix(SHADOW,STONE,.04),
+  defs(P,G,c){ return `
+    <radialGradient id="${P}lantern" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="${mix(SHADOW,STONE,.98)}"/>
+      <stop offset="58%" stop-color="${mix(SHADOW,STONE,.70)}"/>
+      <stop offset="100%" stop-color="${mix(SHADOW,STONE,.30)}"/></radialGradient>
+    <linearGradient id="${P}bellg" x1="0.15" y1="0" x2="0.9" y2="1">
+      <stop offset="0%" stop-color="${mix(SHADOW,GOLD,.30)}"/>
+      <stop offset="42%" stop-color="${mix(SHADOW,GOLD,.10)}"/>
+      <stop offset="100%" stop-color="${INK}"/></linearGradient>`;
+  },
+  bg(P,G,c){
+    const vp=c.vp;
+    let s = '<rect width="'+VW+'" height="'+VH+'" fill="'+mix(SHADOW,STONE,.05)+'"/>';
+    s += '<path d="'+opening(geo(c,c.n+1.2),"oct")+'" fill="url(#'+P+'lantern)"/>';
+    s += '<ellipse cx="'+vp.x+'" cy="'+vp.y+'" rx="300" ry="250" fill="url(#'+P+'glow)" opacity=".5"/>';
+    /* the stair, winding away below */
+    for(let k=0;k<26;k++){
+      const a = k*0.62, rr = 300 - k*9;
+      const x = vp.x + Math.cos(a)*rr, y = vp.y + Math.sin(a)*rr*0.42 + 300 - k*10;
+      if(y>VH+40) continue;
+      s += '<path d="'+poly([[x-56,y],[x+56,y],[x+50,y+9],[x-50,y+9]])+'" fill="'+rgba(STONE,n2(0.05+k*0.004))+'"/>';
+    }
+    return s + haze(P,c,STONE,.055);
+  },
+  bay(gf,gn,P,c,i){
+    const L = wall(gf,gn,"L"), R = wall(gf,gn,"R");
+    let s = "";
+    /* louvred openings, east and west */
+    for(const W of [L,R]){
+      s += '<path d="'+poly([W(0.06,0.20),W(0.94,0.20),W(0.94,0.80),W(0.06,0.80)])+'" fill="'+rgba(INK,.62)+'"/>';
+      for(let k=0;k<6;k++){
+        const v0 = 0.22 + 0.096*k;
+        s += '<path d="'+poly([W(0.08,v0),W(0.92,v0+0.012),W(0.92,v0+0.052),W(0.08,v0+0.040)])+
+             '" fill="'+mix(SHADOW,STONE,n2(0.07+i*0.027))+'"/>';
+        s += '<path d="'+poly([W(0.08,v0+0.040),W(0.92,v0+0.052),W(0.92,v0+0.062),W(0.08,v0+0.050)])+
+             '" fill="'+rgba(INK,.45)+'"/>';
+      }
+      s += '<path d="'+poly([W(0.06,0.20),W(0.94,0.20),W(0.94,0.80),W(0.06,0.80)])+
+           '" fill="none" stroke="'+rgba(STONE,.16)+'" stroke-width="1.2"/>';
+    }
+    /* the timber floor-frames of each stage */
+    const beams = [[gf.L,gf.top,gn.L,gn.top],[gf.L,gf.base,gn.L,gn.base],
+                   [gf.R,gf.top,gn.R,gn.top],[gf.R,gf.base,gn.R,gn.base]];
+    for(const b of beams)
+      s += '<line x1="'+n2(b[0])+'" y1="'+n2(b[1])+'" x2="'+n2(b[2])+'" y2="'+n2(b[3])+
+           '" stroke="'+mix(SHADOW,STONE,.22)+'" stroke-width="'+n2(4*gn.s)+'"/>';
+    return s;
+  },
+  fx(P,G,c){
+    const vp=c.vp;
+    let s = "";
+    /* the headstock, spanning the chamber */
+    const hy = 246, hw = 214;
+    s += '<path d="'+poly([[vp.x-hw,hy-15],[vp.x+hw,hy-15],[vp.x+hw,hy+15],[vp.x-hw,hy+15]])+'" fill="'+mix(SHADOW,STONE,.20)+'"/>';
+    s += '<path d="'+poly([[vp.x-hw,hy+15],[vp.x+hw,hy+15],[vp.x+hw,hy+23],[vp.x-hw,hy+23]])+'" fill="'+rgba(INK,.7)+'"/>';
+    for(const sx of [-1,1]){
+      s += '<rect x="'+n2(vp.x+sx*64-6)+'" y="'+n2(hy-19)+'" width="12" height="46" fill="'+mix(SHADOW,STONE,.34)+'"/>';
+      s += '<circle cx="'+n2(vp.x+sx*150)+'" cy="'+hy+'" r="9" fill="none" stroke="'+rgba(STONE,.30)+'" stroke-width="2.5"/>';
+    }
+    /* the great bell */
+    const bx=vp.x, by=452, bw=126, bh=150;
+    s += '<path d="M'+(bx-14)+','+(hy+22)+' L'+(bx+14)+','+(hy+22)+' L'+(bx+11)+','+(by-bh+6)+' L'+(bx-11)+','+(by-bh+6)+' Z" fill="'+mix(SHADOW,STONE,.26)+'"/>';
+    const bell = "M"+(bx-bw)+","+by+
+      " C"+n2(bx-bw*0.99)+","+n2(by-bh*0.16)+" "+n2(bx-bw*0.76)+","+n2(by-bh*0.34)+" "+n2(bx-bw*0.58)+","+n2(by-bh*0.56)+
+      " C"+n2(bx-bw*0.47)+","+n2(by-bh*0.72)+" "+n2(bx-bw*0.42)+","+n2(by-bh*0.86)+" "+n2(bx-bw*0.40)+","+n2(by-bh*0.97)+
+      " L"+n2(bx+bw*0.40)+","+n2(by-bh*0.97)+
+      " C"+n2(bx+bw*0.42)+","+n2(by-bh*0.86)+" "+n2(bx+bw*0.47)+","+n2(by-bh*0.72)+" "+n2(bx+bw*0.58)+","+n2(by-bh*0.56)+
+      " C"+n2(bx+bw*0.76)+","+n2(by-bh*0.34)+" "+n2(bx+bw*0.99)+","+n2(by-bh*0.16)+" "+(bx+bw)+","+by+" Z";
+    s += '<path d="'+bell+'" fill="url(#'+P+'bellg)"/>';
+    s += '<path d="'+bell+'" fill="none" stroke="'+rgba(GOLD,.42)+'" stroke-width="1.4"/>';
+    s += '<path d="'+poly([[bx-bw,by],[bx+bw,by],[bx+bw*0.94,by+20],[bx-bw*0.94,by+20]])+'" fill="'+mix(SHADOW,GOLD,.16)+'"/>';
+    /* inscription band + clapper */
+    s += '<line x1="'+(bx-bw*0.86)+'" y1="'+(by-42)+'" x2="'+(bx+bw*0.86)+'" y2="'+(by-42)+'" stroke="'+rgba(GOLD,.30)+'" stroke-width="1"/>';
+    s += '<line x1="'+(bx-bw*0.90)+'" y1="'+(by-30)+'" x2="'+(bx+bw*0.90)+'" y2="'+(by-30)+'" stroke="'+rgba(GOLD,.30)+'" stroke-width="1"/>';
+    s += '<path d="M'+bx+','+(by-bh*0.6)+' L'+bx+','+(by+26)+'" stroke="'+rgba(INK,.85)+'" stroke-width="6"/>';
+    s += '<circle cx="'+bx+'" cy="'+(by+30)+'" r="13" fill="'+mix(SHADOW,GOLD,.12)+'" stroke="'+rgba(GOLD,.3)+'" stroke-width="1"/>';
+    /* bell-ropes falling past the camera */
+    for(const sx of [-1,1]){
+      s += '<path d="M'+n2(vp.x+sx*150)+','+(hy+9)+' C'+n2(vp.x+sx*186)+',420 '+n2(vp.x+sx*232)+',640 '+n2(vp.x+sx*300)+','+VH+
+           '" fill="none" stroke="'+mix(SHADOW,STONE,.20)+'" stroke-width="4"/>';
+    }
+    return s;
+  },
+  fore(P,G,c){
+    return '<path d="'+poly([[0,0],[VW,0],[VW,120],[0,120]])+'" fill="'+rgba(INK,.4)+'"/>';
+  }
+},
+
+/* ── 06 · CHAPEL ───────────────────────────────────────
+   The rose window on the west front, its light crossing
+   the nave to the founder's slab.                        */
+{
+  vp:{x:718,y:466}, n:9, gap:0.46, kind:"pointed",
+  op:{L:-300,R:1730,top:-560,spring:118,base:2200,floor:852},
+  colFar: mix(SHADOW,STONE,.30), colNear: mix(SHADOW,STONE,.035),
+  defs(P,G,c){ return `
+    <radialGradient id="${P}rose" cx="50%" cy="46%" r="52%">
+      <stop offset="0%" stop-color="${mix(GOLD,STONE,.55)}"/>
+      <stop offset="42%" stop-color="${GOLD}"/>
+      <stop offset="78%" stop-color="${mix(GOLD,SHADOW,.52)}"/>
+      <stop offset="100%" stop-color="${mix(GOLD,INK,.80)}"/></radialGradient>
+    <linearGradient id="${P}lancet" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="${mix(SHADOW,GOLD,.52)}"/>
+      <stop offset="100%" stop-color="${mix(SHADOW,GOLD,.14)}"/></linearGradient>`;
+  },
+  bg(P,G,c){
+    const vp=c.vp;
+    let s = floorPlate(P,G,c,13);
+    s += '<rect x="'+n2(vp.x-660)+'" y="'+n2(vp.y-620)+'" width="1320" height="760" fill="'+mix(SHADOW,STONE,.105)+'"/>';
+    /* rose window: twelve petals, thirty-six cusps */
+    const rx=718, ry=300, R0=128;
+    s += '<circle cx="'+rx+'" cy="'+ry+'" r="'+R0+'" fill="url(#'+P+'rose)"/>';
+    s += '<circle cx="'+rx+'" cy="'+ry+'" r="'+R0+'" fill="none" stroke="'+rgba(STONE,.5)+'" stroke-width="7"/>';
+    s += '<circle cx="'+rx+'" cy="'+ry+'" r="'+(R0*0.66)+'" fill="none" stroke="'+rgba(INK,.45)+'" stroke-width="4"/>';
+    for(let k=0;k<12;k++){
+      const a=k*Math.PI/6, ca=Math.cos(a), sa=Math.sin(a);
+      s += '<line x1="'+n2(rx+ca*R0*0.20)+'" y1="'+n2(ry+sa*R0*0.20)+'" x2="'+n2(rx+ca*R0)+'" y2="'+n2(ry+sa*R0)+
+           '" stroke="'+rgba(INK,.5)+'" stroke-width="5"/>';
+      const px=rx+ca*R0*0.82, py=ry+sa*R0*0.82;
+      s += '<circle cx="'+n2(px)+'" cy="'+n2(py)+'" r="'+n2(R0*0.15)+'" fill="none" stroke="'+rgba(INK,.42)+'" stroke-width="3"/>';
+    }
+    for(let k=0;k<36;k++){
+      const a=k*Math.PI/18;
+      s += '<circle cx="'+n2(rx+Math.cos(a)*R0*1.03)+'" cy="'+n2(ry+Math.sin(a)*R0*1.03)+'" r="4.5" fill="'+rgba(STONE,.42)+'"/>';
+    }
+    s += '<circle cx="'+rx+'" cy="'+ry+'" r="'+(R0*0.19)+'" fill="'+mix(GOLD,STONE,.4)+'"/>';
+    s += '<ellipse cx="'+rx+'" cy="'+ry+'" rx="330" ry="290" fill="url(#'+P+'glow)" opacity=".62"/>';
+    /* altar step and the sanctuary lamp */
+    s += '<path d="'+poly([[vp.x-190,vp.y+96],[vp.x+190,vp.y+96],[vp.x+232,vp.y+126],[vp.x-232,vp.y+126]])+'" fill="'+mix(SHADOW,STONE,.16)+'"/>';
+    return s + haze(P,c,GOLD,.05);
+  },
+  bay(gf,gn,P,c,i){
+    const L = wall(gf,gn,"L"), R = wall(gf,gn,"R");
+    let s = "";
+    for(const W of [L,R]){
+      /* lancet, glazed */
+      const u0=0.22,u1=0.78,m=0.5;
+      const lp = "M"+n2(W(u0,0.62)[0])+","+n2(W(u0,0.62)[1])+
+        " L"+n2(W(u0,0.22)[0])+","+n2(W(u0,0.22)[1])+
+        " Q"+n2(W(m,0.03)[0])+","+n2(W(m,0.03)[1])+" "+n2(W(u1,0.22)[0])+","+n2(W(u1,0.22)[1])+
+        " L"+n2(W(u1,0.62)[0])+","+n2(W(u1,0.62)[1])+" Z";
+      s += '<path d="'+lp+'" fill="url(#'+P+'lancet)" opacity="'+n2(1-Math.min(0.6,i*0.09))+'"/>';
+      s += '<path d="'+lp+'" fill="none" stroke="'+rgba(STONE,.24)+'" stroke-width="'+n2(1.6*gn.s)+'"/>';
+      for(let k=1;k<4;k++){
+        const a=W(u0,0.22+0.40*k/4), b=W(u1,0.22+0.40*k/4);
+        s += '<line x1="'+n2(a[0])+'" y1="'+n2(a[1])+'" x2="'+n2(b[0])+'" y2="'+n2(b[1])+'" stroke="'+rgba(INK,.5)+'" stroke-width="1.6"/>';
+      }
+      /* clustered colonnettes rising to the vault */
+      for(const u of [0.05,0.95]){
+        const a=W(u,0.06), b=W(u,1.0);
+        s += '<line x1="'+n2(a[0])+'" y1="'+n2(a[1])+'" x2="'+n2(b[0])+'" y2="'+n2(b[1])+'" stroke="'+mix(SHADOW,STONE,.17)+'" stroke-width="'+n2(11*gn.s)+'"/>';
+        s += '<line x1="'+n2(a[0])+'" y1="'+n2(a[1])+'" x2="'+n2(b[0])+'" y2="'+n2(b[1])+'" stroke="'+rgba(STONE,.14)+'" stroke-width="'+n2(2*gn.s)+'"/>';
+      }
+      /* dado */
+      s += '<path d="'+poly([W(0.02,0.70),W(0.98,0.70),W(0.98,1.0),W(0.02,1.0)])+'" fill="'+rgba(INK,.42)+'"/>';
+    }
+    return s;
+  },
+  fx(P,G,c){
+    let s = "";
+    /* the shaft from the rose, and where it lands */
+    s += shaft(P,[[640,326],[800,326],[880,VH],[470,VH]], .10);
+    s += shaft(P,[[664,318],[772,318],[812,VH],[560,VH]], .07);
+    s += '<ellipse cx="702" cy="726" rx="188" ry="50" fill="'+rgba(GOLD,.14)+'" filter="url(#'+P+'bl)"/>';
+    /* the founder's slab */
+    s += '<path d="'+poly([[616,698],[790,698],[838,764],[568,764]])+'" fill="'+rgba(INK,.68)+'"/>';
+    s += '<path d="'+poly([[616,698],[790,698],[838,764],[568,764]])+'" fill="none" stroke="'+rgba(STONE,.24)+'" stroke-width="1.2"/>';
+    for(let k=0;k<4;k++){
+      const y=712+k*13, w=60-k*3;
+      s += '<line x1="'+n2(703-w)+'" y1="'+y+'" x2="'+n2(703+w)+'" y2="'+y+'" stroke="'+rgba(STONE,.22)+'" stroke-width="2.4"/>';
+    }
+    /* the sanctuary lamp */
+    s += '<line x1="560" y1="120" x2="560" y2="576" stroke="'+rgba(STONE,.13)+'" stroke-width="1"/>';
+    s += '<path d="M544,576 q16,-15 32,0 q-3,24 -16,28 q-13,-4 -16,-28 Z" fill="'+mix(SHADOW,GOLD,.22)+'" stroke="'+rgba(GOLD,.42)+'" stroke-width="1"/>';
+    s += '<circle cx="560" cy="594" r="30" fill="url(#'+P+'glow)" opacity=".85"/>';
+    return s;
+  },
+  fore(P,G,c){ return foreArch(c,.5); }
+}
+
+];
+
+/* ═══════════════════════════════════════════════════════
+   5 · DETAIL ILLUSTRATIONS  (drawn, not photographed)
+   ═══════════════════════════════════════════════════════ */
+
+const ST = rgba(STONE,.62), STd = rgba(STONE,.28), GD = rgba(GOLD,.85), GDd = rgba(GOLD,.35);
+const ILLUS = {
+
+capital:()=>`
+  <rect x="34" y="30" width="72" height="9" fill="none" stroke="${ST}"/>
+  <path d="M38 39 q6 22 -4 30 q-8 6 -12 -2 q-3 -8 6 -10" fill="none" stroke="${ST}"/>
+  <path d="M102 39 q-6 22 4 30 q8 6 12 -2 q3 -8 -6 -10" fill="none" stroke="${ST}"/>
+  <path d="M50 39 q10 30 20 32 q10 -2 20 -32" fill="none" stroke="${GDd}"/>
+  <path d="M58 44 q6 20 12 24 M82 44 q-6 20 -12 24" fill="none" stroke="${STd}"/>
+  <path d="M46 72 h48 l-3 8 h-42 Z" fill="none" stroke="${ST}"/>
+  <path d="M52 80 v34 M88 80 v34" stroke="${ST}" fill="none"/>
+  <path d="M48 114 h44" stroke="${STd}"/>
+  <circle cx="70" cy="57" r="4" fill="${GD}" opacity=".7"/>`,
+
+lavabo:()=>`
+  <path d="M30 40 h80 v6 h-80 Z" fill="none" stroke="${ST}"/>
+  <path d="M36 46 q0 34 34 34 q34 0 34 -34" fill="none" stroke="${ST}"/>
+  <path d="M44 52 q0 24 26 24 q26 0 26 -24" fill="none" stroke="${STd}"/>
+  <path d="M70 22 v14" stroke="${ST}"/>
+  <path d="M62 22 q8 -8 16 0 q-4 6 -8 6 q-4 0 -8 -6 Z" fill="${GDd}" stroke="${GD}"/>
+  <path d="M70 36 v26" stroke="${GD}" stroke-dasharray="2 4"/>
+  <path d="M50 82 h40 v28 h-40 Z" fill="none" stroke="${STd}"/>
+  <path d="M56 110 v10 M84 110 v10" stroke="${STd}"/>`,
+
+channel:()=>`
+  <path d="M10 46 h120 M10 94 h120" stroke="${STd}"/>
+  <path d="M10 62 q60 8 120 0 M10 78 q60 8 120 0" fill="none" stroke="${ST}"/>
+  <path d="M10 70 q60 8 120 0" fill="none" stroke="${GD}"/>
+  <path d="M22 46 v16 M52 46 v14 M84 46 v14 M114 46 v16" stroke="${STd}"/>
+  <path d="M30 80 v14 M64 80 v14 M100 80 v14" stroke="${STd}"/>
+  <path d="M108 66 l10 4 l-10 4" fill="none" stroke="${GD}"/>`,
+
+pulpit:()=>`
+  <path d="M20 12 v116" stroke="${STd}"/>
+  <path d="M28 46 h52 q14 0 14 14 v26 q0 14 -14 14 h-52 Z" fill="none" stroke="${ST}"/>
+  <path d="M28 60 h60 M28 74 h62" stroke="${STd}"/>
+  <path d="M28 100 q14 12 22 26" fill="none" stroke="${ST}"/>
+  <path d="M28 100 q22 6 34 20" fill="none" stroke="${STd}"/>
+  <path d="M96 40 h18 M96 52 h18 M96 64 h18 M96 76 h18" stroke="${STd}"/>
+  <path d="M40 30 h30 v14 h-30 Z" fill="none" stroke="${GDd}"/>
+  <circle cx="55" cy="37" r="3" fill="${GD}"/>`,
+
+azulejo:()=>{
+  let s = `<rect x="18" y="18" width="104" height="104" fill="none" stroke="${ST}"/>`;
+  for(let r=0;r<4;r++) for(let q=0;q<4;q++){
+    const x=18+q*26, y=18+r*26, cx=x+13, cy=y+13;
+    s += `<rect x="${x}" y="${y}" width="26" height="26" fill="none" stroke="${STd}"/>`;
+    s += `<path d="M${cx} ${y+4} q9 9 0 18 q-9 -9 0 -18 Z" fill="none" stroke="${(r+q)%2?GDd:ST}"/>`;
+    s += `<path d="M${x+4} ${cy} q9 -9 18 0 q-9 9 -18 0 Z" fill="none" stroke="${(r+q)%2?GDd:ST}"/>`;
+    if((r+q)%2===0) s += `<circle cx="${cx}" cy="${cy}" r="2" fill="${GD}"/>`;
+  }
+  return s + `<rect x="12" y="12" width="116" height="116" fill="none" stroke="${GDd}"/>`;
+},
+
+table:()=>`
+  <path d="M14 54 h112 l-8 10 h-96 Z" fill="none" stroke="${ST}"/>
+  <path d="M14 54 q56 -8 112 0" fill="none" stroke="${STd}"/>
+  <path d="M26 64 v50 M114 64 v50" stroke="${ST}"/>
+  <path d="M26 76 h88" stroke="${STd}"/>
+  <path d="M20 114 h16 M104 114 h16" stroke="${ST}"/>
+  <path d="M40 40 h26 v14 h-26 Z" fill="none" stroke="${STd}"/>
+  <path d="M84 44 q8 -8 16 0 q-8 4 -16 0 Z" fill="${GDd}" stroke="${GD}"/>
+  <path d="M92 44 v10" stroke="${GD}"/>`,
+
+boss:()=>{
+  let s = `<circle cx="70" cy="70" r="52" fill="none" stroke="${STd}"/>`;
+  for(let k=0;k<8;k++){
+    const a=k*Math.PI/4;
+    s += `<line x1="${n2(70+Math.cos(a)*26)}" y1="${n2(70+Math.sin(a)*26)}" x2="${n2(70+Math.cos(a)*62)}" y2="${n2(70+Math.sin(a)*62)}" stroke="${ST}" stroke-width="4"/>`;
+  }
+  s += `<circle cx="70" cy="70" r="26" fill="${rgba(GOLD,.16)}" stroke="${GD}"/>`;
+  s += `<circle cx="70" cy="70" r="18" fill="none" stroke="${GDd}"/>`;
+  s += `<path d="M60 76 q4 -14 12 -14 q9 0 10 12 q-10 6 -22 2 Z" fill="none" stroke="${GD}"/>`;
+  s += `<path d="M72 62 v-8 l6 3" fill="none" stroke="${GD}"/>`;
+  return s;
+},
+
+portal:()=>`
+  <path d="M34 128 v-56 q0 -36 36 -36 q36 0 36 36 v56" fill="none" stroke="${ST}" stroke-width="6" stroke-dasharray="7 6" stroke-linecap="round"/>
+  <path d="M46 128 v-54 q0 -24 24 -24 q24 0 24 24 v54" fill="none" stroke="${STd}"/>
+  <path d="M24 128 v-58 q0 -46 46 -46 q46 0 46 46 v58" fill="none" stroke="${STd}"/>
+  <g stroke="${GD}" fill="none">
+    <circle cx="26" cy="60" r="11"/><ellipse cx="26" cy="60" rx="11" ry="4"/><ellipse cx="26" cy="60" rx="4" ry="11"/>
+    <circle cx="114" cy="60" r="11"/><ellipse cx="114" cy="60" rx="11" ry="4"/><ellipse cx="114" cy="60" rx="4" ry="11"/>
+  </g>
+  <path d="M62 36 q8 -10 16 0 q-8 6 -16 0 Z" fill="${GDd}" stroke="${GD}"/>`,
+
+bench:()=>`
+  <path d="M12 64 h116 v12 h-116 Z" fill="none" stroke="${ST}"/>
+  <path d="M12 64 q30 -6 58 -5 q30 -1 58 5" fill="none" stroke="${GDd}"/>
+  <path d="M12 76 v40 M128 76 v40" stroke="${ST}"/>
+  <path d="M12 116 h116" stroke="${STd}"/>
+  <path d="M40 76 v40 M100 76 v40" stroke="${STd}"/>
+  <path d="M12 40 h116" stroke="${STd}"/>
+  <path d="M26 40 v24 M70 40 v24 M114 40 v24" stroke="${STd}"/>
+  <path d="M52 60 q18 -8 36 0" fill="none" stroke="${GDd}"/>`,
+
+corbel:()=>`
+  <path d="M34 22 v34 M70 18 v38 M106 22 v34" stroke="${ST}"/>
+  <circle cx="34" cy="22" r="6" fill="none" stroke="${STd}"/>
+  <circle cx="70" cy="18" r="7" fill="none" stroke="${STd}"/>
+  <circle cx="106" cy="22" r="6" fill="none" stroke="${STd}"/>
+  <path d="M22 56 h96 l-10 14 h-76 Z" fill="none" stroke="${ST}"/>
+  <path d="M32 70 q12 30 38 40 q26 -10 38 -40" fill="none" stroke="${ST}"/>
+  <path d="M50 74 q6 22 20 30 M90 74 q-6 22 -20 30" fill="none" stroke="${STd}"/>
+  <path d="M70 82 q-8 8 -4 18 q4 -6 8 -2 q4 -10 -4 -16 Z" fill="none" stroke="${GD}"/>`,
+
+shelf:()=>{
+  let s = `<rect x="16" y="14" width="108" height="112" fill="none" stroke="${ST}"/>`;
+  s += `<path d="M16 14 q54 -8 108 0" fill="none" stroke="${GD}"/>`;
+  const r = seeded(42);
+  for(let row=0;row<4;row++){
+    const y = 26 + row*26;
+    s += `<line x1="18" y1="${y+22}" x2="122" y2="${y+22}" stroke="${GDd}" stroke-width="2"/>`;
+    let x = 21;
+    while(x < 118){
+      const w = 4 + r()*7, h = 13 + r()*8;
+      s += `<rect x="${n2(x)}" y="${n2(y+22-h)}" width="${n2(w)}" height="${n2(h)}" fill="none" stroke="${r()>.6?GDd:STd}"/>`;
+      x += w + 1.5;
+    }
+  }
+  return s + `<line x1="16" y1="70" x2="124" y2="70" stroke="${GDd}" stroke-width="2"/>`;
+},
+
+book:()=>`
+  <path d="M70 34 q-28 -12 -56 -6 v78 q28 -6 56 6 q28 -12 56 -6 v-78 q-28 -6 -56 6 Z" fill="none" stroke="${ST}"/>
+  <path d="M70 34 v78" stroke="${ST}"/>
+  <g stroke="${STd}">
+    <path d="M24 48 h36 M24 58 h36 M24 68 h36 M24 78 h36"/>
+    <path d="M80 48 h36 M80 58 h36 M80 68 h36 M80 78 h36"/>
+  </g>
+  <g fill="${GD}">
+    <rect x="26" y="44" width="5" height="5"/><rect x="40" y="54" width="5" height="5"/>
+    <rect x="88" y="64" width="5" height="5"/><rect x="102" y="44" width="5" height="5"/>
+  </g>
+  <path d="M14 106 q28 -6 56 6 q28 -12 56 -6" fill="none" stroke="${GDd}"/>
+  <path d="M126 60 h8 v14 h-8" fill="none" stroke="${GD}"/>`,
+
+bat:()=>`
+  <path d="M70 56 q-6 -10 -14 -4 q-14 -22 -36 -18 q10 10 6 22 q-12 2 -14 14 q16 -6 24 4 q10 12 26 10" fill="none" stroke="${ST}"/>
+  <path d="M70 56 q6 -10 14 -4 q14 -22 36 -18 q-10 10 -6 22 q12 2 14 14 q-16 -6 -24 4 q-10 12 -26 10" fill="none" stroke="${ST}"/>
+  <path d="M70 50 q-7 4 -6 14 q1 12 6 20 q5 -8 6 -20 q1 -10 -6 -14 Z" fill="${rgba(STONE,.14)}" stroke="${ST}"/>
+  <path d="M64 48 l-3 -8 l7 5 M76 48 l3 -8 l-7 5" fill="none" stroke="${ST}"/>
+  <circle cx="66" cy="56" r="1.6" fill="${GD}"/><circle cx="74" cy="56" r="1.6" fill="${GD}"/>
+  <path d="M20 112 h100" stroke="${STd}" stroke-dasharray="3 5"/>`,
+
+bell:()=>`
+  <path d="M62 20 h16 v12 h-16 Z" fill="none" stroke="${ST}"/>
+  <path d="M56 32 q14 -8 28 0" fill="none" stroke="${ST}"/>
+  <path d="M28 100 q0 -34 12 -50 q6 -10 8 -18 h44 q2 8 8 18 q12 16 12 50 Z" fill="${rgba(GOLD,.08)}" stroke="${ST}"/>
+  <path d="M24 100 h92 v10 h-92 Z" fill="none" stroke="${GD}"/>
+  <path d="M40 66 h60 M38 76 h64" stroke="${GDd}"/>
+  <path d="M70 60 v52" stroke="${STd}"/>
+  <circle cx="70" cy="116" r="7" fill="none" stroke="${GD}"/>
+  <path d="M46 88 q24 8 48 0" fill="none" stroke="${STd}"/>`,
+
+headstock:()=>`
+  <path d="M14 46 h112 v26 h-112 Z" fill="none" stroke="${ST}"/>
+  <path d="M14 72 h112 v6 h-112 Z" fill="${rgba(STONE,.12)}" stroke="${STd}"/>
+  <path d="M30 40 h12 v42 h-12 Z M98 40 h12 v42 h-12 Z" fill="none" stroke="${GD}"/>
+  <path d="M36 40 v-8 M104 40 v-8" stroke="${GD}"/>
+  <circle cx="14" cy="59" r="8" fill="none" stroke="${ST}"/>
+  <circle cx="126" cy="59" r="8" fill="none" stroke="${ST}"/>
+  <path d="M64 78 h12 l-2 20 h-8 Z" fill="none" stroke="${ST}"/>
+  <path d="M20 52 q40 6 100 0 M20 62 q40 6 100 0" fill="none" stroke="${STd}"/>
+  <path d="M56 30 l6 10 l6 -10" fill="none" stroke="${GDd}"/>`,
+
+louvre:()=>{
+  let s = `<rect x="20" y="16" width="100" height="108" fill="none" stroke="${ST}"/>`;
+  for(let k=0;k<7;k++){
+    const y = 24 + k*14;
+    s += `<path d="M24 ${y} L116 ${y+6} L116 ${y+11} L24 ${y+5} Z" fill="${rgba(STONE,.10)}" stroke="${STd}"/>`;
+    if(k%2===0) s += `<line x1="24" y1="${y+5}" x2="116" y2="${y+11}" stroke="${GDd}"/>`;
+  }
+  return s + `<path d="M120 40 l12 6 M120 68 l12 6 M120 96 l12 6" stroke="${GD}"/>`;
+},
+
+rose:()=>{
+  let s = `<circle cx="70" cy="70" r="58" fill="none" stroke="${ST}"/>
+           <circle cx="70" cy="70" r="50" fill="${rgba(GOLD,.07)}" stroke="${STd}"/>`;
+  for(let k=0;k<12;k++){
+    const a=k*Math.PI/6;
+    s += `<line x1="${n2(70+Math.cos(a)*15)}" y1="${n2(70+Math.sin(a)*15)}" x2="${n2(70+Math.cos(a)*50)}" y2="${n2(70+Math.sin(a)*50)}" stroke="${ST}" stroke-width="2"/>`;
+    s += `<circle cx="${n2(70+Math.cos(a)*36)}" cy="${n2(70+Math.sin(a)*36)}" r="11" fill="none" stroke="${GDd}"/>`;
+  }
+  for(let k=0;k<36;k++){
+    const a=k*Math.PI/18;
+    s += `<circle cx="${n2(70+Math.cos(a)*54)}" cy="${n2(70+Math.sin(a)*54)}" r="2.6" fill="${GDd}"/>`;
+  }
+  return s + `<circle cx="70" cy="70" r="15" fill="${rgba(GOLD,.22)}" stroke="${GD}"/>
+              <circle cx="70" cy="70" r="6" fill="${GD}"/>`;
+},
+
+glass:()=>{
+  let s = `<path d="M30 126 v-72 q0 -40 40 -40 q40 0 40 40 v72 Z" fill="none" stroke="${ST}"/>`;
+  const r = seeded(7);
+  for(let row=0;row<6;row++) for(let q=0;q<4;q++){
+    const x=32+q*19, y=30+row*16;
+    if(y<46 && (q===0||q===3)) continue;
+    s += `<rect x="${x}" y="${y}" width="18" height="15" fill="${rgba(r()>.55?GOLD:STONE, 0.06+r()*0.20)}" stroke="${rgba(INK,.6)}"/>`;
+  }
+  return s + `<path d="M30 126 v-72 q0 -40 40 -40 q40 0 40 40 v72" fill="none" stroke="${GDd}" stroke-width="2"/>
+              <path d="M70 22 v104" stroke="${rgba(INK,.6)}"/>`;
+},
+
+tomb:()=>`
+  <path d="M16 40 h108 v82 h-108 Z" fill="${rgba(STONE,.05)}" stroke="${ST}"/>
+  <path d="M24 48 h92 v66 h-92 Z" fill="none" stroke="${STd}"/>
+  <g stroke="${ST}">
+    <path d="M36 62 h68 M32 74 h76 M40 86 h60 M46 98 h48"/>
+  </g>
+  <path d="M70 24 v14 M60 30 h20" stroke="${GD}"/>
+  <path d="M56 104 q14 10 28 0" fill="none" stroke="${GDd}"/>
+  <circle cx="70" cy="70" r="3" fill="${GD}" opacity=".6"/>`
+};
+
+function illusSVG(key){
+  const f = ILLUS[key] || ILLUS.capital;
+  return '<svg viewBox="0 0 140 140" fill="none" stroke-width="1.3" stroke-linejoin="round">'+f()+'</svg>';
+}
+
+/* ═══════════════════════════════════════════════════════
+   6 · THE VISIT
+   ═══════════════════════════════════════════════════════ */
+
+const $ = s => document.querySelector(s);
+const RM = window.matchMedia("(prefers-reduced-motion: reduce)");
+let reduced = RM.matches;
+RM.addEventListener && RM.addEventListener("change", e => { reduced = e.matches; });
+
+const A = $("#sceneA"), B = $("#sceneB"), spotsEl = $("#spots"), railEl = $("#rail");
+let cur = 0, lang = "en", live = A, travelling = false, sndOn = true;
+let audio = { playing:false, t:0, last:0 };
+let sc = 1, ox = 0, oy = 0;
+let mx = 0, my = 0, tx = 0, ty = 0;
+
+const t = k => UI[lang][k];
+const L = s => s[lang];
+const mmss = v => String(Math.floor(v/60)).padStart(2,"0")+":"+String(Math.floor(v%60)).padStart(2,"0");
+
+/* ── viewport mapping (mirrors preserveAspectRatio slice) ── */
+function layout(){
+  const W = innerWidth, H = innerHeight;
+  sc = Math.max(W/VW, H/VH);
+  ox = (W - VW*sc)/2; oy = (H - VH*sc)/2;
+  placeSpots();
+}
+
+/* ── chapter rail ───────────────────────────────────── */
+function renderRail(){
+  railEl.innerHTML = '<div id="prog"></div>';
+  STOPS.forEach((s,i)=>{
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "stop" + (i===cur?" cur":"") + (i<cur?" done":"");
+    b.setAttribute("aria-current", i===cur ? "step" : "false");
+    b.innerHTML = '<span class="tick"></span>'+
+      '<span class="sn">'+s.num+'</span>'+
+      '<span class="st">'+L(s).title+'</span>'+
+      '<span class="sd">'+L(s).kicker+' · '+mmss(s.dur)+'</span>';
+    b.addEventListener("click", ()=>go(i));
+    railEl.appendChild(b);
+  });
+  updateProgress();
+}
+function updateProgress(){
+  const p = (cur + audio.t/STOPS[cur].dur) / STOPS.length;
+  const el = $("#prog"); if(el) el.style.width = (p*100).toFixed(2)+"%";
+}
+
+/* ── plan ───────────────────────────────────────────── */
+const PLAN = [ [100,113], [100,166], [159,104], [160,60], [52,55], [102,29] ];
+function renderPlan(){
+  const w = rgba(STONE,.30), f = rgba(STONE,.045);
+  let s = '<g stroke-width="1" fill="'+f+'" stroke="'+w+'">'+
+    '<rect x="36" y="16" width="132" height="27"/>'+
+    '<path d="M168 16 a13.5 13.5 0 0 1 0 27"/>'+
+    '<rect x="60" y="70" width="80" height="80"/>'+
+    '<rect x="56" y="152" width="90" height="26"/>'+
+    '<rect x="142" y="84" width="34" height="40"/>'+
+    '<rect x="40" y="42" width="26" height="26"/>'+
+    '</g>'+
+    '<rect x="142" y="42" width="36" height="36" fill="none" stroke="'+rgba(STONE,.26)+'" stroke-dasharray="3 3"/>'+
+    '<rect x="76" y="86" width="48" height="48" fill="'+rgba(STONE,.07)+'" stroke="'+rgba(STONE,.16)+'"/>'+
+    '<path d="M76 110 h48 M100 86 v48" stroke="'+rgba(STONE,.10)+'"/>'+
+    '<circle cx="100" cy="110" r="4" fill="none" stroke="'+rgba(STONE,.22)+'"/>';
+  /* the route */
+  s += '<path d="M'+PLAN.map(p=>p.join(" ")).join(" L")+'" fill="none" stroke="'+rgba(GOLD,.20)+'" stroke-dasharray="2 4"/>';
+  PLAN.forEach((p,i)=>{
+    s += '<g class="pdot'+(i===cur?" cur":"")+'" data-i="'+i+'" role="button" tabindex="0" aria-label="'+L(STOPS[i]).title+'">'+
+      '<circle class="hit" cx="'+p[0]+'" cy="'+p[1]+'" r="12"/>'+
+      '<circle class="halo" cx="'+p[0]+'" cy="'+p[1]+'" r="9" fill="none" stroke="'+rgba(GOLD,.5)+'"/>'+
+      '<circle class="core" cx="'+p[0]+'" cy="'+p[1]+'" r="3.4"/></g>';
+  });
+  s += '<path d="M180 176 v-16 M175 165 l5 -5 l5 5" stroke="'+rgba(STONE,.34)+'" fill="none"/>';
+  $("#planSvg").innerHTML = s;
+  $("#planSvg").querySelectorAll(".pdot").forEach(g=>{
+    const i = +g.dataset.i;
+    g.addEventListener("click", ()=>go(i));
+    g.addEventListener("keydown", e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); go(i); } });
+  });
+  $("#planCap").textContent = L(STOPS[cur]).wing;
+}
+
+/* ── hotspots ───────────────────────────────────────── */
+function renderSpots(){
+  spotsEl.innerHTML = "";
+  STOPS[cur].spots.forEach((sp,i)=>{
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "spot"; b.dataset.i = i;
+    b.style.animationDelay = (240 + i*120) + "ms";
+    b.setAttribute("aria-label", L(sp).t);
+    b.innerHTML = '<span class="pulse"></span><span class="ring"></span><span class="dot"></span>'+
+                  '<span class="lbl">'+L(sp).t+'</span>';
+    b.addEventListener("click", e=>{ e.stopPropagation(); openCard(i); });
+    spotsEl.appendChild(b);
+  });
+  placeSpots();
+}
+function placeSpots(){
+  const list = spotsEl.children, sps = STOPS[cur].spots;
+  for(let i=0;i<list.length;i++){
+    const sp = sps[i];
+    if(!sp) continue;
+    list[i].style.left = (ox + sp.x*sc + tx*0.62) + "px";
+    list[i].style.top  = (oy + sp.y*sc + ty*0.62) + "px";
+  }
+}
+
+/* ── detail card ────────────────────────────────────── */
+let openIdx = -1;
+function openCard(i){
+  const sp = STOPS[cur].spots[i], d = L(sp);
+  openIdx = i;
+  $("#cIllus").innerHTML = illusSVG(sp.ill);
+  $("#cKick").textContent = t("detail");
+  $("#cTitle").textContent = d.t;
+  $("#cText").textContent = d.b;
+  $("#cFoot").textContent = d.f;
+  $("#card").classList.add("on");
+  [...spotsEl.children].forEach((el,k)=>el.classList.toggle("open", k===i));
+  $("#cClose").focus({preventScroll:true});
+}
+function closeCard(){
+  openIdx = -1;
+  $("#card").classList.remove("on");
+  [...spotsEl.children].forEach(el=>el.classList.remove("open"));
+}
+
+/* ── narration ──────────────────────────────────────── */
+function renderNarration(){
+  const s = STOPS[cur], d = L(s);
+  $("#nNum").textContent = s.num + " " + t("of") + " 06";
+  $("#nKick").textContent = d.kicker;
+  $("#nTitle").textContent = d.title;
+  $("#nBody").textContent = d.body;
+  $("#nMeta").innerHTML = d.meta.map(m=>"<span>"+m+"</span>").join("");
+  $("#nHint").textContent = t("hint");
+  $("#aName").textContent = t("narration") + " · " + s.num + " " + d.title;
+  $("#aDur").textContent = mmss(s.dur);
+}
+
+/* ── travel ─────────────────────────────────────────── */
+function go(i){
+  i = (i + STOPS.length) % STOPS.length;
+  if(i === cur || travelling) return;
+  travelling = true;
+  closeCard();
+  cur = i;
+  audio.t = 0;
+
+  const inc = (live === A) ? B : A;
+  inc.innerHTML = buildScene(i);
+  spotsEl.style.opacity = "0";
+  $("#narr").classList.add("out");
+
+  requestAnimationFrame(()=>{
+    inc.classList.add("on");
+    live.classList.remove("on");
+  });
+  setTimeout(()=>{
+    renderNarration();
+    $("#narr").classList.remove("out");
+  }, reduced ? 10 : 230);
+  setTimeout(()=>{
+    live.innerHTML = "";
+    live = inc;
+    travelling = false;
+    spotsEl.style.opacity = "1";
+    renderSpots();
+    applyParallax(true);
+  }, reduced ? 30 : 560);
+
+  renderRail(); renderPlan(); updateProgress(); updateEdges(); updateAudioUI();
+}
+function updateEdges(){
+  $("#prev").disabled = cur === 0;
+  $("#next").disabled = cur === STOPS.length-1;
+}
+
+/* ── parallax ───────────────────────────────────────── */
+function applyParallax(force){
+  const nodes = document.querySelectorAll(".scene.on .pl");
+  nodes.forEach(g=>{
+    const d = parseFloat(g.dataset.d) || 0;
+    g.style.transform = "translate(" + (tx*d).toFixed(2) + "px," + (ty*d).toFixed(2) + "px)";
+  });
+  if(force) placeSpots();
+}
+addEventListener("mousemove", e=>{
+  if(reduced) return;
+  mx = (e.clientX/innerWidth - 0.5) * 34;
+  my = (e.clientY/innerHeight - 0.5) * 20;
+});
+
+/* ── audio simulation ───────────────────────────────── */
+function setPlaying(v){
+  audio.playing = v;
+  audio.last = performance.now();
+  $("#aud").classList.toggle("playing", v);
+  $("#playBtn").classList.toggle("playing", v);
+  $("#playBtn").setAttribute("aria-pressed", String(v));
+  $("#pIcon").innerHTML = v
+    ? '<path d="M2 1h3v10H2z"/><path d="M7 1h3v10H7z"/>'
+    : '<path d="M2 1l8 5-8 5z"/>';
+  $("#playBtn").setAttribute("aria-label", v ? "Pause narration" : "Play narration");
+}
+function updateAudioUI(){
+  const dur = STOPS[cur].dur, p = Math.min(1, audio.t/dur);
+  $("#aFill").style.width = (p*100).toFixed(2)+"%";
+  $("#aKnob").style.left = (p*100).toFixed(2)+"%";
+  $("#aCur").textContent = mmss(audio.t);
+  $("#aTrack").setAttribute("aria-valuenow", Math.round(p*100));
+  updateProgress();
+}
+
+function frame(now){
+  /* eased parallax */
+  if(!reduced){
+    tx += (mx - tx) * 0.06;
+    ty += (my - ty) * 0.06;
+    if(Math.abs(mx-tx) > 0.01 || Math.abs(my-ty) > 0.01) applyParallax(true);
+  }
+  /* narration clock */
+  if(audio.playing){
+    const dt = Math.min(0.1, (now - audio.last)/1000);
+    audio.last = now;
+    audio.t += dt;
+    if(audio.t >= STOPS[cur].dur){
+      audio.t = STOPS[cur].dur;
+      setPlaying(false);
+      if(cur < STOPS.length-1) setTimeout(()=>{ go(cur+1); setTimeout(()=>setPlaying(true), 700); }, 900);
+    }
+    updateAudioUI();
+  }
+  requestAnimationFrame(frame);
+}
+
+/* ── language ───────────────────────────────────────── */
+function setLang(v){
+  lang = v;
+  document.documentElement.lang = v;
+  document.querySelectorAll("[data-lang]").forEach(b=>
+    b.setAttribute("aria-pressed", String(b.dataset.lang===v)));
+  $("#brandSub").textContent = t("sub");
+  $("#planT").textContent = t("plan");
+  $("#sndLbl").textContent = sndOn ? t("audioOn") : t("audioOff");
+  $("#vK").textContent = t("stops");
+  $("#vP").textContent = t("intro");
+  $("#enter").textContent = t("enter");
+  renderNarration(); renderRail(); renderPlan(); renderSpots();
+  if(openIdx > -1) openCard(openIdx);
+}
+
+/* ── wiring ─────────────────────────────────────────── */
+$("#prev").addEventListener("click", ()=>go(cur-1));
+$("#next").addEventListener("click", ()=>go(cur+1));
+$("#cClose").addEventListener("click", closeCard);
+$("#playBtn").addEventListener("click", ()=>{
+  if(!sndOn) toggleSound();
+  setPlaying(!audio.playing);
+});
+document.querySelectorAll("[data-lang]").forEach(b=>
+  b.addEventListener("click", ()=>setLang(b.dataset.lang)));
+
+function toggleSound(){
+  sndOn = !sndOn;
+  const btn = $("#sndBtn"), svg = btn.querySelector("svg");
+  btn.setAttribute("aria-pressed", String(sndOn));
+  btn.classList.toggle("off", !sndOn);
+  svg.querySelector(".w1").style.display = sndOn ? "" : "none";
+  svg.querySelector(".w2").style.display = sndOn ? "" : "none";
+  svg.querySelector(".x").style.display  = sndOn ? "none" : "";
+  $("#sndLbl").textContent = sndOn ? t("audioOn") : t("audioOff");
+  if(!sndOn && audio.playing) setPlaying(false);
+}
+$("#sndBtn").addEventListener("click", toggleSound);
+
+const track = $("#aTrack");
+function seekAt(clientX){
+  const r = track.getBoundingClientRect();
+  audio.t = Math.max(0, Math.min(1, (clientX - r.left)/r.width)) * STOPS[cur].dur;
+  updateAudioUI();
+}
+track.addEventListener("click", e=>seekAt(e.clientX));
+track.addEventListener("keydown", e=>{
+  if(e.key==="ArrowLeft" || e.key==="ArrowRight"){
+    e.preventDefault(); e.stopPropagation();
+    audio.t = Math.max(0, Math.min(STOPS[cur].dur, audio.t + (e.key==="ArrowRight"?5:-5)));
+    updateAudioUI();
+  }
+});
+
+addEventListener("keydown", e=>{
+  if(e.key === "Escape"){ if(openIdx>-1) closeCard(); return; }
+  if($("#veil").classList.contains("gone") === false) return;
+  if(e.target === track) return;
+  if(e.key === "ArrowRight"){ e.preventDefault(); go(cur+1); }
+  else if(e.key === "ArrowLeft"){ e.preventDefault(); go(cur-1); }
+  else if(e.key === " " && e.target === document.body){ e.preventDefault(); setPlaying(!audio.playing); }
+  else if(/^[1-6]$/.test(e.key)) go(+e.key - 1);
+});
+addEventListener("resize", layout);
+
+/* ── start ──────────────────────────────────────────── */
+function start(){
+  A.innerHTML = buildScene(0);
+  A.classList.add("on");
+  live = A;
+  layout();
+  renderNarration(); renderRail(); renderPlan(); renderSpots();
+  updateEdges(); updateAudioUI(); setPlaying(false);
+  applyParallax(true);
+  requestAnimationFrame(frame);
+}
+start();
+
+$("#enter").addEventListener("click", ()=>{
+  $("#veil").classList.add("gone");
+  setTimeout(()=>{ setPlaying(true); }, reduced ? 40 : 700);
+});
+$("#veil").addEventListener("keydown", e=>{ if(e.key==="Enter") $("#enter").click(); });
+setTimeout(()=>$("#enter").focus({preventScroll:true}), 260);
+</script>
+</body>
+</html>

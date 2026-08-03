@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SAL — Comporta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..500&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   SAL — Comporta, Portugal
+   Palette: night / sea shadow / warm salt / sea-glass (single accent)
+   ============================================================ */
+
+:root{
+  --night:#0B0D0F;
+  --night-2:#0E1113;
+  --sea:#14201F;
+  --sea-2:#0F1918;
+  --salt:#E8E2D6;
+  --glass:#7FA99B;
+
+  --salt-70:rgba(232,226,214,.70);
+  --salt-45:rgba(232,226,214,.45);
+  --salt-28:rgba(232,226,214,.28);
+  --salt-14:rgba(232,226,214,.14);
+  --salt-08:rgba(232,226,214,.08);
+
+  --serif:'Fraunces',Georgia,'Times New Roman',serif;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
+
+  --ease:cubic-bezier(.16,1,.3,1);
+  --ease-soft:cubic-bezier(.4,0,.2,1);
+
+  --gut:clamp(24px,5.2vw,104px);
+  --maxw:1560px;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--night);color:var(--salt);
+  font-family:var(--sans);font-weight:300;font-size:16px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  overflow-x:hidden;
+}
+img,svg{display:block;max-width:100%}
+button,input,select{font:inherit;color:inherit}
+button{background:none;border:0;cursor:pointer}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--glass);color:var(--night)}
+
+/* ---------- shared type ---------- */
+.mono{
+  font-family:var(--mono);font-weight:400;
+  font-size:10px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--salt-45);
+}
+.mono.acc{color:var(--glass)}
+.serif{font-family:var(--serif);font-weight:300;font-variation-settings:'opsz' 144;letter-spacing:-.02em;line-height:1.02}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--gut);width:100%}
+
+.rule{height:1px;background:var(--salt-14);width:100%}
+
+/* section label with hairline */
+.sec-label{display:flex;align-items:center;gap:18px;margin-bottom:clamp(40px,5vw,84px)}
+.sec-label .ln{flex:0 0 56px;height:1px;background:var(--glass);opacity:.65}
+.sec-label .n{color:var(--salt-28)}
+
+/* ---------- grain ---------- */
+#grain{
+  position:fixed;inset:-120px;z-index:9000;pointer-events:none;
+  opacity:.24;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grainShift .7s steps(1) infinite;
+}
+@keyframes grainShift{
+  0%{transform:translate(0,0)}12.5%{transform:translate(-6%,-4%)}25%{transform:translate(4%,-7%)}
+  37.5%{transform:translate(-8%,3%)}50%{transform:translate(7%,6%)}62.5%{transform:translate(-3%,8%)}
+  75%{transform:translate(6%,-5%)}87.5%{transform:translate(-7%,-2%)}100%{transform:translate(0,0)}
+}
+
+/* vignette on top of everything */
+#vignette{
+  position:fixed;inset:0;z-index:8500;pointer-events:none;
+  background:radial-gradient(120% 80% at 50% 45%,transparent 42%,rgba(0,0,0,.42) 100%);
+}
+
+/* ---------- scroll progress ---------- */
+#prog{position:fixed;top:0;left:0;height:2px;width:100%;z-index:9200;pointer-events:none}
+#prog i{
+  display:block;height:100%;width:100%;background:var(--glass);
+  transform:scaleX(0);transform-origin:0 50%;transition:transform .12s linear;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+#hdr{
+  position:fixed;top:0;left:0;right:0;z-index:8000;
+  transform:translateY(-102%);transition:transform .7s var(--ease),background .5s var(--ease-soft);
+  background:rgba(11,13,15,.62);backdrop-filter:blur(18px) saturate(140%);
+  -webkit-backdrop-filter:blur(18px) saturate(140%);
+  border-bottom:1px solid var(--salt-08);
+}
+#hdr.on{transform:translateY(0)}
+.hdr-in{display:flex;align-items:center;justify-content:space-between;height:74px}
+.hdr-mark{font-family:var(--serif);font-weight:400;font-size:21px;letter-spacing:.34em;padding-left:.34em}
+.hdr-nav{display:flex;align-items:center;gap:38px}
+.hdr-nav a{
+  font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--salt-45);position:relative;padding:6px 0;transition:color .5s var(--ease-soft);
+}
+.hdr-nav a::after{
+  content:'';position:absolute;left:0;bottom:0;height:1px;width:100%;background:var(--glass);
+  transform:scaleX(0);transform-origin:0 50%;transition:transform .55s var(--ease);
+}
+.hdr-nav a:hover{color:var(--salt)}
+.hdr-nav a:hover::after{transform:scaleX(1)}
+
+.btn-ghost{
+  font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+  border:1px solid var(--salt-28);padding:11px 22px;color:var(--salt);
+  transition:border-color .55s var(--ease),background .55s var(--ease),color .55s var(--ease);
+}
+.btn-ghost:hover{border-color:var(--glass);background:var(--glass);color:var(--night)}
+
+/* ============================================================
+   INTRO
+   ============================================================ */
+#intro{
+  position:relative;min-height:100svh;display:flex;flex-direction:column;
+  justify-content:center;align-items:center;overflow:hidden;isolation:isolate;
+}
+.atmos{position:absolute;inset:0;z-index:-1;overflow:hidden}
+.atmos .layer{position:absolute;inset:-25%}
+
+/* generated dusk-over-water field */
+.a-base{background:
+  linear-gradient(180deg,
+    #070A0B 0%, #0A1012 22%, #0E1A1B 44%,
+    #16292A 58%, #22403C 64%, #2D4A42 67%,
+    #16292A 70%, #0C1618 82%, #070A0B 100%);
+}
+.a-moon{
+  position:absolute;
+  background:radial-gradient(closest-side,
+    rgba(232,226,214,.42), rgba(201,190,166,.16) 34%, rgba(127,169,155,.09) 58%, transparent 76%);
+  width:min(110vw,1360px);height:min(52vw,600px);left:50%;top:20%;transform:translateX(-50%);
+  filter:blur(10px);animation:drift 52s var(--ease-soft) infinite alternate;
+}
+.a-band{
+  background:
+    radial-gradient(58% 20% at 50% 58%, rgba(232,226,214,.13), transparent 72%),
+    linear-gradient(180deg,transparent 46%,rgba(127,169,155,.13) 58%,rgba(127,169,155,.03) 66%,transparent 78%);
+  animation:swell 38s ease-in-out infinite alternate;
+}
+.a-deep{
+  background:
+    linear-gradient(180deg,rgba(7,10,11,.60) 0%,transparent 32%),
+    linear-gradient(180deg,transparent 56%,rgba(5,7,8,.62) 78%,rgba(5,7,8,.92) 100%);
+}
+@keyframes drift{0%{transform:translate(-50%,0) scale(1)}100%{transform:translate(-49%,-2.5%) scale(1.07)}}
+@keyframes swell{0%{transform:translateY(-1.4%)}100%{transform:translateY(1.8%)}}
+
+/* horizon line SVG — the sea, drawn */
+.a-lines{position:absolute;left:-12%;right:-12%;bottom:0;height:42%;width:124%}
+.a-lines path{fill:none;stroke:var(--salt);stroke-width:.7;vector-effect:non-scaling-stroke}
+.a-lines path:nth-child(1){opacity:.30;animation:ln 26s ease-in-out infinite alternate}
+.a-lines path:nth-child(2){opacity:.22;animation:ln 31s ease-in-out infinite alternate-reverse}
+.a-lines path:nth-child(3){opacity:.18;animation:ln 38s ease-in-out infinite alternate}
+.a-lines path:nth-child(4){opacity:.14;animation:ln 44s ease-in-out infinite alternate-reverse}
+.a-lines path:nth-child(5){opacity:.10;animation:ln 50s ease-in-out infinite alternate}
+.a-lines path:nth-child(6){opacity:.07;animation:ln 58s ease-in-out infinite alternate-reverse}
+@keyframes ln{0%{transform:translate(0,0)}100%{transform:translate(-2.4%,-1%)}}
+
+.intro-top{position:absolute;top:0;left:0;right:0;padding-top:38px}
+.intro-top .wrap{display:flex;justify-content:space-between;align-items:baseline}
+.intro-top .mono{opacity:0;animation:fadeIn 1.2s var(--ease) 2.2s forwards}
+
+/* wordmark */
+#word{
+  margin:0;display:flex;justify-content:center;align-items:center;
+  font-family:var(--serif);font-weight:300;font-variation-settings:'opsz' 144;
+  font-size:clamp(96px,22.5vw,330px);line-height:.9;letter-spacing:.07em;
+  padding-left:.07em;position:relative;z-index:1;
+}
+#word span{
+  display:inline-block;opacity:0;transform:translateY(.28em) scaleY(1.14);
+  filter:blur(14px);
+  animation:letterIn 1.5s var(--ease) forwards;
+}
+#word span:nth-child(1){animation-delay:.25s}
+#word span:nth-child(2){animation-delay:.45s}
+#word span:nth-child(3){animation-delay:.65s}
+@keyframes letterIn{to{opacity:1;transform:translateY(0) scaleY(1);filter:blur(0)}}
+
+.intro-sub{
+  margin-top:clamp(20px,3vw,42px);text-align:center;
+  opacity:0;animation:fadeIn 1.4s var(--ease) 1.35s forwards;
+}
+.intro-sub .l1{
+  font-family:var(--mono);font-size:11px;letter-spacing:.42em;text-transform:uppercase;
+  color:var(--salt-70);
+}
+.intro-sub .l2{
+  margin-top:16px;font-family:var(--serif);font-style:italic;font-weight:300;
+  font-size:clamp(15px,1.35vw,19px);color:var(--salt-45);letter-spacing:.01em;
+}
+@keyframes fadeIn{to{opacity:1}}
+
+.cue{
+  position:absolute;bottom:40px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:14px;
+  opacity:0;animation:fadeIn 1.2s var(--ease) 2.4s forwards;
+}
+.cue .mono{font-size:9px;letter-spacing:.3em}
+.cue .track{position:relative;width:1px;height:64px;background:var(--salt-14);overflow:hidden}
+.cue .track i{position:absolute;top:-100%;left:0;width:1px;height:100%;background:var(--glass);animation:cueRun 2.6s var(--ease-soft) infinite}
+@keyframes cueRun{0%{top:-100%}60%,100%{top:100%}}
+
+/* ============================================================
+   REVEALS
+   ============================================================ */
+.rv{opacity:0;transform:translateY(30px);transition:opacity .9s var(--ease),transform .9s var(--ease);transition-delay:var(--d,0ms)}
+.rv.in{opacity:1;transform:none}
+/* curtain wipe — note: never use clip-path for the hidden state,
+   it zeroes the IntersectionObserver rect and the reveal can never fire */
+.rv-l{position:relative;overflow:hidden}
+.rv-l::after{
+  content:'';position:absolute;inset:-1px;z-index:5;background:var(--night);
+  transform:translateX(0);transition:transform 1.15s var(--ease);transition-delay:var(--d,0ms);
+}
+.rv-l.in::after{transform:translateX(101%)}
+
+/* ============================================================
+   STATEMENT
+   ============================================================ */
+#statement{padding:clamp(120px,17vh,220px) 0 clamp(120px,17vh,220px);position:relative;overflow:hidden}
+.stmt-glow{
+  position:absolute;left:-14%;top:20%;width:60vw;height:60vw;pointer-events:none;
+  background:radial-gradient(closest-side,rgba(127,169,155,.10),transparent 70%);
+}
+.stmt-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2.05fr);gap:clamp(32px,5vw,90px);align-items:start}
+.stmt-side{position:sticky;top:130px}
+.stmt-side p{font-size:14px;line-height:1.85;color:var(--salt-45);max-width:32ch;margin:22px 0 0}
+.stmt-h{
+  font-family:var(--serif);font-weight:300;font-variation-settings:'opsz' 144;
+  font-size:clamp(38px,5.6vw,88px);line-height:1.06;letter-spacing:-.028em;margin:0;
+  text-wrap:balance;
+}
+.stmt-h em{font-style:italic;color:var(--glass);font-weight:300}
+.stmt-h .dim{color:var(--salt-45)}
+.stmt-meta{display:flex;gap:56px;margin-top:clamp(48px,6vw,90px);flex-wrap:wrap}
+.stmt-meta div{max-width:24ch}
+.stmt-meta .k{font-family:var(--serif);font-size:26px;letter-spacing:-.01em;display:block;margin-bottom:8px}
+.stmt-meta .v{font-size:13px;color:var(--salt-45);line-height:1.7}
+
+/* ============================================================
+   MENU
+   ============================================================ */
+#menu{padding:clamp(100px,12vh,170px) 0 clamp(110px,14vh,190px);background:
+  linear-gradient(180deg,var(--night) 0%,var(--sea-2) 38%,var(--sea-2) 62%,var(--night) 100%);
+  position:relative;
+}
+.menu-head{display:flex;justify-content:space-between;align-items:flex-end;gap:40px;flex-wrap:wrap;margin-bottom:clamp(44px,5vw,76px)}
+.menu-title{font-family:var(--serif);font-weight:300;font-variation-settings:'opsz' 144;font-size:clamp(34px,4.6vw,68px);line-height:1;letter-spacing:-.025em;margin:0}
+.menu-title .it{font-style:italic;color:var(--salt-45)}
+.menu-week{margin-top:14px;display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.menu-week .dot{width:4px;height:4px;background:var(--glass);border-radius:50%}
+
+/* lang toggle */
+.lang{display:inline-flex;border:1px solid var(--salt-14);align-self:flex-end}
+.lang button{
+  font-family:var(--mono);font-size:10px;letter-spacing:.18em;padding:9px 16px;color:var(--salt-45);
+  transition:color .5s var(--ease-soft),background .5s var(--ease-soft);
+}
+.lang button[aria-pressed="true"]{background:var(--salt);color:var(--night)}
+.lang button:not([aria-pressed="true"]):hover{color:var(--salt)}
+
+.menu-grid{display:grid;grid-template-columns:minmax(0,1.62fr) minmax(0,1fr);gap:clamp(36px,5vw,92px);align-items:start}
+
+.courses{border-top:1px solid var(--salt-14)}
+.course{
+  display:grid;grid-template-columns:64px minmax(0,1fr);gap:0 20px;align-items:baseline;
+  width:100%;text-align:left;padding:clamp(20px,2.1vw,30px) 4px;border-bottom:1px solid var(--salt-08);
+  position:relative;
+  transition:padding-left .65s var(--ease),opacity .9s var(--ease),transform .9s var(--ease);
+  transition-delay:var(--d,0ms),var(--d,0ms),var(--d,0ms);
+}
+.course.in{transition-delay:0ms,var(--d,0ms),var(--d,0ms)}
+.course::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:var(--glass);
+  transform:scaleY(0);transform-origin:50% 0;transition:transform .65s var(--ease);
+}
+.course:hover::before,.course.act::before{transform:scaleY(1)}
+.course:hover,.course.act{padding-left:20px}
+.course .num{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--salt-28);transition:color .55s var(--ease-soft)}
+.course:hover .num,.course.act .num{color:var(--glass)}
+.course .nm{
+  font-family:var(--serif);font-weight:300;font-variation-settings:'opsz' 96;
+  font-size:clamp(21px,2.05vw,30px);letter-spacing:-.015em;line-height:1.16;
+  transition:color .55s var(--ease-soft);
+}
+.course .ds{
+  grid-column:2;margin-top:7px;font-size:13.5px;line-height:1.65;color:var(--salt-45);max-width:46ch;
+  transition:color .55s var(--ease-soft),opacity .45s var(--ease-soft);
+}
+.course.act .ds,.course:hover .ds{color:var(--salt-70)}
+.course .ds.swap{opacity:0}
+.course .inline-pair{display:none}
+
+.menu-note{
+  margin-top:clamp(36px,4vw,60px);display:grid;grid-template-columns:1fr 1fr;gap:34px;
+}
+.menu-note p{margin:10px 0 0;font-size:13px;line-height:1.75;color:var(--salt-45);max-width:40ch}
+.price-line{display:flex;align-items:baseline;gap:14px}
+.price-line .p{font-family:var(--serif);font-size:clamp(30px,3vw,44px);letter-spacing:-.02em}
+
+/* sticky detail */
+.detail{position:sticky;top:120px;border:1px solid var(--salt-08);background:
+  linear-gradient(160deg,rgba(232,226,214,.045),rgba(232,226,214,0) 55%),
+  radial-gradient(120% 80% at 80% 0%,rgba(127,169,155,.11),transparent 62%);
+  padding:clamp(24px,2.4vw,38px);min-height:440px;display:flex;flex-direction:column;
+}
+.detail-mark{height:200px;display:flex;align-items:center;justify-content:center;margin-bottom:26px}
+.detail-mark svg{width:200px;height:200px;color:var(--glass);opacity:.92;overflow:visible}
+.detail-fade{animation:dFade .6s var(--ease)}
+@keyframes dFade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.detail .d-num{margin-bottom:auto}
+.detail .d-nm{font-family:var(--serif);font-size:26px;font-weight:300;letter-spacing:-.015em;margin:18px 0 4px}
+.detail .d-lbl{margin-top:26px;padding-top:18px;border-top:1px solid var(--salt-14)}
+.detail .d-pair{font-family:var(--serif);font-style:italic;font-size:19px;line-height:1.35;color:var(--salt);margin-top:10px}
+.detail .d-reg{margin-top:8px;font-size:12px;color:var(--salt-45);font-family:var(--mono);letter-spacing:.1em}
+
+/* ============================================================
+   THE HOUSE
+   ============================================================ */
+#casa{padding:clamp(110px,14vh,190px) 0;position:relative}
+.casa-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);gap:clamp(40px,5.5vw,110px);align-items:center}
+.casa-h{font-family:var(--serif);font-weight:300;font-variation-settings:'opsz' 144;font-size:clamp(32px,4.2vw,60px);line-height:1.08;letter-spacing:-.025em;margin:0 0 28px}
+.casa-h .it{font-style:italic;color:var(--glass)}
+.casa-body p{font-size:14.5px;line-height:1.85;color:var(--salt-70);max-width:44ch;margin:0 0 20px}
+.casa-body p.dim{color:var(--salt-45)}
+.casa-facts{display:flex;gap:44px;margin-top:40px;flex-wrap:wrap;padding-top:28px;border-top:1px solid var(--salt-14)}
+.casa-facts .k{font-family:var(--serif);font-size:30px;display:block;letter-spacing:-.02em}
+.casa-facts .v{margin-top:4px}
+
+/* generated panel */
+.panel{position:relative;aspect-ratio:4/5;overflow:hidden;background:var(--sea-2)}
+.panel .p-l{position:absolute;inset:0}
+.p-sky{background:
+  linear-gradient(180deg,
+    #06090A 0%, #0A1114 18%, #101D20 34%, #1B2C2C 46%,
+    #35443C 54%, #6E6650 60%, #A08F6C 62.4%, #C6AE7E 63.4%,
+    #2A3C3A 64.2%, #1B2E30 72%, #0F1E20 86%, #070D0E 100%);
+}
+.p-sun{
+  position:absolute;left:26%;top:47%;width:30%;height:22%;
+  background:radial-gradient(closest-side,
+    rgba(255,246,220,.90), rgba(232,206,150,.42) 38%, rgba(201,162,39,.14) 62%, transparent 78%);
+  filter:blur(3px);animation:sunDrift 44s ease-in-out infinite alternate;
+}
+@keyframes sunDrift{0%{transform:translateY(0)}100%{transform:translateY(2.5%)}}
+.p-haze{background:
+  linear-gradient(180deg,transparent 40%,rgba(232,214,178,.10) 58%,rgba(127,169,155,.07) 68%,transparent 82%),
+  radial-gradient(60% 12% at 34% 63%, rgba(255,246,220,.30), transparent 72%);
+}
+.p-water{
+  top:auto;height:36%;bottom:0;
+  background:
+    radial-gradient(34% 60% at 34% 0%, rgba(232,206,150,.20), transparent 70%),
+    linear-gradient(180deg,rgba(7,13,14,0) 0%,rgba(7,13,14,.45) 55%,rgba(7,13,14,.85) 100%);
+}
+.p-svg{position:absolute;inset:0;width:100%;height:100%}
+.p-svg path{fill:none;stroke:var(--salt);vector-effect:non-scaling-stroke;stroke-width:.55}
+.p-vig{background:radial-gradient(110% 80% at 50% 50%,transparent 40%,rgba(0,0,0,.5) 100%)}
+.panel-cap{position:absolute;left:20px;bottom:18px;z-index:2}
+.panel-cap .mono{color:rgba(232,226,214,.6)}
+
+/* ============================================================
+   WINES
+   ============================================================ */
+#vinhos{padding:clamp(100px,12vh,170px) 0 clamp(110px,14vh,190px);background:
+  linear-gradient(180deg,var(--night) 0%,#0D1413 30%,#0D1413 70%,var(--night) 100%);}
+.wine-head{display:flex;justify-content:space-between;align-items:flex-end;gap:40px;flex-wrap:wrap;margin-bottom:38px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{
+  font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+  padding:10px 18px;border:1px solid var(--salt-14);color:var(--salt-45);
+  transition:color .5s var(--ease-soft),border-color .5s var(--ease-soft),background .5s var(--ease-soft);
+}
+.chip:hover{color:var(--salt);border-color:var(--salt-28)}
+.chip[aria-pressed="true"]{background:var(--glass);border-color:var(--glass);color:var(--night)}
+.wine-count{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--salt-28)}
+
+.wines{border-top:1px solid var(--salt-14)}
+.wine{
+  display:grid;grid-template-columns:1.15fr .8fr 88px 1.35fr;gap:24px;align-items:baseline;
+  padding:20px 4px;border-bottom:1px solid var(--salt-08);
+  transition:opacity .5s var(--ease-soft),transform .5s var(--ease),background .5s var(--ease-soft),padding-left .5s var(--ease);
+}
+.wine:hover{background:rgba(232,226,214,.026);padding-left:16px}
+.wine .prod{font-family:var(--serif);font-size:19px;font-weight:300;letter-spacing:-.01em;line-height:1.25}
+.wine .prod small{display:block;font-family:var(--sans);font-size:11.5px;letter-spacing:.02em;color:var(--salt-45);margin-top:4px}
+.wine .reg{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--salt-45)}
+.wine .yr{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--salt-28)}
+.wine .note{font-size:13px;color:var(--salt-45);line-height:1.6}
+.wine.hide{display:none}
+.wine.anim{animation:wIn .55s var(--ease) both}
+@keyframes wIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.wine-foot{margin-top:30px;display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap;align-items:center}
+
+/* ============================================================
+   RESERVATION
+   ============================================================ */
+#reservar{padding:clamp(110px,14vh,190px) 0;position:relative;overflow:hidden}
+.res-glow{position:absolute;right:-18%;top:8%;width:62vw;height:62vw;pointer-events:none;
+  background:radial-gradient(closest-side,rgba(127,169,155,.09),transparent 70%)}
+.res-grid{display:grid;grid-template-columns:minmax(0,.86fr) minmax(0,1.35fr);gap:clamp(40px,6vw,110px);align-items:start}
+.res-h{font-family:var(--serif);font-weight:300;font-variation-settings:'opsz' 144;font-size:clamp(34px,4.6vw,66px);line-height:1.06;letter-spacing:-.026em;margin:0 0 24px}
+.res-h .it{font-style:italic;color:var(--glass)}
+.res-side p{font-size:14px;line-height:1.85;color:var(--salt-45);max-width:34ch;margin:0 0 18px}
+.res-side .hours{margin-top:34px;padding-top:24px;border-top:1px solid var(--salt-14)}
+.res-side .hours dl{margin:14px 0 0;display:grid;grid-template-columns:auto 1fr;gap:9px 24px;font-size:13px}
+.res-side .hours dt{color:var(--salt-45);font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;padding-top:3px}
+.res-side .hours dd{margin:0;color:var(--salt-70)}
+
+.widget{border:1px solid var(--salt-14);background:rgba(232,226,214,.022);padding:clamp(24px,2.6vw,44px)}
+.step{display:none}
+.step.on{display:block;animation:dFade .65s var(--ease)}
+.fld-row{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.fld{margin-bottom:24px}
+.fld label{display:block;margin-bottom:10px}
+.ctl{
+  width:100%;background:transparent;border:0;border-bottom:1px solid var(--salt-28);
+  padding:11px 0;font-size:15px;font-family:var(--sans);font-weight:300;color:var(--salt);
+  transition:border-color .5s var(--ease-soft);
+}
+.ctl:focus{outline:none;border-bottom-color:var(--glass)}
+.ctl::placeholder{color:var(--salt-28)}
+select.ctl{appearance:none;border-radius:0;cursor:pointer;
+  background-image:linear-gradient(45deg,transparent 50%,var(--salt-45) 50%),linear-gradient(135deg,var(--salt-45) 50%,transparent 50%);
+  background-position:calc(100% - 9px) 20px,calc(100% - 4px) 20px;background-size:5px 5px,5px 5px;background-repeat:no-repeat}
+select.ctl option{background:var(--night-2);color:var(--salt)}
+input[type=date].ctl::-webkit-calendar-picker-indicator{filter:invert(.75);cursor:pointer;opacity:.5}
+
+.seg{display:flex;border:1px solid var(--salt-14)}
+.seg button{
+  flex:1;font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+  padding:13px 10px;color:var(--salt-45);transition:background .5s var(--ease-soft),color .5s var(--ease-soft);
+}
+.seg button[aria-pressed="true"]{background:var(--salt);color:var(--night)}
+.seg button:not([aria-pressed="true"]):hover{color:var(--salt)}
+
+.slots{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:14px}
+.slot{
+  font-family:var(--mono);font-size:11px;letter-spacing:.08em;padding:14px 4px;text-align:center;
+  border:1px solid var(--salt-14);color:var(--salt-70);
+  transition:border-color .45s var(--ease-soft),background .45s var(--ease-soft),color .45s var(--ease-soft);
+}
+.slot:hover:not(:disabled){border-color:var(--glass);color:var(--salt)}
+.slot:disabled{color:var(--salt-14);cursor:not-allowed;position:relative;border-color:var(--salt-08)}
+.slot:disabled::after{content:'';position:absolute;left:14%;right:14%;top:50%;height:1px;background:var(--salt-08)}
+.slot[aria-pressed="true"]{background:var(--glass);border-color:var(--glass);color:var(--night)}
+.closed-note{margin-top:14px;padding:16px;border:1px dashed var(--salt-14);font-size:13px;color:var(--salt-45)}
+
+.summary{margin-top:30px;padding-top:22px;border-top:1px solid var(--salt-14);display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap}
+.summary .s-txt{font-family:var(--serif);font-size:clamp(18px,1.7vw,24px);font-weight:300;letter-spacing:-.01em;line-height:1.35;color:var(--salt-45)}
+.summary .s-txt strong{font-weight:400;color:var(--salt)}
+.btn-solid{
+  font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+  background:var(--salt);color:var(--night);padding:15px 30px;white-space:nowrap;
+  transition:background .5s var(--ease),color .5s var(--ease),opacity .5s var(--ease);
+}
+.btn-solid:hover:not(:disabled){background:var(--glass)}
+.btn-solid:disabled{opacity:.28;cursor:not-allowed}
+.btn-text{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--salt-45);transition:color .5s var(--ease-soft)}
+.btn-text:hover{color:var(--glass)}
+
+.recap{border:1px solid var(--salt-14);padding:20px 22px;margin-bottom:30px;display:flex;gap:38px;flex-wrap:wrap}
+.recap div span{display:block}
+.recap .rv2{font-family:var(--serif);font-size:20px;margin-top:5px}
+
+.ok{text-align:center;padding:clamp(20px,3vw,44px) 0}
+.ok-mark{width:74px;height:74px;margin:0 auto 26px;border:1px solid var(--glass);border-radius:50%;display:grid;place-items:center}
+.ok-mark svg{width:26px;height:26px;stroke:var(--glass);fill:none;stroke-width:1.2;stroke-linecap:round;stroke-linejoin:round}
+.ok-mark svg path{stroke-dasharray:40;stroke-dashoffset:40;animation:draw .9s var(--ease) .18s forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.ok h3{font-family:var(--serif);font-weight:300;font-size:clamp(26px,3vw,40px);letter-spacing:-.02em;margin:0 0 14px}
+.ok p{font-size:14px;color:var(--salt-45);max-width:40ch;margin:0 auto 8px;line-height:1.8}
+.ok .ref{margin-top:26px;display:inline-block;border:1px solid var(--salt-14);padding:12px 22px}
+.err{color:var(--glass);font-family:var(--mono);font-size:10px;letter-spacing:.14em;margin-top:10px;display:none}
+.err.on{display:block}
+
+/* ============================================================
+   PRACTICAL
+   ============================================================ */
+#pratico{padding:clamp(100px,12vh,170px) 0;background:linear-gradient(180deg,var(--night),#0C1211)}
+.prat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(28px,3vw,56px);margin-bottom:clamp(50px,6vw,90px)}
+.prat-col h4{margin:0 0 16px}
+.prat-col p{margin:0 0 6px;font-size:13.5px;line-height:1.8;color:var(--salt-70)}
+.prat-col p.dim{color:var(--salt-45)}
+.prat-col a:hover{color:var(--glass)}
+
+.map{position:relative;border:1px solid var(--salt-08);background:
+  radial-gradient(120% 100% at 20% 0%,rgba(127,169,155,.07),transparent 60%),#0A0F10;
+  padding:26px;overflow:hidden}
+.map svg{width:100%;height:auto;display:block}
+.map svg *{vector-effect:non-scaling-stroke}
+.map .land{fill:rgba(232,226,214,.05);stroke:none}
+.map .water{fill:rgba(11,17,18,.9);stroke:none}
+.map .coast{fill:none;stroke:var(--salt-28);stroke-width:1}
+.map .sea-l{fill:none;stroke:rgba(127,169,155,.5);stroke-width:1}
+.map .rice{fill:none;stroke:rgba(232,226,214,.10);stroke-width:1}
+.map .rd{fill:none;stroke:var(--salt-14);stroke-width:1;stroke-dasharray:4 4}
+.map .pin circle{fill:var(--glass)}
+.map .pin .ring{fill:none;stroke:var(--glass);stroke-width:.8;opacity:.55;animation:ping 3.4s var(--ease-soft) infinite}
+@keyframes ping{0%{r:4;opacity:.6}70%,100%{r:16;opacity:0}}
+.map text{font-family:var(--mono);font-size:4px;letter-spacing:.22em;fill:var(--salt-45);text-transform:uppercase}
+.map .lbl-acc{fill:var(--glass)}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+footer{padding:clamp(70px,8vw,120px) 0 40px;background:#0C1211;overflow:hidden}
+.f-mark{
+  font-family:var(--serif);font-weight:300;font-variation-settings:'opsz' 144;
+  font-size:clamp(120px,25vw,380px);line-height:.8;letter-spacing:.04em;text-align:center;
+  color:transparent;-webkit-text-stroke:1px rgba(232,226,214,.30);
+  padding-left:.04em;margin:0 0 clamp(40px,5vw,70px);user-select:none;
+}
+.f-rows{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap;padding-top:26px;border-top:1px solid var(--salt-08)}
+.f-rows .mono{color:var(--salt-28)}
+.f-rows a:hover{color:var(--glass)}
+.f-links{display:flex;gap:28px;flex-wrap:wrap}
+
+/* ============================================================
+   RESPONSIVE — holds to 1024, degrades gracefully below
+   ============================================================ */
+@media (max-width:1180px){
+  .menu-grid{grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:44px}
+  .wine{grid-template-columns:1.1fr .75fr 70px 1.15fr;gap:18px}
+  .slots{grid-template-columns:repeat(5,1fr)}
+}
+@media (max-width:1024px){
+  .stmt-grid{grid-template-columns:1fr;gap:40px}
+  .stmt-side{position:static}
+  .casa-grid{grid-template-columns:1fr;gap:48px}
+  .panel{aspect-ratio:16/10}
+  .res-grid{grid-template-columns:1fr;gap:48px}
+  .prat-grid{grid-template-columns:1fr 1fr;gap:36px}
+  .hdr-nav{gap:26px}
+}
+@media (max-width:900px){
+  .menu-grid{grid-template-columns:1fr}
+  .detail{display:none}
+  .course .inline-pair{
+    display:block;grid-column:2;margin-top:12px;padding-top:12px;border-top:1px solid var(--salt-08);
+    font-family:var(--serif);font-style:italic;font-size:15px;color:var(--glass);
+  }
+  .menu-note{grid-template-columns:1fr;gap:26px}
+  .fld-row{grid-template-columns:1fr;gap:0}
+  .slots{grid-template-columns:repeat(4,1fr)}
+  .wine{grid-template-columns:1fr 1fr;gap:8px 18px}
+  .wine .note{grid-column:1/-1}
+  .hdr-nav a:not(.btn-ghost){display:none}
+}
+@media (max-width:640px){
+  .prat-grid{grid-template-columns:1fr}
+  .slots{grid-template-columns:repeat(3,1fr)}
+  .stmt-meta{gap:28px}
+}
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+  #word span{opacity:1;transform:none;filter:none}
+  .intro-sub,.intro-top .mono,.cue{opacity:1}
+  .rv{opacity:1;transform:none}
+  .rv-l::after{display:none}
+  #grain{animation:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= SVG SYMBOL LIBRARY (editorial marks) ================= -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="m-oyster" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M50 93C24 86 10 62 15 40 20 18 42 6 60 11c22 6 31 34 24 56-5 15-18 25-34 26z"/>
+      <path d="M50 93C31 83 23 63 27 46c4-16 18-25 30-21"/>
+      <path d="M50 93C36 82 32 66 36 53c3-11 12-17 20-15"/>
+      <path d="M50 93c-9-9-12-22-9-32 2-8 8-12 14-11"/>
+      <path d="M50 93c-4-7-5-14-3-20"/>
+      <path d="M43 96c1-3 4-5 8-5"/>
+    </g></symbol>
+
+    <symbol id="m-wheat" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M50 92V34"/>
+      <path d="M50 34c-9-4-13-11-13-18 8 1 12 6 13 12M50 34c9-4 13-11 13-18-8 1-12 6-13 12"/>
+      <path d="M50 50c-10-4-15-11-15-19 9 1 14 7 15 14M50 50c10-4 15-11 15-19-9 1-14 7-15 14"/>
+      <path d="M50 66c-10-4-15-11-15-19 9 1 14 7 15 14M50 66c10-4 15-11 15-19-9 1-14 7-15 14"/>
+      <path d="M50 20V8"/>
+    </g></symbol>
+
+    <symbol id="m-prawn" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M70 26c16 16 14 40-4 52-12 8-28 6-36-4"/>
+      <path d="M62 34c12 12 10 28-2 36-8 6-18 6-24 2"/>
+      <path d="M74 40l-9 3M78 52l-10 1M76 64l-10-2M69 72l-7-6M58 79l-3-8M46 82v-8"/>
+      <path d="M70 26c2-10-2-18-10-22"/>
+      <path d="M68 24c14-6 26-2 29 8M72 30c16 2 24 12 22 22"/>
+      <path d="M30 74l-14 6M30 74l-12-4M30 74l-8 12M30 74H12"/>
+      <path d="M56 76l-2 10M48 78l-4 10M64 71l2 12"/>
+      <circle cx="65" cy="31" r="1.7"/>
+    </g></symbol>
+
+    <symbol id="m-scallop" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M50 86 12 40a44 44 0 0 1 76 0z"/>
+      <path d="M50 86 32 34M50 86v-54M50 86l18-52M50 86 20 39M50 86l30-47"/>
+      <path d="M42 88h16M44 90c0-4 3-6 6-6s6 2 6 6"/>
+    </g></symbol>
+
+    <symbol id="m-crab" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M50 38c14 0 24 9 24 20s-10 20-24 20-24-9-24-20 10-20 24-20z"/>
+      <path d="M30 46 16 34c-5-4-4-10 1-13M70 46l14-12c5-4 4-10-1-13"/>
+      <path d="M17 21c-5 1-7 6-5 10s7 5 10 2M83 21c5 1 7 6 5 10s-7 5-10 2"/>
+      <path d="M27 60 12 62M28 68 15 74M30 74l-9 8M73 60l15 2M72 68l13 6M70 74l9 8"/>
+      <path d="M43 40v-6M57 40v-6"/><circle cx="43" cy="33" r="1.4"/><circle cx="57" cy="33" r="1.4"/>
+    </g></symbol>
+
+    <symbol id="m-fish" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M8 50c14-18 34-27 52-27 12 0 22 4 28 11-6 20-25 33-46 33-14 0-26-6-34-17z"/>
+      <path d="M88 34c5-4 8-8 9-13-8 1-14 4-19 8M88 66c5 4 8 8 9 13-8-1-14-4-19-8"/>
+      <path d="M8 50c-3 8-3 16 0 24 7-2 12-8 15-16M46 24c2-7 6-12 11-15"/>
+      <path d="M78 38c-6 8-9 16-9 24"/>
+      <circle cx="82" cy="41" r="1.7"/>
+    </g></symbol>
+
+    <symbol id="m-squid" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M50 6c11 0 19 14 19 32 0 12-4 20-8 22H39c-4-2-8-10-8-22C31 20 39 6 50 6z"/>
+      <path d="M31 20C20 24 13 30 12 38c0 6 8 12 19 12M69 20c11 4 18 10 19 18 0 6-8 12-19 12"/>
+      <path d="M50 14v40"/>
+      <path d="M42 60c-3 12-9 20-18 25M47 60c-3 13-5 24-4 33M53 60c3 13 5 24 4 33M58 60c3 12 9 20 18 25"/>
+      <path d="M37 60c-5 8-12 13-21 15M63 60c5 8 12 13 21 15"/>
+    </g></symbol>
+
+    <symbol id="m-acorn" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M32 44c0 24 7 41 18 49 11-8 18-25 18-49"/>
+      <path d="M28 44c0-10 10-17 22-17s22 7 22 17z"/>
+      <path d="M30 40c12-5 28-5 40 0M31 35c11-5 27-5 38 0"/>
+      <path d="M50 27c0-7-1-11-3-14"/>
+      <path d="M47 16c-6-5-13-6-19-3 3 6 9 9 16 8"/>
+      <path d="M42 54c-1 16 2 27 8 34"/>
+    </g></symbol>
+
+    <symbol id="m-salt" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M40 26 26 34v18l14 8 14-8V34z"/><path d="M40 44 26 34M40 44v16M40 44l14-10"/>
+      <path d="M66 48 56 54v12l10 6 10-6V54z"/><path d="M66 60 56 54M66 60v12M66 60l10-6"/>
+      <path d="M46 68 36 74v10l10 6 10-6V74z"/><path d="M46 80 36 74M46 80v10M46 80l10-6"/>
+      <path d="M22 18l4 4M74 26l5-5M56 14l3 5"/>
+    </g></symbol>
+
+    <symbol id="m-fennel" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M50 92V42"/>
+      <path d="M50 42 24 22M50 42 34 16M50 42v-30M50 42l16-26M50 42l26-20M50 42 30 30M50 42l20-12"/>
+      <circle cx="24" cy="22" r="2"/><circle cx="34" cy="16" r="2"/><circle cx="50" cy="12" r="2"/>
+      <circle cx="66" cy="16" r="2"/><circle cx="76" cy="22" r="2"/><circle cx="30" cy="30" r="2"/><circle cx="70" cy="30" r="2"/>
+      <path d="M50 66c-8 0-13-5-15-11 8-1 13 3 15 8M50 76c8 0 13-5 15-11-8-1-13 3-15 8"/>
+    </g></symbol>
+  </defs>
+</svg>
+
+<div id="prog"><i></i></div>
+<div id="vignette"></div>
+<div id="grain"></div>
+
+<!-- ================= HEADER ================= -->
+<header id="hdr">
+  <div class="wrap hdr-in">
+    <a href="#intro" class="hdr-mark">SAL</a>
+    <nav class="hdr-nav">
+      <a href="#menu">Menu</a>
+      <a href="#casa">A Casa</a>
+      <a href="#vinhos">Vinhos</a>
+      <a href="#pratico">Visitar</a>
+      <a href="#reservar" class="btn-ghost">Reservar</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ================= INTRO ================= -->
+<section id="intro">
+  <div class="atmos" aria-hidden="true">
+    <div class="layer a-base"></div>
+    <div class="a-moon"></div>
+    <div class="layer a-band"></div>
+    <svg class="a-lines" viewBox="0 0 1200 300" preserveAspectRatio="none">
+      <path d="M0 26 C 160 16, 280 40, 460 28 S 800 8, 1200 32"/>
+      <path d="M0 62 C 170 48, 300 76, 480 62 S 820 40, 1200 68"/>
+      <path d="M0 104 C 180 88, 320 118, 500 104 S 840 78, 1200 110"/>
+      <path d="M0 150 C 190 132, 340 164, 520 150 S 860 122, 1200 158"/>
+      <path d="M0 198 C 200 178, 360 212, 540 198 S 880 168, 1200 206"/>
+      <path d="M0 248 C 210 226, 380 262, 560 248 S 900 216, 1200 256"/>
+    </svg>
+    <div class="layer a-deep"></div>
+  </div>
+
+  <div class="intro-top">
+    <div class="wrap">
+      <span class="mono">Est. 2019</span>
+      <span class="mono">38°23′N · 8°47′W</span>
+    </div>
+  </div>
+
+  <h1 id="word" aria-label="SAL"><span>S</span><span>A</span><span>L</span></h1>
+
+  <div class="intro-sub">
+    <div class="l1">Comporta · Atlântico</div>
+    <div class="l2">Um menu. Nove tempos. O que os barcos trouxerem.</div>
+  </div>
+
+  <div class="cue">
+    <span class="mono">Descer</span>
+    <span class="track"><i></i></span>
+  </div>
+</section>
+
+<!-- ================= STATEMENT ================= -->
+<section id="statement">
+  <div class="stmt-glow" aria-hidden="true"></div>
+  <div class="wrap stmt-grid">
+    <div class="stmt-side rv">
+      <div class="sec-label" style="margin-bottom:0">
+        <span class="ln"></span><span class="mono n">01</span><span class="mono">Filosofia</span>
+      </div>
+      <p>Mariana Sequeira cozinha a trinta metros da água. O menu é escrito à quarta-feira, depois da lota de Setúbal, e não volta a repetir-se.</p>
+    </div>
+    <div>
+      <h2 class="stmt-h rv" style="--d:80ms">
+        Não escolhemos o peixe.<br>
+        <span class="dim">Escolhemos o dia em que</span> <em>o mar</em> <span class="dim">decide</span><br>
+        o que vamos servir.
+      </h2>
+      <div class="stmt-meta">
+        <div class="rv" style="--d:160ms"><span class="k">Nove</span><span class="v mono" style="letter-spacing:.16em">Tempos</span><p class="v" style="margin:8px 0 0">Uma sequência única, servida a toda a sala à mesma hora.</p></div>
+        <div class="rv" style="--d:240ms"><span class="k">Semanal</span><span class="v mono" style="letter-spacing:.16em">Rotação</span><p class="v" style="margin:8px 0 0">Escrito à quarta-feira. Nunca repetido dentro do mesmo mês.</p></div>
+        <div class="rv" style="--d:320ms"><span class="k">Vinte e Dois</span><span class="v mono" style="letter-spacing:.16em">Lugares</span><p class="v" style="margin:8px 0 0">Um único serviço por período. Sem mesas de passagem.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= MENU ================= -->
+<section id="menu">
+  <div class="wrap">
+    <div class="sec-label rv"><span class="ln"></span><span class="mono n">02</span><span class="mono">O Menu</span></div>
+
+    <div class="menu-head">
+      <div class="rv">
+        <h2 class="menu-title">Semana de <span class="it">28 de Julho</span></h2>
+        <div class="menu-week">
+          <span class="mono">Lota de Setúbal · Terça</span>
+          <span class="dot"></span>
+          <span class="mono">Nove tempos</span>
+          <span class="dot"></span>
+          <span class="mono acc">Serviço único · 20h00</span>
+        </div>
+      </div>
+      <div class="lang rv" style="--d:100ms" role="group" aria-label="Idioma do menu">
+        <button data-lang="pt" aria-pressed="true">PT</button>
+        <button data-lang="en" aria-pressed="false">EN</button>
+      </div>
+    </div>
+
+    <div class="menu-grid">
+      <div>
+        <div class="courses" id="courses"></div>
+
+        <div class="menu-note">
+          <div class="rv">
+            <div class="mono" style="margin-bottom:8px">Preço</div>
+            <div class="price-line">
+              <span class="p">145 €</span>
+              <span class="mono">por pessoa</span>
+            </div>
+            <p>Harmonização de vinhos, sete copos, 85 €. Serviço de pão e manteiga de algas incluído.</p>
+          </div>
+          <div class="rv" style="--d:120ms">
+            <div class="mono" style="margin-bottom:8px">Vegetariano</div>
+            <p style="margin-top:0">Existe um menu vegetariano de nove tempos, construído sobre horta de Melides, algas e leguminosas fermentadas. Pedimos aviso de 24 horas.</p>
+            <p style="margin-top:12px">Alergias e restrições: indique na reserva. Não trabalhamos com substituições à mesa.</p>
+          </div>
+        </div>
+      </div>
+
+      <aside class="detail rv" style="--d:140ms" id="detail" aria-live="polite">
+        <div class="detail-mark" id="dMark"></div>
+        <div class="d-num mono" id="dNum">Tempo 01</div>
+        <div class="d-nm" id="dName">Ostra da Ria</div>
+        <div class="d-lbl">
+          <span class="mono acc">A copo</span>
+          <div class="d-pair" id="dPair">Aphros “Ten” Loureiro 2022</div>
+          <div class="d-reg" id="dReg">Vinho Verde · Lima</div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ================= THE HOUSE ================= -->
+<section id="casa">
+  <div class="wrap">
+    <div class="sec-label rv"><span class="ln"></span><span class="mono n">03</span><span class="mono">A Casa</span></div>
+    <div class="casa-grid">
+      <div>
+        <h2 class="casa-h rv">Uma sala de cal,<br>madeira e <span class="it">luz baixa</span>.</h2>
+        <div class="casa-body">
+          <p class="rv" style="--d:80ms">A casa era um armazém de rede. Mantivemos as paredes, o pé-direito e a porta grande virada a poente; tirámos tudo o resto. Vinte e dois lugares em carvalho não tratado, uma bancada de pedra de Estremoz onde se termina cada prato à vista.</p>
+          <p class="dim rv" style="--d:150ms">Ao fim da tarde o sol entra rasante e atravessa a sala inteira. Não usamos velas até isso acabar.</p>
+          <p class="dim rv" style="--d:210ms">O terraço fica sobre a duna, protegido por canas. Serve-se aí o primeiro copo e o último — nunca a refeição. Entre Maio e Setembro, se o vento deixar.</p>
+        </div>
+        <div class="casa-facts rv" style="--d:270ms">
+          <div><span class="k">22</span><span class="v mono">Lugares</span></div>
+          <div><span class="k">1</span><span class="v mono">Serviço</span></div>
+          <div><span class="k">40m</span><span class="v mono">Do mar</span></div>
+        </div>
+      </div>
+
+      <figure class="panel rv-l" style="margin:0">
+        <div class="p-l p-sky"></div>
+        <div class="p-sun"></div>
+        <div class="p-l p-haze"></div>
+        <svg class="p-svg" viewBox="0 0 400 500" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M-20 352 C 60 340, 120 366, 200 352 S 340 330, 420 356" opacity=".30"/>
+          <path d="M-20 378 C 70 366, 130 392, 210 378 S 350 356, 420 382" opacity=".22"/>
+          <path d="M-20 404 C 80 392, 140 418, 220 404 S 360 382, 420 408" opacity=".16"/>
+          <path d="M-20 430 C 90 420, 150 444, 230 430 S 370 410, 420 434" opacity=".11"/>
+          <path d="M-20 456 C 100 448, 160 470, 240 456 S 380 438, 420 460" opacity=".08"/>
+          <path d="M-20 336 C 80 330, 140 344, 220 336 S 350 326, 420 340" opacity=".26"/>
+          <path d="M-20 260 C 90 254, 150 266, 230 258 S 360 248, 420 262" opacity=".10"/>
+        </svg>
+        <div class="p-l p-water"></div>
+        <div class="p-l p-vig"></div>
+        <figcaption class="panel-cap"><span class="mono">Poente sobre a duna · Carvalhal</span></figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ================= WINES ================= -->
+<section id="vinhos">
+  <div class="wrap">
+    <div class="sec-label rv"><span class="ln"></span><span class="mono n">04</span><span class="mono">Vinhos</span></div>
+
+    <div class="wine-head">
+      <div class="rv">
+        <h2 class="menu-title">Uma carta <span class="it">curta</span>,<br>quase toda portuguesa.</h2>
+      </div>
+      <div class="rv" style="--d:100ms;display:flex;flex-direction:column;gap:14px;align-items:flex-end">
+        <div class="chips" id="chips" role="group" aria-label="Filtrar vinhos">
+          <button class="chip" data-f="todos" aria-pressed="true">Todos</button>
+          <button class="chip" data-f="brancos" aria-pressed="false">Brancos</button>
+          <button class="chip" data-f="tintos" aria-pressed="false">Tintos</button>
+          <button class="chip" data-f="espumantes" aria-pressed="false">Espumantes</button>
+          <button class="chip" data-f="fortificados" aria-pressed="false">Fortificados</button>
+        </div>
+        <span class="wine-count" id="wineCount">18 referências</span>
+      </div>
+    </div>
+
+    <div class="wines rv" id="wines" style="--d:60ms"></div>
+
+    <div class="wine-foot rv">
+      <p style="margin:0;font-size:13px;color:var(--salt-45);max-width:52ch">Carta completa à mesa, com cerca de duzentas referências. Harmonização de sete copos, 85 €. Serviço de vinho por Rui Aleixo.</p>
+      <span class="mono acc">Adega · 1 400 garrafas</span>
+    </div>
+  </div>
+</section>
+
+<!-- ================= RESERVATION ================= -->
+<section id="reservar">
+  <div class="res-glow" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="sec-label rv"><span class="ln"></span><span class="mono n">05</span><span class="mono">Reservar</span></div>
+    <div class="res-grid">
+      <div class="res-side">
+        <h2 class="res-h rv">Uma mesa,<br><span class="it">um serviço</span>.</h2>
+        <p class="rv" style="--d:80ms">Servimos a sala inteira à mesma hora. Pedimos que chegue dez minutos antes; depois disso o primeiro tempo já saiu.</p>
+        <p class="rv" style="--d:130ms">Mesas até seis pessoas online. Para grupos maiores ou a mesa da bancada, telefone-nos.</p>
+        <div class="hours rv" style="--d:180ms">
+          <span class="mono acc">Horários</span>
+          <dl>
+            <dt>Qua — Dom</dt><dd>Almoço 12:30 — 15:00</dd>
+            <dt></dt><dd>Jantar 19:30 — 23:00</dd>
+            <dt>Seg — Ter</dt><dd>Encerrado</dd>
+          </dl>
+        </div>
+      </div>
+
+      <div class="widget rv" style="--d:120ms">
+        <!-- STEP 1 -->
+        <div class="step on" id="step1">
+          <div class="fld-row">
+            <div class="fld">
+              <label class="mono" for="rDate">Data</label>
+              <input class="ctl" type="date" id="rDate">
+            </div>
+            <div class="fld">
+              <label class="mono" for="rParty">Pessoas</label>
+              <select class="ctl" id="rParty">
+                <option value="1">1 pessoa</option>
+                <option value="2" selected>2 pessoas</option>
+                <option value="3">3 pessoas</option>
+                <option value="4">4 pessoas</option>
+                <option value="5">5 pessoas</option>
+                <option value="6">6 pessoas</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="fld">
+            <span class="mono" style="display:block;margin-bottom:10px">Serviço</span>
+            <div class="seg" id="rService" role="group" aria-label="Serviço">
+              <button data-s="almoco" aria-pressed="false">Almoço</button>
+              <button data-s="jantar" aria-pressed="true">Jantar</button>
+            </div>
+          </div>
+
+          <div class="fld" style="margin-bottom:0">
+            <span class="mono" style="display:block">Horas disponíveis</span>
+            <div class="slots" id="slots"></div>
+            <div class="closed-note" id="closedNote" style="display:none"></div>
+          </div>
+
+          <div class="summary">
+            <div class="s-txt" id="sumTxt">Escolha data, serviço e hora.</div>
+            <button class="btn-solid" id="toStep2" disabled>Continuar</button>
+          </div>
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="step" id="step2">
+          <div class="recap" id="recap"></div>
+          <div class="fld-row">
+            <div class="fld">
+              <label class="mono" for="fName">Nome</label>
+              <input class="ctl" type="text" id="fName" placeholder="Nome e apelido" autocomplete="name">
+            </div>
+            <div class="fld">
+              <label class="mono" for="fPhone">Telefone</label>
+              <input class="ctl" type="tel" id="fPhone" placeholder="+351 —" autocomplete="tel">
+            </div>
+          </div>
+          <div class="fld">
+            <label class="mono" for="fMail">Email</label>
+            <input class="ctl" type="email" id="fMail" placeholder="nome@email.com" autocomplete="email">
+          </div>
+          <div class="fld">
+            <label class="mono" for="fNote">Alergias, restrições ou ocasião</label>
+            <input class="ctl" type="text" id="fNote" placeholder="Opcional">
+          </div>
+          <div class="err mono" id="formErr">Preencha nome, telefone e um email válido.</div>
+          <div class="summary">
+            <button class="btn-text" id="backStep1">← Alterar hora</button>
+            <button class="btn-solid" id="confirmBtn">Confirmar reserva</button>
+          </div>
+        </div>
+
+        <!-- STEP 3 -->
+        <div class="step" id="step3">
+          <div class="ok">
+            <div class="ok-mark"><svg viewBox="0 0 24 24"><path d="M4 12.5 9.5 18 20 6.5"/></svg></div>
+            <h3>Mesa reservada</h3>
+            <p id="okLine">—</p>
+            <p>Enviámos a confirmação por email. Se precisar de alterar, telefone-nos até 24 horas antes.</p>
+            <div class="ref"><span class="mono">Referência</span> <span class="mono" style="color:var(--glass)" id="okRef">—</span></div>
+            <div style="margin-top:30px"><button class="btn-text" id="againBtn">Fazer outra reserva</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PRACTICAL ================= -->
+<section id="pratico">
+  <div class="wrap">
+    <div class="sec-label rv"><span class="ln"></span><span class="mono n">06</span><span class="mono">Visitar</span></div>
+
+    <div class="prat-grid">
+      <div class="prat-col rv">
+        <h4 class="mono acc">Horários</h4>
+        <p>Quarta a Domingo</p>
+        <p class="dim">Almoço 12:30 — 15:00</p>
+        <p class="dim">Jantar 19:30 — 23:00</p>
+        <p class="dim" style="margin-top:12px">Segunda e Terça encerrado</p>
+        <p class="dim">Encerramento anual em Janeiro</p>
+      </div>
+      <div class="prat-col rv" style="--d:80ms">
+        <h4 class="mono acc">Morada</h4>
+        <p>Rua do Areal 12</p>
+        <p>Carvalhal</p>
+        <p>7570-779 Comporta</p>
+        <p class="dim" style="margin-top:12px">Alentejo Litoral, Portugal</p>
+      </div>
+      <div class="prat-col rv" style="--d:160ms">
+        <h4 class="mono acc">Contacto</h4>
+        <p><a href="tel:+351269128440">+351 269 128 440</a></p>
+        <p><a href="mailto:mesa@sal.pt">mesa@sal.pt</a></p>
+        <p class="dim" style="margin-top:12px">Atendemos das 10h às 18h,<br>de quarta a domingo.</p>
+      </div>
+      <div class="prat-col rv" style="--d:240ms">
+        <h4 class="mono acc">Notas</h4>
+        <p class="dim">Estacionamento em areia solta, à entrada do caminho. Não entre de carro na duna.</p>
+        <p class="dim" style="margin-top:12px">Sem código de vestuário. Traga um casaco: o terraço arrefece cedo.</p>
+        <p class="dim" style="margin-top:12px">Sala acessível ao nível do solo.</p>
+      </div>
+    </div>
+
+    <div class="map rv-l">
+      <svg viewBox="0 0 400 150" role="img" aria-label="Mapa esquemático da costa da Comporta com a localização do restaurante">
+        <!-- ocean contour lines -->
+        <path class="sea-l" d="M0 16 C 70 10, 110 22, 168 18 S 280 6, 400 18" opacity=".30"/>
+        <path class="sea-l" d="M0 30 C 68 24, 110 37, 168 32 S 280 20, 400 32" opacity=".45"/>
+        <path class="sea-l" d="M0 44 C 66 38, 108 51, 166 46 S 278 34, 400 46" opacity=".6"/>
+        <path class="sea-l" d="M0 57 C 64 52, 106 64, 164 59 S 276 48, 400 59" opacity=".38"/>
+        <!-- land mass (fill only) -->
+        <path class="land" d="M0 71 C 62 64, 112 77, 176 71 C 244 65, 300 79, 400 71 L400 150 L0 150 Z"/>
+        <!-- coastline (stroke only) -->
+        <path class="coast" d="M0 71 C 62 64, 112 77, 176 71 C 244 65, 300 79, 400 71"/>
+        <!-- Sado estuary cutting inland -->
+        <path class="water" d="M0 90 C 26 87, 52 81, 74 73 C 84 69, 94 67, 101 67 C 94 76, 88 89, 77 99 C 58 116, 28 124, 0 126 Z"/>
+        <path class="coast" d="M0 90 C 26 87, 52 81, 74 73 C 84 69, 94 67, 101 67" opacity=".7"/>
+        <path class="coast" d="M101 67 C 94 76, 88 89, 77 99 C 58 116, 28 124, 0 126" opacity=".7"/>
+        <!-- rice fields -->
+        <g class="rice">
+          <path d="M292 114h74M292 121h74M292 128h74M292 135h74"/>
+          <path d="M304 112v25M322 112v25M340 112v25M356 112v25"/>
+        </g>
+        <!-- roads -->
+        <path class="rd" d="M0 104 C 90 98, 180 111, 262 103 S 350 92, 400 100"/>
+        <path class="rd" d="M226 150 C 228 130, 230 110, 232 93"/>
+        <!-- pin -->
+        <g class="pin" transform="translate(232,92)">
+          <circle class="ring" r="4"/><circle r="2.2"/>
+        </g>
+        <text x="240" y="90" class="lbl-acc" style="font-size:6px">SAL</text>
+        <text x="240" y="99">Carvalhal</text>
+        <text x="8" y="14">Atlântico</text>
+        <text x="300" y="109">Comporta</text>
+        <text x="6" y="112">Estuário do Sado</text>
+        <text x="150" y="96">N261</text>
+        <text x="292" y="146">Arrozais</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="wrap">
+    <div class="f-mark rv" aria-hidden="true">SAL</div>
+    <div class="f-rows">
+      <span class="mono">© 2026 SAL — Comporta</span>
+      <div class="f-links">
+        <a class="mono" href="#menu">Menu</a>
+        <a class="mono" href="#reservar">Reservar</a>
+        <a class="mono" href="mailto:mesa@sal.pt">mesa@sal.pt</a>
+        <a class="mono" href="tel:+351269128440">+351 269 128 440</a>
+      </div>
+      <span class="mono">Chefe Mariana Sequeira</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+var RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ==========================================================
+   DATA
+   ========================================================== */
+var COURSES = [
+  {n:'01', name:'Ostra da Ria',          mark:'m-oyster',  pt:'Gelo de maçã verde, funcho-marinho, água do mar.',            en:'Green apple ice, sea fennel, cold seawater.',                pair:'Aphros “Ten” Loureiro 2022',             reg:'Vinho Verde · Lima'},
+  {n:'02', name:'Pão e Manteiga',        mark:'m-wheat',   pt:'Massa-mãe de trigo barbela, algas do Sado, flor de sal.',     en:'Barbela sourdough, Sado seaweed, flor de sal.',              pair:'Filipa Pato 3B Rosé s/a',                reg:'Bairrada · Método clássico'},
+  {n:'03', name:'Carabineiro',           mark:'m-prawn',   pt:'Tomate fermentado, funcho-marinho, óleo da cabeça.',          en:'Fermented tomato, sea fennel, oil from the head.',           pair:'Vale da Capucha Arinto 2021',            reg:'Lisboa · Torres Vedras'},
+  {n:'04', name:'Vieira na Brasa',       mark:'m-scallop', pt:'Alho-francês queimado, manteiga tostada, lima.',              en:'Charred leek, brown butter, lime.',                         pair:'Casa de Mouraz Encruzado 2021',          reg:'Dão · Tondela'},
+  {n:'05', name:'Sapateira',             mark:'m-crab',    pt:'Trigo sarraceno tostado, creme de ostra, aipo.',              en:'Toasted buckwheat, oyster cream, celery.',                   pair:'Soalheiro Primeiras Vinhas 2020',        reg:'Monção e Melgaço'},
+  {n:'06', name:'Robalo de Anzol',       mark:'m-fish',    pt:'Ameijoa-branca, limão em sal, agrião do mar.',                en:'Clams, salted lemon, sea rocket.',                          pair:'Filipa Pato Nossa Calcário Branco 2020', reg:'Bairrada · Óis do Bairro'},
+  {n:'07', name:'Choco na Sua Tinta',    mark:'m-squid',   pt:'Arroz carolino, alho novo, flor de coentro.',                 en:'Carolino rice, new garlic, coriander flower.',               pair:'Conceito Bastardo 2021',                 reg:'Douro Superior'},
+  {n:'08', name:'Porco Preto e Berbigão',mark:'m-acorn',     pt:'Bolota, talos de coentro, gordura curada seis meses.',        en:'Acorn, coriander stems, six-month cured fat.',               pair:'Luís Pato Vinhas Velhas Baga 2018',      reg:'Bairrada · Amoreira da Gândara'},
+  {n:'09', name:'Areia',                 mark:'m-salt',    pt:'Pinhão, caramelo salgado, gelado de leite de ovelha.',        en:'Pine nut, salt caramel, sheep’s milk ice cream.',            pair:'Barbeito Sercial 10 Anos',               reg:'Madeira · Estufa velha'}
+];
+
+var WINES = [
+  {c:'brancos', p:'Vale da Capucha', w:'Arinto', r:'Lisboa · Torres Vedras', y:'2021', n:'Giz e casca de limão; sal a fechar.'},
+  {c:'brancos', p:'Soalheiro', w:'Primeiras Vinhas Alvarinho', r:'Monção e Melgaço', y:'2020', n:'Fruta de caroço presa por acidez atlântica.'},
+  {c:'brancos', p:'Quinta do Ameal', w:'Loureiro', r:'Vinho Verde · Lima', y:'2022', n:'Folha de lima e flor branca, quase sem peso.'},
+  {c:'brancos', p:'Casa de Mouraz', w:'Encruzado', r:'Dão · Tondela', y:'2021', n:'Cera de abelha e marmelo; final longo e calado.'},
+  {c:'brancos', p:'Filipa Pato', w:'Nossa Calcário Bical', r:'Bairrada · Óis do Bairro', y:'2020', n:'Tensão calcária, amêndoa verde, concha de ostra.'},
+  {c:'brancos', p:'Herdade do Rocim', w:'Fresh From Amphora', r:'Alentejo · Vidigueira', y:'2022', n:'Talha antiga: casca, ervas secas, textura seca.'},
+
+  {c:'tintos', p:'Luís Pato', w:'Vinhas Velhas Baga', r:'Bairrada · Amoreira da Gândara', y:'2018', n:'Ginja e fumo de lenha; tanino fino, direito.'},
+  {c:'tintos', p:'Quinta da Pellada', w:'Touriga Nacional', r:'Dão · Serra da Estrela', y:'2017', n:'Violetas e pó de granito, fresco e vertical.'},
+  {c:'tintos', p:'Herdade do Mouchão', w:'Alicante Bouschet', r:'Alentejo · Sousel', y:'2015', n:'Tinta e figo seco; pede o porco preto.'},
+  {c:'tintos', p:'Conceito', w:'Bastardo', r:'Douro Superior', y:'2021', n:'Pálido e leve, fruta vermelha e pimenta.'},
+  {c:'tintos', p:'Aphros', w:'Vinhão', r:'Vinho Verde · Lima', y:'2020', n:'Silva e lousa; servido fresco, quase a copo cheio.'},
+  {c:'tintos', p:'Quinta do Mouro', w:'Zagalos', r:'Alentejo · Estremoz', y:'2019', n:'Esteva, alecrim e uma doçura de sol contida.'},
+
+  {c:'espumantes', p:'Filipa Pato', w:'3B Rosé', r:'Bairrada', y:'s/a', n:'Baga e Bical; maçã brava e giz.'},
+  {c:'espumantes', p:'Quinta dos Abibes', w:'Blanc de Blancs Bruto Natural', r:'Bairrada · Cantanhede', y:'2018', n:'Bolha fina, côdea de pão, muito tenso.'},
+  {c:'espumantes', p:'Vértice', w:'Cuvée Bruto', r:'Douro · Cima Corgo', y:'2016', n:'Trinta e seis meses em cave; noz e citrino.'},
+
+  {c:'fortificados', p:'Niepoort', w:'Colheita Porto', r:'Douro · Vila Nova de Gaia', y:'1997', n:'Noz, óleo de laranja, doçura discreta.'},
+  {c:'fortificados', p:'Barbeito', w:'Sercial 10 Anos', r:'Madeira', y:'s/a', n:'Seco, salino, quase austero.'},
+  {c:'fortificados', p:'Blandy’s', w:'Bual 20 Anos', r:'Madeira', y:'s/a', n:'Café, alperce seco e sal marinho.'}
+];
+
+/* ==========================================================
+   SCROLL PROGRESS
+   ========================================================== */
+var progBar = document.querySelector('#prog i');
+var hdr = document.getElementById('hdr');
+var ticking = false;
+function onScroll(){
+  var st = window.pageYOffset || document.documentElement.scrollTop;
+  var h = document.documentElement.scrollHeight - window.innerHeight;
+  var p = h > 0 ? Math.min(1, Math.max(0, st / h)) : 0;
+  progBar.style.transform = 'scaleX(' + p + ')';
+  if (st > window.innerHeight * 0.72) hdr.classList.add('on'); else hdr.classList.remove('on');
+  ticking = false;
+}
+window.addEventListener('scroll', function(){
+  if (!ticking){ ticking = true; window.requestAnimationFrame(onScroll); }
+}, {passive:true});
+window.addEventListener('resize', onScroll, {passive:true});
+
+/* ==========================================================
+   REVEALS
+   ========================================================== */
+function initReveals(){
+  var els = document.querySelectorAll('.rv, .rv-l');
+  if (!('IntersectionObserver' in window) || RM){
+    Array.prototype.forEach.call(els, function(el){ el.classList.add('in'); });
+    return;
+  }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, {rootMargin:'0px 0px -12% 0px', threshold:0.08});
+  Array.prototype.forEach.call(els, function(el){ io.observe(el); });
+}
+
+/* ==========================================================
+   MENU
+   ========================================================== */
+var lang = 'pt';
+var coursesEl = document.getElementById('courses');
+var dMark = document.getElementById('dMark');
+var dNum = document.getElementById('dNum');
+var dName = document.getElementById('dName');
+var dPair = document.getElementById('dPair');
+var dReg = document.getElementById('dReg');
+var activeCourse = -1;
+
+function buildCourses(){
+  var frag = document.createDocumentFragment();
+  COURSES.forEach(function(c, i){
+    var b = document.createElement('button');
+    b.className = 'course rv';
+    b.style.setProperty('--d', (i * 55) + 'ms');
+    b.setAttribute('data-i', i);
+    b.innerHTML =
+      '<span class="num">' + c.n + '</span>' +
+      '<span class="nm">' + c.name + '</span>' +
+      '<span class="ds">' + c[lang] + '</span>' +
+      '<span class="inline-pair">' + c.pair + '</span>';
+    b.addEventListener('mouseenter', function(){ setCourse(i); });
+    b.addEventListener('focus', function(){ setCourse(i); });
+    b.addEventListener('click', function(){ setCourse(i); });
+    frag.appendChild(b);
+  });
+  coursesEl.appendChild(frag);
+}
+
+function setCourse(i){
+  if (i === activeCourse) return;
+  activeCourse = i;
+  var c = COURSES[i];
+  Array.prototype.forEach.call(coursesEl.children, function(el, j){
+    el.classList.toggle('act', j === i);
+  });
+  dMark.innerHTML = '<svg viewBox="0 0 100 100" aria-hidden="true"><use href="#' + c.mark + '"/></svg>';
+  dNum.textContent = 'Tempo ' + c.n;
+  dName.textContent = c.name;
+  dPair.textContent = c.pair;
+  dReg.textContent = c.reg;
+  if (!RM){
+    var d = document.getElementById('detail');
+    d.classList.remove('detail-fade');
+    void d.offsetWidth;
+    d.classList.add('detail-fade');
+  }
+}
+
+function setLang(l){
+  if (l === lang) return;
+  lang = l;
+  document.querySelectorAll('.lang button').forEach(function(b){
+    b.setAttribute('aria-pressed', String(b.getAttribute('data-lang') === l));
+  });
+  var rows = coursesEl.querySelectorAll('.ds');
+  rows.forEach(function(el){ el.classList.add('swap'); });
+  window.setTimeout(function(){
+    rows.forEach(function(el, i){ el.textContent = COURSES[i][lang]; el.classList.remove('swap'); });
+  }, RM ? 0 : 260);
+}
+document.querySelectorAll('.lang button').forEach(function(b){
+  b.addEventListener('click', function(){ setLang(b.getAttribute('data-lang')); });
+});
+
+/* ==========================================================
+   WINES
+   ========================================================== */
+var winesEl = document.getElementById('wines');
+var wineCount = document.getElementById('wineCount');
+
+function buildWines(){
+  var frag = document.createDocumentFragment();
+  WINES.forEach(function(w){
+    var row = document.createElement('div');
+    row.className = 'wine';
+    row.setAttribute('data-c', w.c);
+    row.innerHTML =
+      '<div class="prod">' + w.p + '<small>' + w.w + '</small></div>' +
+      '<div class="reg">' + w.r + '</div>' +
+      '<div class="yr">' + w.y + '</div>' +
+      '<div class="note">' + w.n + '</div>';
+    frag.appendChild(row);
+  });
+  winesEl.appendChild(frag);
+}
+
+function filterWines(f){
+  var shown = 0;
+  Array.prototype.forEach.call(winesEl.children, function(row){
+    var match = (f === 'todos' || row.getAttribute('data-c') === f);
+    row.classList.toggle('hide', !match);
+    row.classList.remove('anim');
+    if (match){
+      shown++;
+      if (!RM){
+        row.style.animationDelay = (shown * 28) + 'ms';
+        void row.offsetWidth;
+        row.classList.add('anim');
+      }
+    }
+  });
+  wineCount.textContent = shown + (shown === 1 ? ' referência' : ' referências');
+}
+document.getElementById('chips').addEventListener('click', function(e){
+  var btn = e.target.closest('.chip');
+  if (!btn) return;
+  this.querySelectorAll('.chip').forEach(function(c){ c.setAttribute('aria-pressed', String(c === btn)); });
+  filterWines(btn.getAttribute('data-f'));
+});
+
+/* ==========================================================
+   RESERVATION
+   ========================================================== */
+var LUNCH  = ['12:30','13:00','13:30','14:00','14:30'];
+var DINNER = ['19:30','20:00','20:30','21:00','21:30','22:00'];
+
+var rDate = document.getElementById('rDate');
+var rParty = document.getElementById('rParty');
+var slotsEl = document.getElementById('slots');
+var closedNote = document.getElementById('closedNote');
+var sumTxt = document.getElementById('sumTxt');
+var toStep2 = document.getElementById('toStep2');
+var service = 'jantar';
+var slot = null;
+
+var DAYS = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+var MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+function pad(n){ return n < 10 ? '0' + n : '' + n; }
+function toISO(d){ return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()); }
+function parseISO(s){
+  var p = String(s).split('-');
+  return new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]));
+}
+function hash(str){
+  var h = 2166136261;
+  for (var i = 0; i < str.length; i++){ h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return h >>> 0;
+}
+function isOpen(d){ var w = d.getDay(); return w !== 1 && w !== 2; }
+function fmtDate(d){ return DAYS[d.getDay()] + ', ' + d.getDate() + ' de ' + MONTHS[d.getMonth()]; }
+
+// default: next open day, at least 2 days out
+(function seedDate(){
+  var d = new Date(); d.setHours(12,0,0,0); d.setDate(d.getDate() + 2);
+  var guard = 0;
+  while (!isOpen(d) && guard++ < 7) d.setDate(d.getDate() + 1);
+  rDate.value = toISO(d);
+  var min = new Date(); min.setHours(12,0,0,0);
+  rDate.min = toISO(min);
+  var max = new Date(); max.setMonth(max.getMonth() + 4);
+  rDate.max = toISO(max);
+})();
+
+function buildSlots(){
+  slot = null;
+  slotsEl.innerHTML = '';
+  var iso = rDate.value;
+  if (!iso){ closedNote.style.display = 'none'; updateSummary(); return; }
+  var d = parseISO(iso);
+  var party = Number(rParty.value);
+
+  if (!isOpen(d)){
+    slotsEl.style.display = 'none';
+    closedNote.style.display = 'block';
+    closedNote.textContent = 'Encerrado à ' + DAYS[d.getDay()].toLowerCase() + '. A casa serve de quarta a domingo — escolha outra data.';
+    updateSummary();
+    return;
+  }
+  slotsEl.style.display = '';
+  closedNote.style.display = 'none';
+
+  var list = (service === 'almoco') ? LUNCH : DINNER;
+  var free = 0;
+  list.forEach(function(t){
+    var b = document.createElement('button');
+    b.className = 'slot';
+    b.textContent = t;
+    b.setAttribute('aria-pressed','false');
+    var seed = hash(iso + '|' + service + '|' + t);
+    var taken = (seed % 10) < 3 || (party >= 5 && (seed % 10) < 5);
+    if (taken){ b.disabled = true; b.title = 'Sem disponibilidade'; }
+    else {
+      free++;
+      b.addEventListener('click', function(){
+        slot = t;
+        slotsEl.querySelectorAll('.slot').forEach(function(s){ s.setAttribute('aria-pressed', String(s === b)); });
+        updateSummary();
+      });
+    }
+    slotsEl.appendChild(b);
+  });
+
+  if (free === 0){
+    closedNote.style.display = 'block';
+    closedNote.textContent = 'Sem mesas para ' + party + ' pessoas neste serviço. Tente outro dia, ou telefone-nos: +351 269 128 440.';
+  }
+  updateSummary();
+}
+
+function updateSummary(){
+  var iso = rDate.value;
+  var party = Number(rParty.value);
+  if (!iso || !slot){
+    sumTxt.innerHTML = 'Escolha data, serviço e hora.';
+    toStep2.disabled = true;
+    return;
+  }
+  var d = parseISO(iso);
+  sumTxt.innerHTML = '<strong>' + party + (party === 1 ? ' pessoa' : ' pessoas') + '</strong> · ' +
+    fmtDate(d) + ' · <strong>' + slot + '</strong>';
+  toStep2.disabled = false;
+}
+
+rDate.addEventListener('change', buildSlots);
+rParty.addEventListener('change', buildSlots);
+document.getElementById('rService').addEventListener('click', function(e){
+  var b = e.target.closest('button[data-s]');
+  if (!b) return;
+  service = b.getAttribute('data-s');
+  this.querySelectorAll('button').forEach(function(x){ x.setAttribute('aria-pressed', String(x === b)); });
+  buildSlots();
+});
+
+function goStep(n){
+  ['step1','step2','step3'].forEach(function(id, i){
+    document.getElementById(id).classList.toggle('on', i === n - 1);
+  });
+}
+
+toStep2.addEventListener('click', function(){
+  var d = parseISO(rDate.value);
+  var party = Number(rParty.value);
+  document.getElementById('recap').innerHTML =
+    '<div><span class="mono">Data</span><span class="rv2">' + d.getDate() + ' ' + MONTHS[d.getMonth()].slice(0,3) + '</span></div>' +
+    '<div><span class="mono">Hora</span><span class="rv2">' + slot + '</span></div>' +
+    '<div><span class="mono">Pessoas</span><span class="rv2">' + party + '</span></div>' +
+    '<div><span class="mono">Serviço</span><span class="rv2">' + (service === 'almoco' ? 'Almoço' : 'Jantar') + '</span></div>' +
+    '<div><span class="mono">Menu</span><span class="rv2">145 €</span></div>';
+  goStep(2);
+});
+document.getElementById('backStep1').addEventListener('click', function(){ goStep(1); });
+
+document.getElementById('confirmBtn').addEventListener('click', function(){
+  var name = document.getElementById('fName').value.trim();
+  var phone = document.getElementById('fPhone').value.trim();
+  var mail = document.getElementById('fMail').value.trim();
+  var err = document.getElementById('formErr');
+  var okMail = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail);
+  if (name.length < 2 || phone.length < 6 || !okMail){
+    err.classList.add('on');
+    return;
+  }
+  err.classList.remove('on');
+  var d = parseISO(rDate.value);
+  var party = Number(rParty.value);
+  document.getElementById('okLine').innerHTML =
+    name.split(' ')[0] + ', temos mesa para ' + party + (party === 1 ? ' pessoa' : ' pessoas') +
+    ' na ' + fmtDate(d).toLowerCase() + ', às ' + slot + '.';
+  var ref = 'SAL-' + String(hash(name + rDate.value + slot) % 100000).padStart(5,'0');
+  document.getElementById('okRef').textContent = ref;
+  goStep(3);
+});
+
+document.getElementById('againBtn').addEventListener('click', function(){
+  document.getElementById('fName').value = '';
+  document.getElementById('fPhone').value = '';
+  document.getElementById('fMail').value = '';
+  document.getElementById('fNote').value = '';
+  buildSlots();
+  goStep(1);
+});
+
+/* ==========================================================
+   INIT
+   ========================================================== */
+buildCourses();
+buildWines();
+buildSlots();
+setCourse(0);
+initReveals();
+onScroll();
+})();
+</script>
+</body>
+</html>

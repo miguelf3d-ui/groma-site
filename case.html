@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GROMA — Case study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--void:#08090A;--deep:#0C0E10;--line:rgba(255,255,255,.10);--text:#F1F3EF;--muted:#878D93;
+  --dim:#5D6369;--acid:#B8FF3C;--sans:"Archivo",system-ui,sans-serif;--serif:"Instrument Serif",serif;
+  --mono:"JetBrains Mono",ui-monospace,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--void);color:var(--text);font-family:var(--sans);height:100svh;display:flex;flex-direction:column;overflow:hidden}
+a{color:inherit;text-decoration:none}
+.mono{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+
+.bar{height:58px;flex:0 0 58px;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:0 18px;border-bottom:1px solid var(--line);background:var(--deep);z-index:10}
+.bl,.br{display:flex;align-items:center;gap:14px;min-width:0}
+.back{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);
+  padding:8px 13px;border:1px solid var(--line);border-radius:999px;transition:.25s;white-space:nowrap}
+.back:hover{color:var(--text);border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.05)}
+.brand{display:flex;align-items:center;gap:9px}
+.brand svg{width:17px;height:17px}
+.brand b{font-family:var(--mono);font-weight:500;font-size:12px;letter-spacing:.24em;text-transform:uppercase}
+.ttl{display:flex;align-items:baseline;gap:12px;min-width:0}
+.ttl h1{font-size:15px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ttl .n{font-family:var(--mono);font-size:11px;color:var(--acid)}
+.btn{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:500;padding:9px 15px;
+  border-radius:999px;border:1px solid var(--line);color:var(--text);transition:.25s;white-space:nowrap;cursor:pointer;background:none;font-family:inherit}
+.btn:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.26)}
+.btn.on{background:var(--acid);color:#0A0B0C;border-color:var(--acid)}
+@media(max-width:760px){.hide-s{display:none}}
+
+.stage{flex:1;position:relative;overflow:hidden;background:#000}
+#f{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+.load{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:var(--void);
+  transition:opacity .5s;pointer-events:none}
+.load.gone{opacity:0}
+.load .r{width:34px;height:34px;border:1.5px solid rgba(255,255,255,.14);border-top-color:var(--acid);
+  border-radius:50%;animation:spin .9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.notes{position:absolute;top:0;right:0;bottom:0;width:min(430px,92vw);background:rgba(10,12,14,.93);
+  backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-left:1px solid var(--line);
+  padding:34px 32px;overflow-y:auto;transform:translateX(100%);transition:transform .45s cubic-bezier(.2,.7,.3,1);z-index:5}
+.notes.open{transform:none}
+.notes h2{font-size:26px;font-weight:600;letter-spacing:-.03em;margin:14px 0 6px}
+.notes h2 em{font-family:var(--serif);font-style:italic;color:var(--acid);font-weight:400}
+.notes .sub{color:var(--muted);font-size:14px;line-height:1.55}
+.notes section{margin-top:28px}
+.notes h3{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--acid);margin-bottom:12px}
+.notes p{color:var(--muted);font-size:14.5px;line-height:1.62}
+.notes ul{list-style:none;margin-top:4px}
+.notes li{color:var(--muted);font-size:14.5px;line-height:1.55;padding-left:18px;position:relative;margin-bottom:11px}
+.notes li::before{content:"";position:absolute;left:0;top:.62em;width:6px;height:1px;background:var(--acid)}
+.facts{border-top:1px solid var(--line);margin-top:26px}
+.facts div{display:flex;justify-content:space-between;gap:16px;padding:11px 0;border-bottom:1px solid var(--line);
+  font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim)}
+.facts div b{font-weight:400;color:var(--text);text-align:right}
+.nav-lr{display:flex;gap:8px;margin-top:30px}
+.nav-lr a{flex:1;text-align:center;font-size:12.5px;padding:11px;border:1px solid var(--line);border-radius:10px;
+  color:var(--muted);transition:.25s}
+.nav-lr a:hover{color:var(--text);background:rgba(255,255,255,.05)}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div class="bl">
+    <a class="back" href="index.html#work">← <span class="hide-s">Back to work</span></a>
+    <a class="brand hide-s" href="index.html">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20" stroke="#F1F3EF" stroke-width="1.5"/>
+      <path d="M12 2.6v4M12 21.4v-4M2.6 12h4M21.4 12h-4" stroke="#B8FF3C" stroke-width="1.5"/>
+      <circle cx="12" cy="12" r="2.2" stroke="#F1F3EF" stroke-width="1.5"/></svg><b>Groma</b></a>
+  </div>
+  <div class="ttl"><span class="n" id="pn">—</span><h1 id="pt">Loading</h1></div>
+  <div class="br">
+    <button class="btn" id="tn">Case notes</button>
+    <a class="btn hide-s" id="op" target="_blank" rel="noopener">Open standalone ↗</a>
+  </div>
+</div>
+
+<div class="stage">
+  <iframe id="f" title="Project demo" loading="eager"></iframe>
+  <div class="load" id="ld"><div class="r"></div></div>
+  <aside class="notes" id="nt"></aside>
+</div>
+
+<script>
+const P={
+"02":{n:"02",t:"Halyard — operations console",f:"demos/02-operations.html",
+ kicker:"Back-office & dashboards",
+ h:"The screen someone <em>lives</em> in.",
+ sub:"A freight operations console for a European logistics operator. Twenty-six live shipments, four ports, one person accountable for all of it.",
+ brief:"Operations managers were running the day out of a spreadsheet exported every morning at 06:00. By 11:00 it was already wrong. The brief was to replace it with something that could be trusted at a glance and worked at speed for eight straight hours.",
+ dec:["Density over comfort. 40px rows, hairline separators, tabular figures. A tool for a professional is not a landing page — reducing scan cost matters more than breathing room.",
+      "Status is a badge, never a colour alone. Tint, border and dot together, so the table survives a colourblind reviewer and a bad monitor.",
+      "Selection changes the header, not the layout. Selecting rows swaps the KPI strip for a bulk-action bar in place — nothing below moves, so the eye never loses its row.",
+      "The detail drawer narrows the table rather than covering it. Context is never lost; the columns simply become denser."],
+ has:["Sortable columns, live text filter, segmented status filter and four saved views that cross-filter correctly",
+      "Row selection with a bulk-action bar and an accurate count",
+      "A slide-in detail drawer with the shipment's own timeline, documents and assignees",
+      "A real empty state when filters return nothing"],
+ role:"Product design · UI · Design system",time:"Studio demo · 2026",stack:"HTML · CSS · Vanilla JS"},
+
+"03":{n:"03",t:"Cadence — design system",f:"demos/03-system.html",
+ kicker:"Design systems",
+ h:"Documentation that <em>practises</em> itself.",
+ sub:"A design system for financial products, version 3.2.0. The page you are looking at is built from the tokens it documents.",
+ brief:"Four squads were shipping four different buttons. The brief was not a component library — it was the documentation and governance that makes a component library survive its second year.",
+ dec:["Every surface on this page resolves from the same custom properties it documents. Flipping the theme is a real test of the system, not a decoration.",
+      "The preview is live and the code follows it. If a designer changes the variant, the JSX under it changes too — so what gets copied is always what was seen.",
+      "Guidance is written as 'when to use / when not to', with rendered examples. Prose without a picture gets ignored; a picture without prose gets misread.",
+      "Accessibility is a first-class section with contrast ratios and a keyboard interaction table, not a footnote."],
+ has:["A working preview with variant, size, disabled, loading and icon controls that re-render live",
+      "Syntax-highlighted code that stays in sync, with a copy confirmation",
+      "The full colour scale — click any swatch to copy its token name",
+      "A genuine light and dark theme, each tuned separately"],
+ role:"Design systems · Documentation · UI",time:"Studio demo · 2026",stack:"HTML · CSS custom properties · Vanilla JS"},
+
+"04":{n:"04",t:"Atelier Nord — commerce",f:"demos/04-commerce.html",
+ kicker:"E-commerce",
+ h:"Art direction as a <em>constraint</em>.",
+ sub:"A Scandinavian-Portuguese ready-to-wear label. Fifteen pieces, one season, no photography budget yet.",
+ brief:"The collection existed before the campaign shoot did. Rather than wait, the storefront was art-directed around drawn garments on tinted studio grounds — a look consistent enough to become the brand's own.",
+ dec:["Every product image is composed, not sourced. One light direction, one floor line, one grain — so eight products read as one shoot.",
+      "Colour swatches tint the garment in place instead of swapping an asset. Fewer files, and the interaction feels physical.",
+      "Almost no radius, no shadows. Whitespace and type contrast carry the luxury signal; effects would cheapen it.",
+      "The sold-out size is stated plainly and offers a back-in-stock prompt. Hiding scarcity loses more sales than showing it."],
+ has:["Sort and filter that genuinely reorder the grid",
+      "A product detail view with colour, size, and three accordions of real content",
+      "A focus-trapped cart drawer with steppers, a live subtotal and a proper empty state",
+      "Newsletter validation and a header that solidifies on scroll"],
+ role:"Art direction · UI · Front-end",time:"Studio demo · 2026",stack:"HTML · CSS · SVG · Vanilla JS"},
+
+"05":{n:"05",t:"Vale — business banking",f:"demos/05-banking.html",
+ kicker:"Mobile product",
+ h:"Five screens that answer <em>one</em> question.",
+ sub:"A European business account for studios and small teams. Multi-currency balances, instant SEPA, and books that close themselves.",
+ brief:"Founders open a banking app for one reason: what do I have, and what just moved. Everything else is secondary and most apps bury the answer under marketing.",
+ dec:["The balance is the largest object on the screen, in tabular figures, with cents at reduced opacity so the number reads as one shape.",
+      "Pending is a visual state, not a label. Dashed pill and a lighter amount, so unsettled money never looks like cleared money.",
+      "Freezing a card frosts and desaturates the card itself. The control and its consequence occupy the same place.",
+      "Every transition is 220–320ms and eases out. In a money app, bounce reads as unserious."],
+ has:["Five navigable screens with a working tab bar",
+      "Transaction detail, a fanned card stack with a live freeze toggle",
+      "A payment keypad that types real amounts into a live caret display, with a success animation",
+      "An SVG donut whose segments and category rows highlight each other"],
+ role:"Product design · Mobile UI · Motion",time:"Studio demo · 2026",stack:"HTML · CSS · SVG · Vanilla JS"},
+
+"06":{n:"06",t:"Clínica Aurora — booking",f:"demos/06-clinic.html",
+ kicker:"Health · Accessibility",
+ h:"Built for someone who is <em>worried</em>.",
+ sub:"A multi-speciality clinic in Lisbon. The whole appointment journey, from speciality to confirmation.",
+ brief:"People book healthcare when something is wrong. The interface has to be calm, legible, forgiving of mistakes, and completable by someone using a keyboard, a screen reader, or one hand on a phone in a waiting room.",
+ dec:["The entire booking can be completed with a keyboard alone. Arrow keys walk the calendar; unavailable days state their reason in the accessible label.",
+      "Errors are specific and human, tied to their field, and summarised at the top on submit. 'Invalid input' helps nobody.",
+      "The summary panel fills in live and is announced politely. The person always knows what they have chosen so far.",
+      "No countdown timers, no scarcity banners, no dark patterns. Pressure has no place in a medical booking."],
+ has:["A four-step wizard with a live, announced summary panel",
+      "A real March 2026 calendar with correct weekday alignment and keyboard navigation",
+      "Conditional fields, a character counter, and validation that focuses the first invalid input",
+      "Clinicians, insurers and an FAQ, all keyboard reachable"],
+ role:"UX · Accessibility · Forms · UI",time:"Studio demo · 2026",stack:"HTML · CSS · Vanilla JS · ARIA"},
+
+"07":{n:"07",t:"Marina Sul — property",f:"demos/07-property.html",
+ kicker:"3D · Spatial interface",
+ h:"An architect's <em>drawing</em>, made live.",
+ sub:"A new-build development on the Tagus estuary. Four blocks, eight floors, ninety-six apartments, all available to explore.",
+ brief:"Sales teams were emailing PDF floor plans and a colour-coded spreadsheet of availability. Buyers could not see where a unit sat in the building, which orientation it faced, or what was left.",
+ dec:["The masterplan is a true 30° axonometric with correct occlusion and three-value face shading — the conventions of an architectural sheet, including the title block, scale bar and north arrow.",
+      "Hovering a floor lifts it and everything above it. The building behaves the way a physical model would.",
+      "Drilling from the axonometric into a 2D plan is a transition, not a page load. Double-line walls, poché, door swings and a lift core — plan conventions, not boxes.",
+      "Filters dim rather than remove. Buyers need to see what they have excluded, otherwise they lose their bearings."],
+ has:["An interactive axonometric of four blocks with per-floor states and tooltips",
+      "A real 2D floor plan per floor, with clickable units",
+      "Typology, price, floor and orientation filters with a live match count",
+      "A unit detail panel with areas, orientation, price per m², and a comparison tray"],
+ role:"3D · Interface · Front-end",time:"Studio demo · 2026",stack:"HTML · SVG · CSS · Vanilla JS"},
+
+"08":{n:"08",t:"Convento de São Bento",f:"demos/08-heritage.html",
+ kicker:"Immersive · Heritage",
+ h:"A guided visit, drawn in <em>vector</em>.",
+ sub:"Six stops through a 16th-century Benedictine house in the Alentejo — cloister, refectory, chapter house, library, bell tower, chapel.",
+ brief:"Heritage sites want immersive visits and cannot afford a photogrammetry campaign. This proves the experience layer can be built first, and the real imagery dropped in later without redesigning anything.",
+ dec:["Every scene is one-point perspective built from layered SVG. Far layers are lighter and desaturated, near layers dark and contrasted — atmospheric depth done with opacity, not textures.",
+      "Layers parallax at different rates with the pointer. Depth you can feel is worth more than resolution you can count.",
+      "Narration is written to be worth reading, not to fill space. If the copy is dull, no amount of motion saves the stop.",
+      "The audio player is honest about being a simulation. A fake waveform that plays nothing would be a lie in a portfolio."],
+ has:["Six distinct architectural scenes with cross-fade travel between them",
+      "Positioned hotspots with detail cards and generated ornament illustrations",
+      "A chapter rail, a monastery plan tracking position, PT/EN, and arrow-key navigation",
+      "Full reduced-motion support"],
+ role:"Concept · Art direction · Interface",time:"Studio demo · 2026",stack:"HTML · SVG · CSS · Vanilla JS"},
+
+"09":{n:"09",t:"SAL — restaurant",f:"demos/09-restaurant.html",
+ kicker:"Brand site",
+ h:"One menu. One <em>gesture</em>.",
+ sub:"A coastal fine-dining room in Comporta. One tasting menu, changed weekly, driven by what the boats bring in.",
+ brief:"A restaurant site has two jobs: make someone want to go, and let them book in under a minute. Most manage the second and forget the first.",
+ dec:["The opening is a full viewport of nothing but the name and the sea. Restraint is the argument — a fine-dining room that shouts is not a fine-dining room.",
+      "Every visual is generated: dusk gradient fields, drawn wave contours, ingredient marks in line. Consistent, weightless, and no stock photography to date the site.",
+      "The menu reveals its wine pairing on hover, one course at a time. The whole list at once is a wall; one course at a time is a meal.",
+      "Motion runs at 500–800ms. Slow is the brand."],
+ has:["A letter-by-letter opening over a drifting generated seascape",
+      "Nine courses with pairings and ingredient marks, in PT and EN",
+      "A filterable wine list of eighteen real Portuguese producers",
+      "A three-step reservation with real slot availability and a success state"],
+ role:"Art direction · Brand site · Front-end",time:"Studio demo · 2026",stack:"HTML · SVG · CSS · Vanilla JS"},
+
+"10":{n:"10",t:"Ledgerline — B2B SaaS",f:"demos/10-saas.html",
+ kicker:"Marketing site",
+ h:"A page a sales team can <em>use</em>.",
+ sub:"Revenue reconciliation software for subscription businesses. It matches payments, invoices and ledger entries, and queues the ones that don't.",
+ brief:"The category is dull and the buyer is a Head of Finance who has read forty of these pages. The only way through is to name the actual problem in the first line and prove the product exists immediately after.",
+ dec:["The headline names the failure, not the category. 'Your payments and your ledger disagree' beats any adjective.",
+      "The hero visual is a real interface built in HTML — a reconciliation run with monospaced IDs and match-confidence bars. Buyers who have used a competitor can tell an illustration from a product in one second.",
+      "Three feature sections, three genuinely different product surfaces: a rules builder, an exceptions diff, and a close timeline. Reused screenshots read as a thin product.",
+      "Testimonials are specific and slightly unglamorous, because that is what a real finance lead says."],
+ has:["A working app mock with a live-counting match rate",
+      "Three distinct product surfaces, including a hover-linked record diff",
+      "Integration tabs, a monthly/annual pricing toggle, and an FAQ accordion",
+      "A logo wall of invented customers, drawn as SVG"],
+ role:"Positioning · Copy · UI · Front-end",time:"Studio demo · 2026",stack:"HTML · CSS · SVG · Vanilla JS"}
+};
+const ORDER=["02","03","04","05","06","07","08","09","10"];
+const id=(new URLSearchParams(location.search).get('p')||"02");
+const d=P[id]||P["02"];
+const i=ORDER.indexOf(id), prev=ORDER[(i-1+ORDER.length)%ORDER.length], next=ORDER[(i+1)%ORDER.length];
+
+document.title="GROMA — "+d.t;
+pn.textContent=d.n; pt.textContent=d.t; op.href=d.f;
+f.src=d.f;
+f.addEventListener('load',()=>ld.classList.add('gone'));
+setTimeout(()=>ld.classList.add('gone'),4000);
+
+nt.innerHTML=`
+  <div class="mono">${d.kicker}</div>
+  <h2>${d.h}</h2>
+  <p class="sub">${d.sub}</p>
+  <section><h3>The brief</h3><p>${d.brief}</p></section>
+  <section><h3>Decisions</h3><ul>${d.dec.map(x=>`<li>${x}</li>`).join('')}</ul></section>
+  <section><h3>In the demo</h3><ul>${d.has.map(x=>`<li>${x}</li>`).join('')}</ul></section>
+  <div class="facts">
+    <div><span>Role</span><b>${d.role}</b></div>
+    <div><span>Context</span><b>${d.time}</b></div>
+    <div><span>Built with</span><b>${d.stack}</b></div>
+  </div>
+  <div class="nav-lr"><a href="case.html?p=${prev}">← ${P[prev].t.split(' — ')[0]}</a><a href="case.html?p=${next}">${P[next].t.split(' — ')[0]} →</a></div>`;
+
+tn.addEventListener('click',()=>{const o=nt.classList.toggle('open');tn.classList.toggle('on',o)});
+addEventListener('keydown',e=>{if(e.key==='Escape'){nt.classList.remove('open');tn.classList.remove('on')}});
+</script>
+</body>
+</html>

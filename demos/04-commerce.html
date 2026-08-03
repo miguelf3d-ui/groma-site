@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ATELIER NORD — Autumn/Winter 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bone:#F4F1EC;
+  --paper:#FBF9F6;
+  --ink:#16150F;
+  --grey:#8B8579;
+  --hair:#DFDAD2;
+  --olive:#4A4F3A;
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --ease-out:cubic-bezier(.16,.84,.44,1);
+  --pad:40px;
+  --stick:108px;
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bone);color:var(--ink);
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:15px;line-height:1.62;font-weight:400;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
+}
+body.locked{overflow:hidden}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;letter-spacing:inherit}
+input,select{font:inherit;color:inherit}
+a{color:inherit;text-decoration:none}
+h1,h2,h3,h4,p{margin:0}
+ul{margin:0;padding:0;list-style:none}
+:focus{outline:none}
+:focus-visible{outline:1.5px solid var(--olive);outline-offset:3px}
+
+.serif{font-family:"Instrument Serif",Georgia,"Times New Roman",serif;font-weight:400;letter-spacing:-.012em}
+.mono{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,monospace}
+.lbl{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:10px;line-height:1.4;letter-spacing:.17em;text-transform:uppercase;color:var(--grey)}
+.wrap{max-width:1440px;margin:0 auto;padding:0 var(--pad)}
+.hr{height:1px;background:var(--hair);border:0;margin:0}
+
+/* ============ IMAGE PANELS ============ */
+.pnl{position:relative;overflow:hidden;background:var(--g1,#EFEBE3);isolation:isolate}
+.pnl>svg{display:block;width:100%;height:100%;transition:transform 700ms var(--ease-out)}
+.pnl::after{
+  content:"";position:absolute;inset:-10%;background-image:var(--grain);
+  mix-blend-mode:multiply;opacity:.34;pointer-events:none;z-index:2;
+}
+.pnl::before{
+  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(115% 88% at 50% 34%,rgba(255,255,255,.30),rgba(255,255,255,0) 58%),
+             linear-gradient(180deg,rgba(22,21,15,.05),rgba(22,21,15,0) 26%,rgba(22,21,15,0) 72%,rgba(22,21,15,.07));
+}
+.pnl .f1{fill:var(--f1)}
+.pnl .f2{fill:var(--f2)}
+.pnl .f3{fill:var(--f3)}
+.pnl .f1,.pnl .f2,.pnl .f3{transition:fill 420ms var(--ease)}
+.pnl stop{transition:stop-color 420ms var(--ease)}
+.pnl .ln{fill:none;stroke:var(--ink);stroke-width:1.5;opacity:.17;stroke-linecap:round}
+.pnl .lnl{fill:none;stroke:var(--ink);stroke-width:1;opacity:.11}
+.pnl .sh{fill:var(--f2);opacity:.16}
+.pnl .flr{fill:var(--g2);opacity:.5}
+.pnl .flrl{stroke:var(--ink);stroke-width:1;opacity:.09}
+
+/* ============ TOP ============ */
+.top{position:fixed;top:0;left:0;right:0;z-index:60}
+.ann{
+  background:var(--ink);color:var(--bone);height:38px;overflow:hidden;
+  transition:height 420ms var(--ease),opacity 300ms var(--ease);
+}
+.ann.gone{height:0;opacity:0}
+.ann-in{height:38px;display:flex;align-items:center;justify-content:center;position:relative;padding:0 var(--pad)}
+.ann-in p{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;opacity:.86}
+.ann-in .sep{opacity:.4;margin:0 12px}
+.ann-x{position:absolute;right:calc(var(--pad) - 8px);top:0;bottom:0;width:34px;display:grid;place-items:center;opacity:.55;transition:opacity 260ms var(--ease)}
+.ann-x:hover{opacity:1}
+.ann-x:focus-visible{outline-color:var(--bone)}
+
+.hdr{
+  height:70px;transition:background 380ms var(--ease),border-color 380ms var(--ease),height 380ms var(--ease);
+  border-bottom:1px solid transparent;
+}
+.hdr.solid{background:rgba(244,241,236,.90);backdrop-filter:saturate(1.4) blur(14px);-webkit-backdrop-filter:saturate(1.4) blur(14px);border-bottom-color:var(--hair);height:62px}
+.hdr-in{height:100%;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;max-width:1440px;margin:0 auto;padding:0 var(--pad)}
+.nav{display:flex;gap:26px;align-items:center}
+.nav a{font-size:12px;letter-spacing:.05em;position:relative;padding:4px 0;color:var(--ink)}
+.nav a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--ink);transform:scaleX(0);transform-origin:left;transition:transform 380ms var(--ease)}
+.nav a:hover::after,.nav a.on::after{transform:scaleX(1)}
+.nav a.on{font-weight:500}
+.mark{
+  font-family:"Instrument Serif",Georgia,serif;font-size:23px;letter-spacing:.2em;
+  text-transform:uppercase;white-space:nowrap;padding-left:.2em;line-height:1;
+}
+.tools{display:flex;gap:4px;justify-content:flex-end;align-items:center}
+.icb{width:38px;height:38px;display:grid;place-items:center;position:relative;border-radius:0;transition:opacity 260ms var(--ease)}
+.icb:hover{opacity:.55}
+.icb svg{width:17px;height:17px;fill:none;stroke:var(--ink);stroke-width:1.25;stroke-linecap:round;stroke-linejoin:round}
+.badge{
+  position:absolute;top:5px;right:3px;min-width:15px;height:15px;padding:0 4px;border-radius:999px;
+  background:var(--olive);color:#F4F1EC;font-family:"JetBrains Mono",monospace;font-size:9px;
+  display:grid;place-items:center;line-height:1;transform:scale(0);transition:transform 340ms var(--ease-out);
+}
+.badge.on{transform:scale(1)}
+
+/* account popover */
+.pop{
+  position:absolute;top:calc(100% + 6px);right:var(--pad);width:216px;background:var(--paper);
+  border:1px solid var(--hair);padding:8px 0;opacity:0;visibility:hidden;transform:translateY(-6px);
+  transition:opacity 280ms var(--ease),transform 280ms var(--ease),visibility 280ms;z-index:5;
+}
+.pop.on{opacity:1;visibility:visible;transform:none}
+.pop a{display:block;padding:9px 18px;font-size:13px;transition:background 240ms var(--ease)}
+.pop a:hover{background:rgba(22,21,15,.045)}
+.pop .div{height:1px;background:var(--hair);margin:8px 0}
+.pop p{padding:4px 18px 10px;font-size:11.5px;color:var(--grey);line-height:1.5}
+
+/* search sheet */
+.srch{
+  position:fixed;left:0;right:0;top:0;z-index:59;background:var(--bone);border-bottom:1px solid var(--hair);
+  padding:0 var(--pad);transform:translateY(-101%);transition:transform 460ms var(--ease-out);
+}
+.srch.on{transform:none}
+.srch-in{max-width:1440px;margin:0 auto;padding:28px 0 26px}
+.srch-row{display:flex;align-items:center;gap:18px;border-bottom:1px solid var(--ink);padding-bottom:12px}
+.srch-row svg{width:18px;height:18px;fill:none;stroke:var(--ink);stroke-width:1.25;flex:0 0 auto}
+.srch input{flex:1;border:0;background:none;font-size:26px;font-family:"Instrument Serif",serif;letter-spacing:-.01em;padding:0}
+.srch input::placeholder{color:var(--grey);opacity:.65}
+.srch-meta{display:flex;justify-content:space-between;align-items:center;margin-top:16px;gap:20px;flex-wrap:wrap}
+.srch-sug{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.srch-sug button{font-size:12px;border:1px solid var(--hair);padding:5px 12px;transition:border-color 300ms var(--ease),background 300ms var(--ease)}
+.srch-sug button:hover{border-color:var(--ink)}
+
+/* ============ HERO ============ */
+.hero{position:relative;height:min(90vh,720px);min-height:560px;overflow:hidden}
+.hero .pnl{position:absolute;inset:0}
+.hero-scrim{position:absolute;inset:0;z-index:3;background:linear-gradient(94deg,rgba(244,241,236,.86) 0%,rgba(244,241,236,.58) 30%,rgba(244,241,236,.06) 54%,rgba(244,241,236,0) 68%)}
+.hero-in{position:relative;z-index:4;height:100%;max-width:1440px;margin:0 auto;padding:var(--stick) var(--pad) 0;display:flex;flex-direction:column;justify-content:center}
+.hero-in .lbl{margin-bottom:22px}
+.hero h1{font-family:"Instrument Serif",Georgia,serif;font-weight:400;font-size:clamp(52px,6.1vw,88px);line-height:.95;letter-spacing:-.022em;max-width:11ch}
+.hero h1 em{font-style:italic;letter-spacing:-.02em}
+.hero p.sub{max-width:37ch;margin-top:26px;font-size:15px;line-height:1.7;color:#3B3A31}
+.cta{
+  display:inline-flex;align-items:center;gap:14px;margin-top:36px;align-self:flex-start;
+  font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-family:"JetBrains Mono",monospace;
+  padding-bottom:8px;border-bottom:1px solid var(--ink);transition:gap 380ms var(--ease),color 380ms var(--ease),border-color 380ms var(--ease);
+}
+.cta svg{width:22px;height:8px;stroke:currentColor;fill:none;stroke-width:1.1}
+.cta:hover{gap:24px;color:var(--olive);border-color:var(--olive)}
+.hero-corner{position:absolute;right:var(--pad);bottom:34px;z-index:4;text-align:right}
+
+/* ============ CATEGORY STRIP ============ */
+.cats{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;padding:0}
+.cat{position:relative;display:block;overflow:hidden}
+.cat .pnl{aspect-ratio:4/3}
+.cat:hover .pnl>svg{transform:scale(1.045)}
+.cat-cap{position:absolute;left:22px;bottom:20px;z-index:4}
+.cat-cap h3{font-family:"Instrument Serif",serif;font-size:26px;line-height:1.1}
+.cat-cap span{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#3B3A31;opacity:.72}
+.cat-line{position:absolute;left:22px;right:22px;bottom:14px;height:1px;background:var(--ink);opacity:.16;transform:scaleX(0);transform-origin:left;transition:transform 520ms var(--ease-out);z-index:4}
+.cat:hover .cat-line{transform:scaleX(1)}
+
+/* ============ SECTION HEAD ============ */
+.sechead{display:flex;align-items:flex-end;justify-content:space-between;gap:60px;padding:96px 0 30px}
+.sechead h2{font-family:"Instrument Serif",serif;font-size:46px;line-height:1.02;letter-spacing:-.018em}
+.sechead p{max-width:44ch;font-size:14px;color:#4A4840;line-height:1.7}
+
+/* ============ FILTER BAR ============ */
+.fbar{
+  display:flex;align-items:center;justify-content:space-between;gap:30px;
+  border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);padding:14px 0;
+  position:sticky;top:calc(var(--stick) - 8px);background:var(--bone);z-index:20;
+}
+.chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chip{
+  font-size:12px;letter-spacing:.02em;padding:6px 15px;border:1px solid var(--hair);
+  transition:border-color 320ms var(--ease),background 320ms var(--ease),color 320ms var(--ease);white-space:nowrap;
+}
+.chip sup{font-family:"JetBrains Mono",monospace;font-size:9px;opacity:.5;margin-left:5px;top:-.4em;position:relative}
+.chip:hover{border-color:var(--grey)}
+.chip.on{background:var(--ink);border-color:var(--ink);color:var(--bone)}
+.chip.on sup{opacity:.6}
+.fright{display:flex;align-items:center;gap:22px;flex:0 0 auto}
+.count{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--grey)}
+.sortwrap{position:relative;display:flex;align-items:center;gap:8px}
+.sortwrap label{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--grey)}
+.sortwrap select{
+  appearance:none;-webkit-appearance:none;border:0;background:none;font-size:12.5px;padding:4px 20px 4px 0;cursor:pointer;
+  border-bottom:1px solid transparent;transition:border-color 300ms var(--ease);
+}
+.sortwrap select:hover{border-bottom-color:var(--ink)}
+.sortwrap .car{position:absolute;right:2px;top:50%;margin-top:-2px;width:8px;height:5px;stroke:var(--ink);fill:none;stroke-width:1.2;pointer-events:none}
+
+/* ============ GRID ============ */
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:44px 26px;padding:34px 0 96px}
+.card{opacity:0;transform:translateY(14px);transition:opacity 620ms var(--ease-out),transform 620ms var(--ease-out)}
+.card.in{opacity:1;transform:none}
+.card-img{position:relative;display:block;width:100%;text-align:left;cursor:pointer}
+.card-img .pnl{aspect-ratio:3/4}
+.card:hover .card-img .pnl>svg{transform:scale(1.038)}
+.tag{
+  position:absolute;top:14px;left:14px;z-index:4;font-family:"JetBrains Mono",monospace;font-size:9px;
+  letter-spacing:.15em;text-transform:uppercase;color:var(--ink);display:flex;align-items:center;gap:6px;
+}
+.tag i{width:5px;height:5px;background:var(--olive);border-radius:50%;display:block}
+.qa{
+  position:absolute;left:10px;right:10px;bottom:10px;z-index:4;background:rgba(251,249,246,.94);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(22,21,15,.10);
+  height:40px;display:flex;align-items:center;justify-content:center;gap:9px;
+  font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;
+  opacity:0;transform:translateY(10px);transition:opacity 340ms var(--ease-out),transform 340ms var(--ease-out),background 300ms var(--ease);
+}
+.qa svg{width:12px;height:12px;stroke:var(--ink);fill:none;stroke-width:1.3}
+.card:hover .qa,.qa:focus-visible{opacity:1;transform:none}
+.qa:hover{background:var(--ink);color:var(--bone)}
+.qa:hover svg{stroke:var(--bone)}
+.card-body{padding-top:15px}
+.card-r1{display:flex;justify-content:space-between;align-items:baseline;gap:14px}
+.card-r1 h3{font-size:14.5px;font-weight:400;letter-spacing:-.005em;line-height:1.35}
+.card-r1 h3 a:hover{opacity:.6}
+.price{font-family:"JetBrains Mono",monospace;font-size:13px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.card-sub{font-size:12px;color:var(--grey);margin-top:3px;letter-spacing:.005em}
+.sw{display:flex;gap:7px;margin-top:12px;align-items:center}
+.sw button{
+  width:13px;height:13px;border-radius:50%;position:relative;
+  box-shadow:inset 0 0 0 1px rgba(22,21,15,.16);transition:transform 300ms var(--ease);
+}
+.sw button::after{
+  content:"";position:absolute;inset:-4px;border:1px solid var(--ink);border-radius:50%;
+  opacity:0;transform:scale(.7);transition:opacity 300ms var(--ease),transform 300ms var(--ease);
+}
+.sw button[aria-pressed="true"]::after{opacity:1;transform:none}
+.sw button:hover{transform:scale(1.12)}
+.sw .swn{font-size:11.5px;color:var(--grey);margin-left:5px}
+
+.empty-res{grid-column:1/-1;padding:80px 0;text-align:center;color:var(--grey)}
+.empty-res h3{font-family:"Instrument Serif",serif;font-size:30px;color:var(--ink);margin-bottom:8px}
+
+/* ============ PDP ============ */
+#view-pdp{display:none;padding-top:var(--stick)}
+#view-pdp.on{display:block;animation:fade 440ms var(--ease-out) both}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.crumb{display:flex;align-items:center;gap:10px;padding:26px 0 30px;font-size:12px;color:var(--grey)}
+.crumb .back{display:inline-flex;align-items:center;gap:9px;transition:gap 340ms var(--ease)}
+.crumb .back svg{width:20px;height:8px;stroke:var(--ink);fill:none;stroke-width:1.1}
+.crumb .back:hover{gap:16px}
+.crumb .sl{opacity:.5}
+.crumb b{font-weight:400;color:var(--ink)}
+.pdp{display:grid;grid-template-columns:minmax(0,1fr) 452px;gap:76px;align-items:start;padding-bottom:100px}
+.gal{display:grid;grid-template-columns:74px minmax(0,1fr);gap:16px;max-width:700px}
+.thumbs{display:flex;flex-direction:column;gap:10px}
+.thumb{padding:0;border:1px solid transparent;transition:border-color 320ms var(--ease),opacity 320ms var(--ease);opacity:.7}
+.thumb .pnl{aspect-ratio:3/4}
+.thumb:hover{opacity:1}
+.thumb.on{border-color:var(--ink);opacity:1}
+.gmain .pnl{aspect-ratio:3/4}
+.pinfo{position:sticky;top:calc(var(--stick) + 18px)}
+.pinfo h1{font-family:"Instrument Serif",serif;font-size:40px;line-height:1.06;letter-spacing:-.018em;margin:12px 0 14px}
+.pinfo .pprice{font-family:"JetBrains Mono",monospace;font-size:16px;font-variant-numeric:tabular-nums}
+.pinfo .ptax{font-size:12px;color:var(--grey);margin-top:5px}
+.pinfo .pshort{font-size:14.5px;color:#4A4840;line-height:1.7;margin-top:20px;max-width:46ch}
+.opt{margin-top:34px}
+.opt-hd{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:13px}
+.opt-hd .sg{font-size:12px;color:var(--grey);border-bottom:1px solid var(--hair);padding-bottom:1px;transition:color 300ms var(--ease),border-color 300ms var(--ease)}
+.opt-hd .sg:hover{color:var(--ink);border-color:var(--ink)}
+.pcols{display:flex;gap:12px;align-items:center}
+.pcols button{width:22px;height:22px;border-radius:50%;position:relative;box-shadow:inset 0 0 0 1px rgba(22,21,15,.16);transition:transform 300ms var(--ease)}
+.pcols button::after{content:"";position:absolute;inset:-5px;border:1px solid var(--ink);border-radius:50%;opacity:0;transform:scale(.75);transition:opacity 320ms var(--ease),transform 320ms var(--ease)}
+.pcols button[aria-pressed="true"]::after{opacity:1;transform:none}
+.pcols button:hover{transform:scale(1.08)}
+.sizes{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+.sizes.wide{grid-template-columns:repeat(3,1fr)}
+.sizes button{
+  height:46px;border:1px solid var(--hair);font-size:13px;position:relative;overflow:hidden;
+  transition:border-color 300ms var(--ease),background 300ms var(--ease),color 300ms var(--ease);
+  font-variant-numeric:tabular-nums;
+}
+.sizes button:hover:not(.out){border-color:var(--ink)}
+.sizes button.on{background:var(--ink);border-color:var(--ink);color:var(--bone)}
+.sizes button.out{color:#B0AA9E;border-color:var(--hair);background:rgba(22,21,15,.022);cursor:not-allowed}
+.sizes button.out::before{
+  content:"";position:absolute;left:-8%;right:-8%;top:50%;height:1px;background:#C6BFB2;transform:rotate(-16deg);
+}
+.sizemsg{font-size:12.5px;color:var(--grey);margin-top:11px;min-height:19px;transition:color 300ms var(--ease)}
+.sizemsg.err{color:#6B2A2A}
+.sizemsg a{border-bottom:1px solid currentColor;color:var(--ink)}
+.sizes.shake{animation:shk 460ms var(--ease)}
+@keyframes shk{0%,100%{transform:none}22%{transform:translateX(-5px)}44%{transform:translateX(4px)}68%{transform:translateX(-2px)}}
+.addbtn{
+  width:100%;height:56px;background:var(--ink);color:var(--bone);margin-top:26px;
+  font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.17em;text-transform:uppercase;
+  transition:background 340ms var(--ease),color 340ms var(--ease);
+}
+.addbtn:hover{background:var(--olive)}
+.pnote{display:flex;gap:9px;align-items:flex-start;margin-top:16px;font-size:12.5px;color:var(--grey);line-height:1.6}
+.pnote svg{width:14px;height:14px;stroke:var(--grey);fill:none;stroke-width:1.2;flex:0 0 auto;margin-top:3px}
+.acc{margin-top:42px;border-top:1px solid var(--hair)}
+.acc-i{border-bottom:1px solid var(--hair)}
+.acc-b{width:100%;display:flex;justify-content:space-between;align-items:center;padding:19px 2px;text-align:left;font-size:13.5px;letter-spacing:.005em;transition:color 300ms var(--ease)}
+.acc-b:hover{color:var(--olive)}
+.acc-b .pm{position:relative;width:11px;height:11px;flex:0 0 auto}
+.acc-b .pm::before,.acc-b .pm::after{content:"";position:absolute;background:currentColor;transition:transform 380ms var(--ease),opacity 380ms var(--ease)}
+.acc-b .pm::before{left:0;right:0;top:5px;height:1px}
+.acc-b .pm::after{top:0;bottom:0;left:5px;width:1px}
+.acc-b[aria-expanded="true"] .pm::after{transform:rotate(90deg);opacity:0}
+.acc-p{max-height:0;overflow:hidden;transition:max-height 460ms var(--ease)}
+.acc-c{padding:0 2px 24px;font-size:14px;line-height:1.75;color:#43413A;max-width:52ch}
+.acc-c p+p{margin-top:13px}
+.acc-c ul{margin-top:4px}
+.acc-c li{position:relative;padding-left:16px;margin-top:6px;font-size:13.5px}
+.acc-c li::before{content:"";position:absolute;left:0;top:10px;width:6px;height:1px;background:var(--grey)}
+.acc-c .lbl{margin:18px 0 6px}
+
+/* ============ JOURNAL ============ */
+.jrn{display:grid;grid-template-columns:1.15fr .85fr;gap:70px;align-items:center;padding:0 0 110px}
+.jrn .pnl{aspect-ratio:4/3}
+.jrn-t h3{font-family:"Instrument Serif",serif;font-size:42px;line-height:1.06;letter-spacing:-.018em;margin:18px 0 22px;max-width:15ch}
+.jrn-t p{font-size:15px;line-height:1.78;color:#43413A;max-width:44ch}
+.jrn-t p+p{margin-top:16px}
+.jrn-t .cta{margin-top:32px}
+
+/* ============ FOOTER ============ */
+footer{border-top:1px solid var(--hair);background:var(--paper)}
+.f-top{display:grid;grid-template-columns:1.35fr repeat(4,.85fr);gap:50px;padding:76px 0 66px}
+.f-brand .mark{font-size:20px;letter-spacing:.19em}
+.f-brand p{font-size:13.5px;color:#4A4840;line-height:1.72;margin-top:20px;max-width:34ch}
+.nl{margin-top:26px;max-width:340px}
+.nl-row{display:flex;border-bottom:1px solid var(--ink);align-items:center;transition:border-color 320ms var(--ease)}
+.nl-row.bad{border-color:#6B2A2A}
+.nl input{flex:1;border:0;background:none;padding:9px 0;font-size:13.5px}
+.nl input::placeholder{color:var(--grey)}
+.nl button{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;padding:9px 0 9px 16px;transition:color 300ms var(--ease)}
+.nl button:hover{color:var(--olive)}
+.nl-msg{font-size:12px;margin-top:9px;min-height:18px;color:var(--grey);transition:color 300ms var(--ease)}
+.nl-msg.bad{color:#6B2A2A}
+.nl-msg.ok{color:var(--olive)}
+.f-col h4{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.17em;text-transform:uppercase;color:var(--grey);margin-bottom:18px;font-weight:400}
+.f-col li{margin-bottom:10px}
+.f-col a{font-size:13.5px;position:relative;transition:opacity 280ms var(--ease)}
+.f-col a::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:1px;background:var(--ink);transform:scaleX(0);transform-origin:left;transition:transform 380ms var(--ease)}
+.f-col a:hover::after{transform:scaleX(1)}
+.f-bot{border-top:1px solid var(--hair);padding:22px 0 30px;display:flex;align-items:center;justify-content:space-between;gap:34px;flex-wrap:wrap}
+.f-legal{display:flex;gap:22px;align-items:center;font-size:11.5px;color:var(--grey);flex-wrap:wrap}
+.f-legal a:hover{color:var(--ink)}
+.pay{display:flex;gap:8px;align-items:center}
+.pay svg{display:block}
+.locale{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--grey)}
+.locale svg{width:13px;height:13px;stroke:var(--grey);fill:none;stroke-width:1.1}
+
+/* ============ CART DRAWER ============ */
+.ovl{position:fixed;inset:0;background:rgba(22,21,15,.28);opacity:0;visibility:hidden;transition:opacity 420ms var(--ease),visibility 420ms;z-index:80;backdrop-filter:blur(1.5px)}
+.ovl.on{opacity:1;visibility:visible}
+.drw{
+  position:fixed;top:0;right:0;bottom:0;width:min(420px,94vw);background:var(--bone);z-index:90;
+  transform:translateX(101%);transition:transform 480ms var(--ease-out);display:flex;flex-direction:column;
+  border-left:1px solid var(--hair);
+}
+.drw.on{transform:none}
+.drw-hd{display:flex;align-items:center;justify-content:space-between;padding:22px 26px;border-bottom:1px solid var(--hair);flex:0 0 auto}
+.drw-hd h2{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:400}
+.drw-x{width:30px;height:30px;display:grid;place-items:center;transition:opacity 260ms var(--ease)}
+.drw-x:hover{opacity:.5}
+.drw-x svg{width:13px;height:13px;stroke:var(--ink);stroke-width:1.3}
+.drw-body{flex:1;overflow-y:auto;padding:6px 26px}
+.drw-body::-webkit-scrollbar{width:5px}
+.drw-body::-webkit-scrollbar-thumb{background:var(--hair)}
+.li{display:grid;grid-template-columns:78px 1fr;gap:16px;padding:22px 0;border-bottom:1px solid var(--hair);animation:liIn 420ms var(--ease-out) both}
+@keyframes liIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.li .pnl{aspect-ratio:3/4}
+.li-r1{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+.li h3{font-size:13.5px;font-weight:400;line-height:1.35}
+.li .lip{font-family:"JetBrains Mono",monospace;font-size:12.5px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.li .meta{font-size:11.5px;color:var(--grey);margin-top:5px}
+.li-r2{display:flex;justify-content:space-between;align-items:center;margin-top:14px}
+.stp{display:flex;align-items:center;border:1px solid var(--hair)}
+.stp button{width:28px;height:28px;display:grid;place-items:center;transition:background 260ms var(--ease),color 260ms var(--ease)}
+.stp button:hover{background:var(--ink);color:var(--bone)}
+.stp button:disabled{opacity:.3;cursor:not-allowed}
+.stp button:disabled:hover{background:none;color:inherit}
+.stp span{min-width:30px;text-align:center;font-family:"JetBrains Mono",monospace;font-size:12px}
+.rm{font-size:11.5px;color:var(--grey);border-bottom:1px solid var(--hair);transition:color 280ms var(--ease),border-color 280ms var(--ease)}
+.rm:hover{color:var(--ink);border-color:var(--ink)}
+.drw-empty{padding:90px 4px;text-align:center;animation:fade 460ms var(--ease-out) both}
+.drw-empty svg{width:34px;height:34px;stroke:var(--grey);fill:none;stroke-width:1;margin-bottom:22px}
+.drw-empty h3{font-family:"Instrument Serif",serif;font-size:27px;margin-bottom:10px}
+.drw-empty p{font-size:13.5px;color:var(--grey);max-width:30ch;margin:0 auto 26px;line-height:1.65}
+.drw-ft{flex:0 0 auto;border-top:1px solid var(--hair);padding:22px 26px 26px;background:var(--paper)}
+.drw-ft .row{display:flex;justify-content:space-between;align-items:baseline;font-size:14px}
+.drw-ft .row+.row{margin-top:8px}
+.drw-ft .row .v{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums}
+.drw-ft .sm{font-size:11.5px;color:var(--grey)}
+.chk{width:100%;height:52px;background:var(--ink);color:var(--bone);margin-top:20px;font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.17em;text-transform:uppercase;transition:background 340ms var(--ease)}
+.chk:hover{background:var(--olive)}
+.drw-ft .cont{display:block;width:100%;text-align:center;margin-top:14px;font-size:12px;color:var(--grey);transition:color 280ms var(--ease)}
+.drw-ft .cont:hover{color:var(--ink)}
+
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ============ RESPONSIVE ============ */
+@media(max-width:1180px){
+  .pdp{grid-template-columns:minmax(0,1fr) 380px;gap:48px}
+  .jrn{gap:48px}
+  .f-top{gap:34px}
+  .hero h1{font-size:clamp(46px,5.6vw,72px)}
+}
+@media(max-width:1024px){
+  :root{--pad:24px}
+  .grid{gap:36px 18px}
+  .nav{gap:18px}
+  .nav a{font-size:11.5px}
+  .sechead{padding-top:74px}
+  .sechead h2{font-size:38px}
+  .pdp{grid-template-columns:minmax(0,1fr) 330px;gap:34px}
+  .pinfo h1{font-size:33px}
+  .gal{grid-template-columns:62px minmax(0,1fr)}
+  .f-top{grid-template-columns:1fr repeat(4,.8fr);gap:26px;padding:60px 0 52px}
+  .jrn h3{font-size:34px}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="ann" id="ann">
+    <div class="ann-in">
+      <p>Complimentary shipping on orders over &euro;200<span class="sep">&mdash;</span>Free returns within 30 days across the EU</p>
+      <button class="ann-x" id="annX" aria-label="Dismiss announcement">
+        <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M1 1l8 8M9 1l-8 8" stroke="currentColor" stroke-width="1.2"/></svg>
+      </button>
+    </div>
+  </div>
+  <header class="hdr" id="hdr">
+    <div class="hdr-in">
+      <nav class="nav" aria-label="Primary">
+        <a href="#grid" class="on" data-nav>New in</a>
+        <a href="#grid" data-nav>Women</a>
+        <a href="#grid" data-nav>Men</a>
+        <a href="#grid" data-nav>Objects</a>
+        <a href="#journal" data-nav>Journal</a>
+      </nav>
+      <a href="#" class="mark" id="markLink" aria-label="Atelier Nord — home">Atelier Nord</a>
+      <div class="tools">
+        <button class="icb" id="btnSearch" aria-label="Search" aria-expanded="false">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="9" cy="9" r="6.2"/><path d="M13.6 13.6L18 18"/></svg>
+        </button>
+        <button class="icb" id="btnAcct" aria-label="Account" aria-expanded="false">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="7" r="3.4"/><path d="M3.6 17.2c.9-3.4 3.4-5.2 6.4-5.2s5.5 1.8 6.4 5.2"/></svg>
+        </button>
+        <button class="icb" id="btnCart" aria-label="Open bag">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3.6 6.4h12.8l-1 10.4H4.6z"/><path d="M7.2 8.2V5.4a2.8 2.8 0 015.6 0v2.8"/></svg>
+          <span class="badge" id="badge">0</span>
+        </button>
+      </div>
+    </div>
+    <div class="pop" id="popAcct" role="menu" aria-label="Account">
+      <a href="#" role="menuitem">Sign in</a>
+      <a href="#" role="menuitem">Create an account</a>
+      <a href="#" role="menuitem">Track an order</a>
+      <div class="div"></div>
+      <p>Members receive first access to each delivery and complimentary alterations at the Porto atelier.</p>
+    </div>
+  </header>
+</div>
+
+<div class="srch" id="srch">
+  <div class="srch-in">
+    <div class="srch-row">
+      <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="9" cy="9" r="6.2"/><path d="M13.6 13.6L18 18"/></svg>
+      <input id="srchIn" type="search" placeholder="Search the collection" aria-label="Search the collection" autocomplete="off">
+      <button class="icb" id="srchX" aria-label="Close search">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 4l12 12M16 4L4 16"/></svg>
+      </button>
+    </div>
+    <div class="srch-meta">
+      <div class="srch-sug">
+        <span class="lbl">Suggested</span>
+        <button data-q="coat">Coats</button>
+        <button data-q="merino">Merino</button>
+        <button data-q="trouser">Trousers</button>
+        <button data-q="silk">Silk</button>
+      </div>
+      <span class="count" id="srchCount">8 pieces in Autumn/Winter 2026</span>
+    </div>
+  </div>
+</div>
+
+<main>
+<div id="view-store">
+
+  <section class="hero" id="hero">
+    <div class="pnl" id="heroPnl"></div>
+    <div class="hero-scrim"></div>
+    <div class="hero-in">
+      <p class="lbl">Autumn &frasl; Winter 2026 &nbsp;&mdash;&nbsp; Collection I</p>
+      <h1>Northern weight,<br><em>southern</em> light.</h1>
+      <p class="sub">Fifteen pieces cut from cloth woven within sixty kilometres of the atelier. Drawn in Copenhagen, made in Portugal, built to be worn for a decade.</p>
+      <a href="#grid" class="cta" data-nav>View the collection
+        <svg viewBox="0 0 22 8" aria-hidden="true"><path d="M0 4h20M16.5 1L20 4l-3.5 3"/></svg>
+      </a>
+    </div>
+    <div class="hero-corner">
+      <p class="lbl" style="margin-bottom:7px">Look 01 &mdash; Vela Wool Coat in Bone</p>
+      <p class="lbl" style="opacity:.62">First delivery &mdash; available now</p>
+    </div>
+  </section>
+
+  <section class="cats" id="cats" aria-label="Categories"></section>
+
+  <div class="wrap">
+    <div class="sechead" id="grid">
+      <h2 class="serif">New in<br>Autumn/Winter 2026</h2>
+      <p>Fifteen pieces released across three deliveries. The first &mdash; outerwear, knitwear and the tailoring that sits beneath them &mdash; is available now, cut in Guimar&atilde;es in runs of under three hundred.</p>
+    </div>
+
+    <div class="fbar">
+      <div class="chips" id="chips" role="group" aria-label="Filter by category"></div>
+      <div class="fright">
+        <span class="count" id="resCount">8 products</span>
+        <div class="sortwrap">
+          <label for="sort">Sort</label>
+          <select id="sort">
+            <option value="featured">Featured</option>
+            <option value="new">Newest first</option>
+            <option value="asc">Price: low to high</option>
+            <option value="desc">Price: high to low</option>
+            <option value="az">Alphabetical</option>
+          </select>
+          <svg class="car" viewBox="0 0 8 5" aria-hidden="true"><path d="M.6.8L4 4 7.4.8"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid" id="pgrid"></div>
+  </div>
+
+  <div class="wrap" id="journal">
+    <div class="sechead">
+      <h2 class="serif">The Journal</h2>
+      <p>Dispatches from the mills, the atelier and the coast &mdash; published whenever there is something worth reporting.</p>
+    </div>
+    <div class="jrn">
+      <div class="pnl" id="jrnPnl"></div>
+      <div class="jrn-t">
+        <p class="lbl">No. 14 &nbsp;&mdash;&nbsp; Field notes &nbsp;&mdash;&nbsp; February 2026</p>
+        <h3 class="serif">Three days in the mills at Guimar&atilde;es</h3>
+        <p>The Ave valley has been spinning cotton since the 1840s, and for a stretch of the last century it clothed most of Europe. What remains is smaller and considerably better: a dozen family mills within twenty minutes of one another, nearly all of them run by the third or fourth generation of the same family.</p>
+        <p>We went in February to watch the Vela cloth come off the loom. It takes eleven minutes to weave a metre of it, and another two days for the finisher to decide it is ready. Nobody there described any of this as craft. They described it as the correct amount of time.</p>
+        <a href="#" class="cta">Read the story
+          <svg viewBox="0 0 22 8" aria-hidden="true"><path d="M0 4h20M16.5 1L20 4l-3.5 3"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /view-store -->
+
+<div id="view-pdp" class="wrap" aria-live="polite"></div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="f-top">
+      <div class="f-brand">
+        <div class="mark">Atelier Nord</div>
+        <p>A ready-to-wear house between Copenhagen and Porto. Cloth chosen first, then the cut. Two deliveries a year, no more.</p>
+        <form class="nl" id="nlForm" novalidate>
+          <p class="lbl" style="margin-bottom:12px">The Letter</p>
+          <div class="nl-row" id="nlRow">
+            <input type="email" id="nlIn" placeholder="Email address" aria-label="Email address" autocomplete="email">
+            <button type="submit">Subscribe</button>
+          </div>
+          <p class="nl-msg" id="nlMsg">Collection notes and early access. Two letters a month.</p>
+        </form>
+      </div>
+      <div class="f-col">
+        <h4>Client Services</h4>
+        <ul>
+          <li><a href="#">Contact us</a></li>
+          <li><a href="#">Shipping &amp; delivery</a></li>
+          <li><a href="#">Returns &amp; exchanges</a></li>
+          <li><a href="#">Size guide</a></li>
+          <li><a href="#">Care &amp; repair</a></li>
+        </ul>
+      </div>
+      <div class="f-col">
+        <h4>The House</h4>
+        <ul>
+          <li><a href="#">Our story</a></li>
+          <li><a href="#">Mills &amp; ateliers</a></li>
+          <li><a href="#">Materials policy</a></li>
+          <li><a href="#">Stockists</a></li>
+          <li><a href="#">Careers</a></li>
+        </ul>
+      </div>
+      <div class="f-col">
+        <h4>Collections</h4>
+        <ul>
+          <li><a href="#">New in</a></li>
+          <li><a href="#">Autumn/Winter 2026</a></li>
+          <li><a href="#">Knitwear</a></li>
+          <li><a href="#">Objects</a></li>
+          <li><a href="#">The archive</a></li>
+        </ul>
+      </div>
+      <div class="f-col">
+        <h4>Visit</h4>
+        <ul>
+          <li><a href="#">Porto &mdash; Rua de Miragaia 84</a></li>
+          <li><a href="#">Copenhagen &mdash; Kompagnistr&aelig;de 12</a></li>
+          <li><a href="#">Book an appointment</a></li>
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">Pinterest</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="f-bot">
+      <div class="f-legal">
+        <span>&copy; 2026 Atelier Nord Lda.</span>
+        <a href="#">Privacy</a><a href="#">Terms of sale</a><a href="#">Cookies</a>
+      </div>
+      <div class="pay" id="pay" aria-label="Accepted payment methods"></div>
+      <div class="locale">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.4"/><path d="M1.6 8h12.8M8 1.6c3.6 3.8 3.6 9 0 12.8-3.6-3.8-3.6-9 0-12.8"/></svg>
+        <span>Portugal &mdash; EUR &euro;</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="ovl" id="ovl"></div>
+<aside class="drw" id="drw" role="dialog" aria-modal="true" aria-label="Shopping bag" aria-hidden="true">
+  <div class="drw-hd">
+    <h2>Your bag <span id="drwCount" class="mono" style="opacity:.5"></span></h2>
+    <button class="drw-x" id="drwX" aria-label="Close bag">
+      <svg viewBox="0 0 14 14" aria-hidden="true"><path d="M2 2l10 10M12 2L2 12" fill="none"/></svg>
+    </button>
+  </div>
+  <div class="drw-body" id="drwBody"></div>
+  <div class="drw-ft" id="drwFt">
+    <div class="row"><span>Subtotal</span><span class="v" id="sub">&euro;0</span></div>
+    <div class="row"><span class="sm">Shipping</span><span class="sm" id="ship">Calculated at checkout</span></div>
+    <button class="chk">Proceed to checkout</button>
+    <a href="#" class="cont" id="contShop">Continue shopping</a>
+  </div>
+</aside>
+
+<script>
+(function(){
+"use strict";
+var $=function(s,c){return (c||document).querySelector(s);};
+var $$=function(s,c){return Array.prototype.slice.call((c||document).querySelectorAll(s));};
+var uid=0;
+
+/* ---------------- palette ---------------- */
+var CW={
+  bone :{n:'Bone',       dot:'#D8CFBE', g1:'#F0ECE4', g2:'#E0D9CB', f1:'#D2C8B6', f2:'#C4B9A4', f3:'#BBAF99'},
+  chalk:{n:'Chalk',      dot:'#E4DED3', g1:'#F3F1ED', g2:'#E7E2DA', f1:'#DED8CC', f2:'#D0C9BB', f3:'#C4BCAC'},
+  oat  :{n:'Oat',        dot:'#D8C6A6', g1:'#F2ECE0', g2:'#E5DBC7', f1:'#D8C6A6', f2:'#CAB694', f3:'#BFA983'},
+  clay :{n:'Clay',       dot:'#BE9077', g1:'#F0E4DC', g2:'#E0CEC1', f1:'#BE9077', f2:'#AE8167', f3:'#CDA48C'},
+  cocoa:{n:'Cocoa',      dot:'#7C6552', g1:'#EBE3DA', g2:'#DBD0C2', f1:'#7C6552', f2:'#6C5644', f3:'#907864'},
+  olive:{n:'Deep olive', dot:'#4A4F3A', g1:'#E4E5D9', g2:'#D2D5C3', f1:'#565C43', f2:'#464B36', f3:'#69704F'},
+  ash  :{n:'Ash',        dot:'#B4B3AC', g1:'#E8E7E3', g2:'#D7D6D1', f1:'#B4B3AC', f2:'#A5A49C', f3:'#C2C1BA'},
+  slate:{n:'Slate',      dot:'#7D878A', g1:'#E1E4E5', g2:'#CED2D4', f1:'#7D878A', f2:'#6E787B', f3:'#8E989B'},
+  ink  :{n:'Ink',        dot:'#23231E', g1:'#E3E1DB', g2:'#D1CFC7', f1:'#2C2C25', f2:'#212119', f3:'#3C3B32'}
+};
+function cwVars(k){var c=CW[k];return '--g1:'+c.g1+';--g2:'+c.g2+';--f1:'+c.f1+';--f2:'+c.f2+';--f3:'+c.f3+';';}
+
+/* ---------------- garment drawings (600 x 800) ---------------- */
+var G={};
+G.coat=
+ '<ellipse class="sh" cx="300" cy="704" rx="152" ry="15"/>'+
+ '<path class="f2" d="M229 165c-16 9-24 24-25 41l-34 270c-2 12 5 20 17 20h27c10 0 16-6 17-16l10-302z"/>'+
+ '<path class="f2" d="M371 165c16 9 24 24 25 41l34 270c2 12-5 20-17 20h-27c-10 0-16-6-17-16l-10-302z"/>'+
+ '<path class="f1" d="M300 148c-29 0-54 7-71 17l-19 12c-14 8-21 23-22 40l-16 264-4 178c0 8 6 13 14 13h236c8 0 14-5 14-13l-4-178-16-264c-1-17-8-32-22-40l-19-12c-17-10-42-17-71-17z"/>'+
+ '<path class="f3" d="M258 152l-14 26 56 68 56-68-14-26-42 28z"/>'+
+ '<path class="f3" d="M191 394h218l1 24H190z"/>'+
+ '<path class="ln" d="M300 246v406"/>'+
+ '<path class="lnl" d="M186 636h228M232 176l-8 300M368 176l8 300"/>'+
+ '<circle class="f3" cx="300" cy="292" r="6"/><circle class="f3" cx="300" cy="472" r="6"/>';
+
+G.knit=
+ '<ellipse class="sh" cx="300" cy="704" rx="128" ry="13"/>'+
+ '<path class="f2" d="M222 203c-12 7-20 18-24 31l-36 208c-3 14 5 24 19 24h25c11 0 18-7 20-18l24-234z"/>'+
+ '<path class="f2" d="M378 203c12 7 20 18 24 31l36 208c3 14-5 24-19 24h-25c-11 0-18-7-20-18l-24-234z"/>'+
+ '<path class="f1" d="M300 186c-28 0-50 4-64 10l-14 7c-10 6-14 16-14 28l-4 325c0 10 6 16 16 16h160c10 0 16-6 16-16l-4-325c0-12-4-22-14-28l-14-7c-14-6-36-10-64-10z"/>'+
+ '<path class="f3" d="M258 190c0 18 18 28 42 28s42-10 42-28c-12-5-26-8-42-8s-30 3-42 8z"/>'+
+ '<path class="f3" d="M204 538h192v18c0 10-6 16-16 16H220c-10 0-16-6-16-16z"/>'+
+ '<path class="f3" d="M160 442h68l-2 20c-2 11-9 18-20 18h-25c-14 0-22-10-21-24z"/>'+
+ '<path class="f3" d="M440 442h-68l2 20c2 11 9 18 20 18h25c14 0 22-10 21-24z"/>'+
+ '<g class="lnl"><path d="M222 542v28M246 542v28M270 542v28M294 542v28M318 542v28M342 542v28M366 542v28"/></g>'+
+ '<g class="lnl"><path d="M230 246l-4 286M370 246l4 286M300 232v300" opacity=".7"/></g>';
+
+G.cardigan=
+ '<ellipse class="sh" cx="300" cy="704" rx="132" ry="13"/>'+
+ '<path class="f2" d="M220 205c-12 7-21 19-25 33l-38 216c-3 14 5 24 19 24h26c11 0 18-7 20-18l24-244z"/>'+
+ '<path class="f2" d="M380 205c12 7 21 19 25 33l38 216c3 14-5 24-19 24h-26c-11 0-18-7-20-18l-24-244z"/>'+
+ '<path class="f1" d="M300 188c-28 0-51 4-66 11l-14 6c-10 6-15 17-15 29l-5 350c0 10 6 16 16 16h168c10 0 16-6 16-16l-5-350c0-12-5-23-15-29l-14-6c-15-7-38-11-66-11z"/>'+
+ '<path fill="var(--g1)" d="M286 196h28l6 62-8 342h-24l-8-342z"/>'+
+ '<path class="f3" d="M268 192l18 6 8 60-6 342h-22l4-346z"/>'+
+ '<path class="f3" d="M332 192l-18 6-8 60 6 342h22l-4-346z"/>'+
+ '<g class="lnl"><path d="M240 260l-6 320M360 260l6 320"/></g>'+
+ '<path class="f3" d="M162 470h66l-2 18c-2 11-9 18-20 18h-26c-14 0-22-10-19-24z"/>'+
+ '<path class="f3" d="M438 470h-66l2 18c2 11 9 18 20 18h26c14 0 22-10 19-24z"/>';
+
+G.trouser=
+ '<ellipse class="sh" cx="300" cy="704" rx="118" ry="12"/>'+
+ '<path class="f1" d="M226 236l-12 428c0 8 5 13 13 13h52c8 0 12-5 13-13l8-240 8 240c1 8 5 13 13 13h52c8 0 13-5 13-13l-12-428z"/>'+
+ '<path class="f3" d="M228 204h144l2 32H226z"/>'+
+ '<path class="ln" d="M256 250l-6 416M344 250l6 416"/>'+
+ '<path class="lnl" d="M240 244l-4 40M360 244l4 40M226 236h148M232 300c14 10 30 12 44 6M368 300c-14 10-30 12-44 6"/>'+
+ '<rect class="f3" x="250" y="200" width="10" height="16"/><rect class="f3" x="340" y="200" width="10" height="16"/>';
+
+G.shirt=
+ '<ellipse class="sh" cx="300" cy="704" rx="126" ry="13"/>'+
+ '<path class="f2" d="M232 209c-11 6-19 17-22 30l-34 224c-2 13 5 22 18 22h26c11 0 17-7 18-17l20-252z"/>'+
+ '<path class="f2" d="M368 209c11 6 19 17 22 30l34 224c2 13-5 22-18 22h-26c-11 0-17-7-18-17l-20-252z"/>'+
+ '<path class="f1" d="M300 192c-24 0-42 4-54 10l-14 7c-9 6-12 15-12 26l-6 345c0 10 6 16 16 16h140c10 0 16-6 16-16l-6-345c0-11-3-20-12-26l-14-7c-12-6-30-10-54-10z"/>'+
+ '<path class="f3" d="M262 188l-22 12 24 38 36-30 36 30 24-38-22-12-38 22z"/>'+
+ '<path class="f3" d="M289 208h22l4 384h-30z"/>'+
+ '<path class="f3" d="M174 460h64l-2 12c-1 10-7 17-18 17h-26c-13 0-20-9-18-22z"/>'+
+ '<path class="f3" d="M426 460h-64l2 12c1 10 7 17 18 17h26c13 0 20-9 18-22z"/>'+
+ '<g fill="var(--g1)"><circle cx="300" cy="272" r="4.5"/><circle cx="300" cy="352" r="4.5"/><circle cx="300" cy="432" r="4.5"/><circle cx="300" cy="512" r="4.5"/></g>'+
+ '<path class="lnl" d="M226 230l-4 348M374 230l4 348"/>';
+
+G.blazer=
+ '<ellipse class="sh" cx="300" cy="704" rx="140" ry="14"/>'+
+ '<path class="f2" d="M234 191c-14 8-22 22-23 38l-30 234c-2 12 5 20 17 20h26c10 0 16-6 17-16l12-268z"/>'+
+ '<path class="f2" d="M366 191c14 8 22 22 23 38l30 234c2 12-5 20-17 20h-26c-10 0-16-6-17-16l-12-268z"/>'+
+ '<path class="f1" d="M300 176c-26 0-50 6-66 15l-14 9c-12 7-17 20-18 33l-13 249-4 92c0 8 6 13 14 13h202c8 0 14-5 14-13l-4-92-13-249c-1-13-6-26-18-33l-14-9c-16-9-40-15-66-15z"/>'+
+ '<path class="f3" d="M262 180l-24 20-2 50 64 96 64-96-2-50-24-20-38 70z"/>'+
+ '<path class="f3" d="M214 462h72v22h-72zM314 462h72v22h-72z"/>'+
+ '<circle class="f3" cx="300" cy="386" r="6"/>'+
+ '<path class="ln" d="M300 348v230"/>'+
+ '<path class="lnl" d="M186 452l16 4M414 452l-16 4M176 434h16M424 434h-16M182 452c8 6 8 12 0 18M418 452c-8 6-8 12 0 18"/>';
+
+G.scarf=
+ '<ellipse class="sh" cx="300" cy="704" rx="108" ry="12"/>'+
+ '<path class="f2" d="M292 158h98l-14 452-72-8z"/>'+
+ '<path class="f1" d="M210 158h96l6 456-78 22z"/>'+
+ '<path class="f3" d="M204 150h192v34H204z"/>'+
+ '<path class="f3" d="M216 300l90-6 2 26-90 8zM306 316l82-8 2 26-84 8z"/>'+
+ '<g class="ln"><path d="M236 636v34M250 634v34M264 632v34M278 630v34M292 628v34M306 626v34"/></g>'+
+ '<g class="ln"><path d="M316 614v30M330 616v30M344 618v30M358 620v30M372 622v30"/></g>'+
+ '<path class="lnl" d="M306 158l6 456M210 200h96M292 200h98"/>';
+
+G.bag=
+ '<ellipse class="sh" cx="300" cy="704" rx="126" ry="13"/>'+
+ '<g fill="none" stroke="var(--f3)" stroke-width="13" stroke-linecap="round"><path d="M246 306c0-70 16-100 60-100"/><path d="M354 306c0-70-16-100-60-100"/></g>'+
+ '<g fill="none" stroke="var(--f2)" stroke-width="13" stroke-linecap="round"><path d="M238 312c0-72 18-104 62-104s62 32 62 104"/></g>'+
+ '<path class="f1" d="M176 300h248l-18 348c-1 9-8 16-17 16H211c-9 0-16-7-17-16z"/>'+
+ '<path class="f3" d="M176 300h248l-1 28H177z"/>'+
+ '<path class="lnl" d="M186 344h228M192 640h216M300 328v330" opacity=".55"/>'+
+ '<rect class="f3" x="286" y="300" width="28" height="16" rx="2"/>';
+
+/* ---------------- panel builder ---------------- */
+function panelSVG(kind,cwKey,variant){
+  variant=variant||'full';
+  var id='g'+(++uid);
+  var vb='0 0 600 800', gAttr='', flr='<rect class="flr" x="-120" y="706" width="840" height="320"/><path class="flrl" d="M-120 706h840"/>';
+  if(variant==='crop') vb='176 138 252 336';
+  if(variant==='flat') gAttr=' transform="rotate(-6 300 400) scale(.8) translate(75 100)"';
+  if(variant==='tile'){
+    vb='-100 100 800 600';
+    gAttr=' transform="translate(190,37) scale(.8)"';
+    flr='<rect class="flr" x="-160" y="600" width="920" height="240"/><path class="flrl" d="M-160 600h920"/>';
+  }
+  var body='';
+  if(variant==='fabric'){
+    body='<rect x="-120" y="-120" width="840" height="1040" fill="url(#'+id+'w)"/>'+
+         '<rect x="-120" y="-120" width="840" height="1040" fill="url(#'+id+'t)"/>'+
+         '<ellipse cx="230" cy="250" rx="420" ry="330" fill="#ffffff" opacity=".16"/>';
+  } else {
+    body='<g'+gAttr+'>'+(G[kind]||G.coat)+'</g>';
+  }
+  return '<svg viewBox="'+vb+'" preserveAspectRatio="xMidYMid slice" role="img" aria-hidden="true">'+
+    '<defs>'+
+      '<linearGradient id="'+id+'a" x1="0" y1="0" x2=".38" y2="1">'+
+        '<stop offset="0" style="stop-color:var(--g1)"/><stop offset="1" style="stop-color:var(--g2)"/>'+
+      '</linearGradient>'+
+      '<radialGradient id="'+id+'b" cx=".5" cy=".33" r=".66">'+
+        '<stop offset="0" stop-color="#ffffff" stop-opacity=".5"/>'+
+        '<stop offset="1" stop-color="#ffffff" stop-opacity="0"/>'+
+      '</radialGradient>'+
+      '<pattern id="'+id+'w" width="9" height="9" patternUnits="userSpaceOnUse">'+
+        '<path d="M0 4.5h9" stroke="var(--f2)" stroke-width="1.4" opacity=".2"/>'+
+        '<path d="M4.5 0v9" stroke="var(--f2)" stroke-width=".9" opacity=".11"/>'+
+      '</pattern>'+
+      '<pattern id="'+id+'t" width="13" height="13" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">'+
+        '<path d="M0 0v13" stroke="var(--f1)" stroke-width="3.4" opacity=".14" stroke-dasharray="6 7"/>'+
+      '</pattern>'+
+    '</defs>'+
+    '<rect x="-120" y="-120" width="840" height="1040" fill="url(#'+id+'a)"/>'+
+    '<rect x="-120" y="-120" width="840" height="1040" fill="url(#'+id+'b)"/>'+
+    (variant==='fabric'?'':flr)+
+    body+
+  '</svg>';
+}
+
+function heroSVG(cwKey){
+  var id='h'+(++uid);
+  return '<svg viewBox="0 0 1440 720" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Autumn/Winter 2026 campaign">'+
+   '<defs>'+
+     '<linearGradient id="'+id+'a" x1="0" y1="0" x2=".6" y2="1">'+
+       '<stop offset="0" style="stop-color:var(--g1)"/><stop offset="1" style="stop-color:var(--g2)"/></linearGradient>'+
+     '<radialGradient id="'+id+'b" cx=".78" cy=".3" r=".55">'+
+       '<stop offset="0" stop-color="#ffffff" stop-opacity=".58"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></radialGradient>'+
+   '</defs>'+
+   '<rect width="1440" height="720" fill="url(#'+id+'a)"/>'+
+   '<rect width="1440" height="720" fill="url(#'+id+'b)"/>'+
+   '<rect class="flr" x="0" y="622" width="1440" height="120"/>'+
+   '<path class="flrl" d="M0 622h1440"/>'+
+   '<path class="flrl" d="M1012 0v622" opacity=".07"/>'+
+   '<g transform="translate(892,17) scale(.86)">'+G.coat+'</g>'+
+  '</svg>';
+}
+
+/* ---------------- data ---------------- */
+var DELIV=[
+ 'Complimentary standard delivery on all orders over &euro;200 within the European Union; &euro;9 below that threshold. Express delivery arrives in one to two working days and is offered at checkout.',
+ 'Orders placed before 13:00 WET are dispatched the same working day from our warehouse in Matosinhos. You will receive tracking by email as soon as the parcel leaves us.',
+ 'Returns are free for thirty days from delivery, provided pieces are unworn and tags remain attached. Refunds are issued to the original payment method within five working days of arrival. Altered and made-to-order pieces are final sale.'
+];
+var P=[
+ {id:'vela',name:'Vela Wool Coat',price:890,cat:'outerwear',catn:'Outerwear',kind:'coat',
+  cws:['bone','ink','olive'],sizes:['XS','S','M','L','XL'],out:['S'],isNew:true,ord:1,added:8,
+  short:'Double-faced wool and cashmere, unlined, falling below the calf.',
+  desc:['The Vela is the longest coat we make: a straight, unbelted column that falls just below the calf and holds its line without any internal structure. The shoulder sits a fraction beyond the natural point and the armhole is cut deep, so it takes a knit underneath without pulling.','The front closes with three corozo buttons set deliberately low, and the whole coat is left unlined so the cloth stays soft and moves with the body rather than against it.'],
+  fab:['80% virgin wool, 20% cashmere &mdash; double-faced, 720g/m','Woven at a family mill in Biella, Italy','Corozo buttons, hand-finished buttonholes','Cut and made in Guimar&atilde;es, Portugal'],
+  care:['Specialist dry clean only','Do not tumble dry or wring','Brush along the nap after wear','Store on a broad wooden hanger, away from light'],
+  model:'The model is 178cm and wears a size S.'},
+
+ {id:'sund',name:'Sund Merino Knit',price:245,cat:'knitwear',catn:'Knitwear',kind:'knit',
+  cws:['oat','ink','clay'],sizes:['XS','S','M','L','XL'],out:['XL'],isNew:true,ord:2,added:7,
+  short:'Extra-fine merino, fully fashioned, with no side seams.',
+  desc:['A crewneck knitted in twelve-gauge extra-fine merino and shaped on the machine rather than cut from panels, so there are no side seams to press against the body.','The rib at the neck, cuff and hem is worked tighter than the body to hold its shape through the season. Substantial enough to wear alone; fine enough to sit under the Vela.'],
+  fab:['100% extra-fine merino wool, 18.5 micron','Spun in Biella, knitted in Barcelos, Portugal','12-gauge, fully fashioned, seam-free sides','Garment-washed for a softened hand'],
+  care:['Hand wash cold, or wool cycle at 30&deg;','Do not bleach; reshape and dry flat','Cool iron on the reverse','De-pill with a comb rather than a razor'],
+  model:'The model is 181cm and wears a size M.'},
+
+ {id:'havn',name:'Havn Trouser',price:310,cat:'tailoring',catn:'Tailoring',kind:'trouser',
+  cws:['ink','olive','ash'],sizes:['34','36','38','40','42','44'],out:['38'],isNew:false,ord:3,added:6,
+  short:'High-rise wool and linen, single pleat, unhemmed for alteration.',
+  desc:['A high-rise trouser with a single forward pleat, cut wide through the thigh and tapered a little from the knee so the leg breaks cleanly over a shoe.','The waistband is curtained and hand-set, and the hem is left long at three centimetres so your tailor can finish it to your own break. Designed to be worn at the natural waist.'],
+  fab:['64% virgin wool, 34% linen, 2% elastane','Woven in Our&eacute;m, Portugal &mdash; 285g/m','Curtained waistband, French-bearer closure','Unhemmed 3cm turn-up for alteration'],
+  care:['Dry clean recommended','Press on the reverse with a cloth','Hang from the cuff to keep the crease','Complimentary hemming at both ateliers'],
+  model:'The model is 176cm and wears a size 38.'},
+
+ {id:'lisboa',name:'Lisboa Poplin Shirt',price:195,cat:'tailoring',catn:'Tailoring',kind:'shirt',
+  cws:['chalk','slate','bone'],sizes:['XS','S','M','L','XL'],out:['XS'],isNew:false,ord:4,added:5,
+  short:'Two-ply cotton poplin with a low, soft-rolled collar.',
+  desc:['Our house shirt, cut generously through the body with a low collar that rolls softly and sits well whether open or closed.','The placket is set a few millimetres off-centre &mdash; a detail borrowed from a 1960s Portuguese work shirt in our archive &mdash; and the side seams are sewn single-needle at twelve stitches to the inch.'],
+  fab:['100% long-staple cotton poplin, 120s two-ply','Woven and made in Guimar&atilde;es, Portugal','Mother-of-pearl buttons','Single-needle side seams, 12 spi'],
+  care:['Machine wash warm at 40&deg;','Wash with like colours','Iron damp on the reverse of the collar','Chlorine bleach will yellow the poplin'],
+  model:'The model is 181cm and wears a size M.'},
+
+ {id:'norr',name:'Norr Alpaca Cardigan',price:395,cat:'knitwear',catn:'Knitwear',kind:'cardigan',
+  cws:['cocoa','bone','olive'],sizes:['XS','S','M','L','XL'],out:['L'],isNew:true,ord:5,added:4,
+  short:'Brushed baby alpaca with a wide rib placket.',
+  desc:['An open-front cardigan in a brushed alpaca blend, knitted loose on a seven-gauge machine and finished with a wide rib placket that gives the front its weight and keeps it hanging straight.','It falls to the top of the hip and is meant to be worn like a light jacket &mdash; indoors, or under the Vela when the wind turns off the Atlantic.'],
+  fab:['62% baby alpaca, 28% merino, 10% polyamide','Brushed twice for loft','Knitted in Barcelos, Portugal','7-gauge, 6cm rib placket'],
+  care:['Dry clean, or hand wash cold with wool detergent','Reshape and dry flat, away from heat','Do not hang &mdash; fold to store','Steam rather than iron'],
+  model:'The model is 178cm and wears a size S.'},
+
+ {id:'skagen',name:'Skagen Wool Blazer',price:640,cat:'outerwear',catn:'Outerwear',kind:'blazer',
+  cws:['olive','ink','ash'],sizes:['XS','S','M','L','XL'],out:['M'],isNew:false,ord:6,added:3,
+  short:'Half-canvas flannel, almost no padding, low two-button stance.',
+  desc:['A softly constructed blazer with a half-canvas front, a lightly roped shoulder and a two-button stance set low on the body.','There is almost no padding: the shape comes from the cloth and the cut of the floating chest piece, so it wears closer to a heavy cardigan than to a jacket.'],
+  fab:['100% virgin wool flannel, 340g/m','Half-canvas front, floating chest piece','Bemberg cupro sleeve lining, unlined body','Cut and made in Guimar&atilde;es, Portugal'],
+  care:['Specialist dry clean only','Rest for a day between wears','Brush the flannel with a soft bristle','Store on a shaped hanger'],
+  model:'The model is 176cm and wears a size S.'},
+
+ {id:'ericeira',name:'Ericeira Silk Scarf',price:130,cat:'objects',catn:'Objects',kind:'scarf',
+  cws:['clay','olive','oat'],sizes:['90 &times; 90','140 &times; 140'],out:['140 &times; 140'],isNew:false,ord:7,added:2,
+  short:'Sand-washed silk twill, hand-rolled edge, printed in Como.',
+  desc:['A square in sand-washed silk twill, printed with a two-colour study of the last light on the Ericeira cliffs, drawn for us by the painter Ana Sim&otilde;es.','The edges are rolled and stitched by hand &mdash; a slow finish that keeps the corners soft and stops the silk from curling at the hem.'],
+  fab:['100% sand-washed silk twill, 16 momme','Printed and finished in Como, Italy','Hand-rolled and hand-stitched edge','Available at 90 &times; 90cm and 140 &times; 140cm'],
+  care:['Dry clean only','Do not spray fragrance on the silk','Store flat or loosely rolled','Press on the lowest setting, under a cloth'],
+  model:'Photographed at 90 &times; 90cm.'},
+
+ {id:'porto',name:'Porto Leather Tote',price:560,cat:'objects',catn:'Objects',kind:'bag',
+  cws:['cocoa','ink','clay'],sizes:['One size'],out:[],isNew:true,ord:8,added:1,
+  short:'One piece of vegetable-tanned bull leather, folded, not panelled.',
+  desc:['A tote cut from a single piece of vegetable-tanned bull leather and folded rather than panelled, so there is only one seam at each side and nothing to come apart.','It arrives firm and pale, and will darken and slump into shape over a year of use. Unlined, with one slip pocket and a detachable zip pouch.'],
+  fab:['Vegetable-tanned bull leather, 2.2mm','Tanned in Alcanena, Portugal','Solid brass hardware, edges painted by hand','38 &times; 32 &times; 14cm &mdash; fits a 13-inch laptop'],
+  care:['Wipe with a dry cloth; never soak','Condition twice a year with a neutral balm','Water marks will fade as the leather patinates','Free re-stitching for life at the Porto atelier'],
+  model:'Shown with the detachable pouch.'}
+];
+var CATS=[{k:'all',n:'All'},{k:'outerwear',n:'Outerwear'},{k:'knitwear',n:'Knitwear'},{k:'tailoring',n:'Tailoring'},{k:'objects',n:'Objects'}];
+P.forEach(function(p){p.cw=p.cws[0];});
+
+var state={filter:'all',sort:'featured',q:'',cart:[],pdp:null,pcw:null,psize:null,pthumb:0,openAcc:0};
+
+/* ---------------- utils ---------------- */
+function money(n){return '€'+n.toLocaleString('en-US');}
+function byId(id){for(var i=0;i<P.length;i++){if(P[i].id===id)return P[i];}return null;}
+function stripTags(s){return s.replace(/&[a-z]+;/g,' ');}
+
+/* ---------------- category strip ---------------- */
+var CATTILE=[
+ {k:'outerwear',n:'Outerwear',c:5,kind:'coat',cw:'ink'},
+ {k:'knitwear', n:'Knitwear', c:4,kind:'knit',cw:'oat'},
+ {k:'tailoring',n:'Tailoring',c:4,kind:'blazer',cw:'olive'},
+ {k:'objects',  n:'Objects',  c:2,kind:'bag',cw:'cocoa'}
+];
+function buildCats(){
+  $('#cats').innerHTML=CATTILE.map(function(t){
+    return '<a href="#grid" class="cat" data-cat="'+t.k+'">'+
+      '<div class="pnl" style="'+cwVars(t.cw)+'">'+panelSVG(t.kind,t.cw,'tile')+'</div>'+
+      '<div class="cat-cap"><span>'+t.c+' pieces</span><h3>'+t.n+'</h3></div>'+
+      '<div class="cat-line"></div></a>';
+  }).join('');
+}
+
+/* ---------------- grid ---------------- */
+function visible(){
+  var q=state.q.trim().toLowerCase();
+  return P.filter(function(p){
+    if(state.filter!=='all'&&p.cat!==state.filter)return false;
+    if(q){
+      var hay=(p.name+' '+p.catn+' '+p.short+' '+stripTags(p.fab.join(' '))).toLowerCase();
+      if(hay.indexOf(q)<0)return false;
+    }
+    return true;
+  }).sort(function(a,b){
+    switch(state.sort){
+      case 'asc':return a.price-b.price;
+      case 'desc':return b.price-a.price;
+      case 'az':return a.name.localeCompare(b.name);
+      case 'new':return b.added-a.added;
+      default:return a.ord-b.ord;
+    }
+  });
+}
+function cardHTML(p){
+  return '<article class="card" data-card="'+p.id+'">'+
+    '<button class="card-img" data-open="'+p.id+'" aria-label="View '+p.name+'">'+
+      '<div class="pnl" data-panel="'+p.id+'" style="'+cwVars(p.cw)+'">'+panelSVG(p.kind,p.cw,'full')+'</div>'+
+      (p.isNew?'<span class="tag"><i></i>New in</span>':'')+
+      '<span class="qa" data-qa="'+p.id+'" role="button" tabindex="0">'+
+        '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 1v10M1 6h10"/></svg>Quick add</span>'+
+    '</button>'+
+    '<div class="card-body">'+
+      '<div class="card-r1"><h3>'+p.name+'</h3><span class="price">'+money(p.price)+'</span></div>'+
+      '<p class="card-sub">'+p.catn+' &mdash; '+p.cws.length+' colours</p>'+
+      '<div class="sw" data-sw="'+p.id+'">'+p.cws.map(function(k){
+        return '<button type="button" data-cw="'+k+'" aria-pressed="'+(k===p.cw)+'" aria-label="'+CW[k].n+'" style="background:'+CW[k].dot+'"></button>';
+      }).join('')+'<span class="swn" data-swn="'+p.id+'">'+CW[p.cw].n+'</span></div>'+
+    '</div></article>';
+}
+function renderGrid(){
+  var list=visible(),g=$('#pgrid');
+  if(!list.length){
+    g.innerHTML='<div class="empty-res"><h3 class="serif">Nothing here yet</h3><p>No pieces match this combination. Try another category, or clear the search.</p></div>';
+  } else {
+    g.innerHTML=list.map(cardHTML).join('');
+  }
+  $('#resCount').textContent=list.length+(list.length===1?' product':' products');
+  $('#srchCount').textContent=list.length+' of '+P.length+' pieces shown';
+  requestAnimationFrame(function(){
+    $$('.card',g).forEach(function(el,i){
+      el.style.transitionDelay=(i*32)+'ms';
+      el.classList.add('in');
+    });
+  });
+}
+function renderChips(){
+  $('#chips').innerHTML=CATS.map(function(c){
+    var n=c.k==='all'?P.length:P.filter(function(p){return p.cat===c.k;}).length;
+    return '<button class="chip'+(state.filter===c.k?' on':'')+'" data-chip="'+c.k+'" aria-pressed="'+(state.filter===c.k)+'">'+c.n+'<sup>'+n+'</sup></button>';
+  }).join('');
+}
+
+/* ---------------- PDP ---------------- */
+var THUMBS=['full','crop','flat','fabric'];
+function renderPDP(){
+  var p=byId(state.pdp);if(!p)return;
+  var cw=state.pcw||p.cw, v=cwVars(cw);
+  var sizesWide=p.sizes.length<=3;
+  var html=
+  '<nav class="crumb">'+
+    '<button class="back" data-back><svg viewBox="0 0 22 8" aria-hidden="true"><path d="M22 4H2M5.5 1L2 4l3.5 3"/></svg>Back</button>'+
+    '<span class="sl">/</span><span>Women</span><span class="sl">/</span><span>'+p.catn+'</span><span class="sl">/</span><b>'+p.name+'</b>'+
+  '</nav>'+
+  '<div class="pdp">'+
+    '<div class="gal">'+
+      '<div class="thumbs">'+THUMBS.map(function(t,i){
+        return '<button class="thumb'+(i===state.pthumb?' on':'')+'" data-thumb="'+i+'" aria-label="View '+(i+1)+' of 4"><div class="pnl" style="'+v+'">'+panelSVG(p.kind,cw,t)+'</div></button>';
+      }).join('')+'</div>'+
+      '<div class="gmain"><div class="pnl" id="pdpMain" style="'+v+'">'+panelSVG(p.kind,cw,THUMBS[state.pthumb])+'</div></div>'+
+    '</div>'+
+    '<div class="pinfo">'+
+      '<p class="lbl">'+p.catn+' &nbsp;&mdash;&nbsp; AW26 &nbsp;&mdash;&nbsp; First delivery</p>'+
+      '<h1>'+p.name+'</h1>'+
+      '<div class="pprice">'+money(p.price)+'</div>'+
+      '<p class="ptax">Duties and taxes included for the European Union</p>'+
+      '<p class="pshort">'+p.short+'</p>'+
+
+      '<div class="opt"><div class="opt-hd"><span class="lbl">Colour &mdash; <span id="cwName" style="color:var(--ink)">'+CW[cw].n+'</span></span></div>'+
+        '<div class="pcols" id="pcols">'+p.cws.map(function(k){
+          return '<button type="button" data-pcw="'+k+'" aria-pressed="'+(k===cw)+'" aria-label="'+CW[k].n+'" style="background:'+CW[k].dot+'"></button>';
+        }).join('')+'</div></div>'+
+
+      '<div class="opt"><div class="opt-hd"><span class="lbl">Size</span><button class="sg" type="button">Size guide</button></div>'+
+        '<div class="sizes'+(sizesWide?' wide':'')+'" id="sizes">'+p.sizes.map(function(s){
+          var o=p.out.indexOf(s)>=0;
+          return '<button type="button" class="'+(o?'out':'')+(state.psize===s?' on':'')+'" data-size="'+s+'"'+(o?' aria-disabled="true"':'')+'>'+s+'</button>';
+        }).join('')+'</div>'+
+        '<p class="sizemsg" id="sizemsg">'+p.model+'</p>'+
+      '</div>'+
+
+      '<button class="addbtn" id="addBtn">Add to bag &nbsp;&mdash;&nbsp; '+money(p.price)+'</button>'+
+      '<div class="pnote"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1.5 4.5h13v8h-13zM1.5 7h13"/></svg><span>Free delivery over &euro;200 and free returns for thirty days. Dispatched from Matosinhos within one working day.</span></div>'+
+
+      '<div class="acc" id="acc">'+
+        accItem(0,'Description','<p>'+p.desc.join('</p><p>')+'</p>')+
+        accItem(1,'Fabric &amp; care','<p class="lbl">Composition</p><ul><li>'+p.fab.join('</li><li>')+'</li></ul><p class="lbl">Care</p><ul><li>'+p.care.join('</li><li>')+'</li></ul>')+
+        accItem(2,'Delivery &amp; returns','<p>'+DELIV.join('</p><p>')+'</p>')+
+      '</div>'+
+    '</div>'+
+  '</div>'+
+  '<div class="sechead" style="padding-top:20px"><h2 class="serif">Also in the collection</h2></div>'+
+  '<div class="grid" id="alsoGrid">'+P.filter(function(x){return x.id!==p.id;}).slice(0,4).map(cardHTML).join('')+'</div>';
+
+  var v2=$('#view-pdp');
+  v2.innerHTML=html;
+  requestAnimationFrame(function(){
+    $$('#alsoGrid .card').forEach(function(el,i){el.style.transitionDelay=(i*32)+'ms';el.classList.add('in');});
+    var open=$('#acc .acc-b[data-acc="'+state.openAcc+'"]');
+    if(open)setAcc(open,true);
+  });
+}
+function accItem(i,title,body){
+  return '<div class="acc-i"><button class="acc-b" data-acc="'+i+'" aria-expanded="false" aria-controls="accp'+i+'">'+title+'<span class="pm"></span></button>'+
+    '<div class="acc-p" id="accp'+i+'"><div class="acc-c">'+body+'</div></div></div>';
+}
+function setAcc(btn,on){
+  var pane=document.getElementById(btn.getAttribute('aria-controls'));
+  btn.setAttribute('aria-expanded',on?'true':'false');
+  pane.style.maxHeight=on?(pane.firstElementChild.offsetHeight+8)+'px':'0px';
+}
+function openPDP(id){
+  state.pdp=id;
+  var p=byId(id);
+  state.pcw=p.cw;state.psize=null;state.pthumb=0;state.openAcc=0;
+  renderPDP();
+  $('#view-store').style.display='none';
+  var v=$('#view-pdp');v.classList.add('on');
+  $('#hdr').classList.add('solid');
+  window.scrollTo(0,0);
+}
+function closePDP(){
+  state.pdp=null;
+  var v=$('#view-pdp');v.classList.remove('on');v.innerHTML='';
+  $('#view-store').style.display='';
+  renderGrid();
+  onScroll();
+}
+
+/* ---------------- cart ---------------- */
+function addToCart(p,cw,size,qty){
+  var key=p.id+'|'+cw+'|'+size,found=null;
+  state.cart.forEach(function(l){if(l.key===key)found=l;});
+  if(found)found.qty+=qty||1;
+  else state.cart.push({key:key,id:p.id,name:p.name,price:p.price,cw:cw,size:size,kind:p.kind,qty:qty||1});
+  renderCart();openCart();
+}
+function cartCount(){return state.cart.reduce(function(a,l){return a+l.qty;},0);}
+function subtotal(){return state.cart.reduce(function(a,l){return a+l.qty*l.price;},0);}
+function renderCart(){
+  var n=cartCount(),b=$('#badge');
+  b.textContent=n;b.classList.toggle('on',n>0);
+  $('#drwCount').textContent=n?'('+n+')':'';
+  var body=$('#drwBody');
+  if(!state.cart.length){
+    body.innerHTML='<div class="drw-empty">'+
+      '<svg viewBox="0 0 34 34" aria-hidden="true"><path d="M5 10h24l-2 20H7z"/><path d="M12 12V8a5 5 0 0110 0v4"/></svg>'+
+      '<h3 class="serif">Your bag is empty</h3>'+
+      '<p>Nothing here yet. The first Autumn/Winter delivery is available now.</p>'+
+      '<button class="cta" data-closecart style="align-self:center">Browse the collection<svg viewBox="0 0 22 8" aria-hidden="true"><path d="M0 4h20M16.5 1L20 4l-3.5 3"/></svg></button>'+
+    '</div>';
+    $('#drwFt').style.display='none';
+    return;
+  }
+  $('#drwFt').style.display='';
+  body.innerHTML=state.cart.map(function(l){
+    return '<div class="li">'+
+      '<div class="pnl" style="'+cwVars(l.cw)+'">'+panelSVG(l.kind,l.cw,'full')+'</div>'+
+      '<div><div class="li-r1"><h3>'+l.name+'</h3><span class="lip">'+money(l.price*l.qty)+'</span></div>'+
+      '<p class="meta">'+CW[l.cw].n+' &nbsp;/&nbsp; Size '+l.size+'</p>'+
+      '<div class="li-r2"><div class="stp">'+
+        '<button data-dec="'+l.key+'" aria-label="Decrease quantity"'+(l.qty<=1?' disabled':'')+'>&minus;</button>'+
+        '<span>'+l.qty+'</span>'+
+        '<button data-inc="'+l.key+'" aria-label="Increase quantity">+</button>'+
+      '</div><button class="rm" data-rm="'+l.key+'">Remove</button></div></div></div>';
+  }).join('');
+  $('#sub').textContent=money(subtotal());
+  $('#ship').innerHTML=subtotal()>=200?'Complimentary':'€9 &mdash; standard';
+}
+
+/* drawer open/close + focus trap */
+var lastFocus=null;
+function openCart(){
+  lastFocus=document.activeElement;
+  $('#drw').classList.add('on');$('#ovl').classList.add('on');
+  $('#drw').setAttribute('aria-hidden','false');
+  document.body.classList.add('locked');
+  setTimeout(function(){$('#drwX').focus();},60);
+  document.addEventListener('keydown',trap,true);
+}
+function closeCart(){
+  $('#drw').classList.remove('on');$('#ovl').classList.remove('on');
+  $('#drw').setAttribute('aria-hidden','true');
+  document.body.classList.remove('locked');
+  document.removeEventListener('keydown',trap,true);
+  if(lastFocus&&lastFocus.focus)lastFocus.focus();
+}
+function trap(e){
+  if(e.key!=='Tab')return;
+  var f=$$('button,[href],input,select,[tabindex]:not([tabindex="-1"])',$('#drw')).filter(function(el){return !el.disabled&&el.offsetParent!==null;});
+  if(!f.length)return;
+  var first=f[0],last=f[f.length-1];
+  if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+  else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+}
+
+/* ---------------- payment icons ---------------- */
+function payIcons(){
+  function box(inner){return '<svg width="40" height="26" viewBox="0 0 40 26" aria-hidden="true"><rect x=".5" y=".5" width="39" height="25" rx="2.5" fill="none" stroke="#DFDAD2"/>'+inner+'</svg>';}
+  var t='font-family:Inter,sans-serif;font-size:8px;letter-spacing:.06em;fill:#8B8579';
+  return [
+    box('<text x="20" y="16.5" text-anchor="middle" style="'+t+';font-weight:600;letter-spacing:.12em">VISA</text>'),
+    box('<circle cx="16" cy="13" r="6" fill="#8B8579" opacity=".45"/><circle cx="24" cy="13" r="6" fill="#8B8579" opacity=".28"/>'),
+    box('<rect x="6" y="6" width="28" height="14" fill="#8B8579" opacity=".16"/><text x="20" y="16.5" text-anchor="middle" style="'+t+';font-weight:600">AMEX</text>'),
+    box('<path d="M14 19l2-12h6a3.4 3.4 0 010 6.8h-4" fill="none" stroke="#8B8579" stroke-width="1.3"/><path d="M18 21l1.6-8" stroke="#8B8579" stroke-width="1.3" fill="none" opacity=".5"/>'),
+    box('<text x="20" y="16.5" text-anchor="middle" style="'+t+';font-weight:600;letter-spacing:.1em">KLARNA</text>'),
+    box('<path d="M18.6 8.2c.9-1 .7-2.3.7-2.3s-1.2.1-2 1.1c-.8.9-.7 2.2-.7 2.2s1.2 0 2-1z" fill="#8B8579" opacity=".6"/><path d="M20.6 10.4c-1.3 0-2.1.7-2.8.7-.7 0-1.5-.7-2.5-.7-1.3 0-2.6 1-2.6 3 0 2.6 1.9 5.4 3 5.4.6 0 1.2-.5 2.1-.5.9 0 1.3.5 2 .5 1.2 0 2.8-2.6 2.8-4.3-1.9-.7-2-3.4 0-4.1-.6-.7-1.4-1-2-1z" fill="#8B8579" opacity=".45"/><text x="30" y="16.5" text-anchor="middle" style="'+t+'">Pay</text>')
+  ].join('');
+}
+
+/* ---------------- events ---------------- */
+document.addEventListener('click',function(e){
+  var t=e.target,el;
+
+  if((el=t.closest('[data-chip]'))){state.filter=el.getAttribute('data-chip');renderChips();renderGrid();return;}
+  if((el=t.closest('.cat[data-cat]'))){
+    e.preventDefault();state.filter=el.getAttribute('data-cat');renderChips();renderGrid();
+    document.getElementById('grid').scrollIntoView({behavior:'smooth',block:'start'});return;
+  }
+  if((el=t.closest('[data-qa]'))){
+    e.preventDefault();e.stopPropagation();
+    var pq=byId(el.getAttribute('data-qa'));
+    var sz=pq.sizes.filter(function(s){return pq.out.indexOf(s)<0;})[0];
+    addToCart(pq,pq.cw,sz,1);return;
+  }
+  if((el=t.closest('.sw [data-cw]'))){
+    e.preventDefault();e.stopPropagation();
+    var pid=el.closest('[data-sw]').getAttribute('data-sw'),k=el.getAttribute('data-cw'),pp=byId(pid);
+    pp.cw=k;
+    $$('[data-sw="'+pid+'"] [data-cw]').forEach(function(b){b.setAttribute('aria-pressed',String(b===el));});
+    $$('[data-panel="'+pid+'"]').forEach(function(pn){pn.style.cssText=cwVars(k);});
+    $$('[data-swn="'+pid+'"]').forEach(function(s){s.textContent=CW[k].n;});
+    return;
+  }
+  if((el=t.closest('[data-open]'))){e.preventDefault();openPDP(el.getAttribute('data-open'));return;}
+  if(t.closest('[data-back]')){closePDP();return;}
+
+  if((el=t.closest('[data-pcw]'))){
+    var kk=el.getAttribute('data-pcw');state.pcw=kk;
+    $$('#pcols [data-pcw]').forEach(function(b){b.setAttribute('aria-pressed',String(b===el));});
+    $$('#view-pdp .gal .pnl').forEach(function(pn){pn.style.cssText=cwVars(kk);});
+    $('#cwName').textContent=CW[kk].n;
+    byId(state.pdp).cw=kk;
+    return;
+  }
+  if((el=t.closest('[data-thumb]'))){
+    var i=+el.getAttribute('data-thumb');state.pthumb=i;
+    var pp2=byId(state.pdp),cwk=state.pcw||pp2.cw;
+    $('#pdpMain').innerHTML=panelSVG(pp2.kind,cwk,THUMBS[i]);
+    $$('#view-pdp .thumb').forEach(function(b,j){b.classList.toggle('on',j===i);});
+    return;
+  }
+  if((el=t.closest('#sizes [data-size]'))){
+    var s=el.getAttribute('data-size'),pp3=byId(state.pdp),msg=$('#sizemsg');
+    if(el.classList.contains('out')){
+      msg.className='sizemsg';
+      msg.innerHTML='Size '+s+' is sold out. <a href="#" data-notify>Notify me when it returns</a>';
+      return;
+    }
+    state.psize=s;
+    $$('#sizes button').forEach(function(b){b.classList.toggle('on',b===el);});
+    msg.className='sizemsg';msg.innerHTML=pp3.model;
+    return;
+  }
+  if(t.closest('[data-notify]')){e.preventDefault();$('#sizemsg').innerHTML='Thank you — we will write to you the moment it is back.';return;}
+  if(t.closest('#addBtn')){
+    var pp4=byId(state.pdp);
+    if(!state.psize){
+      var sz2=$('#sizes'),m2=$('#sizemsg');
+      m2.className='sizemsg err';m2.textContent='Please select a size.';
+      sz2.classList.remove('shake');void sz2.offsetWidth;sz2.classList.add('shake');
+      return;
+    }
+    addToCart(pp4,state.pcw||pp4.cw,state.psize,1);return;
+  }
+  if((el=t.closest('.acc-b'))){
+    var on=el.getAttribute('aria-expanded')==='true';
+    $$('#acc .acc-b').forEach(function(b){setAcc(b,false);});
+    if(!on){setAcc(el,true);state.openAcc=+el.getAttribute('data-acc');}
+    else state.openAcc=-1;
+    return;
+  }
+
+  if((el=t.closest('[data-inc]'))){bump(el.getAttribute('data-inc'),1);return;}
+  if((el=t.closest('[data-dec]'))){bump(el.getAttribute('data-dec'),-1);return;}
+  if((el=t.closest('[data-rm]'))){
+    var key=el.getAttribute('data-rm');
+    state.cart=state.cart.filter(function(l){return l.key!==key;});renderCart();return;
+  }
+  if(t.closest('#btnCart')){openCart();return;}
+  if(t.closest('#drwX')||t.closest('#ovl')||t.closest('[data-closecart]')||t.closest('#contShop')){e.preventDefault();closeCart();return;}
+
+  if(t.closest('#btnSearch')){toggleSearch();return;}
+  if(t.closest('#srchX')){toggleSearch(false);return;}
+  if((el=t.closest('.srch-sug [data-q]'))){
+    $('#srchIn').value=el.getAttribute('data-q');state.q=el.getAttribute('data-q');
+    if(state.pdp)closePDP();renderGrid();return;
+  }
+  if(t.closest('#btnAcct')){
+    var pop=$('#popAcct'),o=pop.classList.toggle('on');
+    $('#btnAcct').setAttribute('aria-expanded',String(o));return;
+  }
+  if(!t.closest('#popAcct')){$('#popAcct').classList.remove('on');$('#btnAcct').setAttribute('aria-expanded','false');}
+
+  if((el=t.closest('#markLink'))){e.preventDefault();if(state.pdp)closePDP();window.scrollTo({top:0,behavior:'smooth'});return;}
+  if((el=t.closest('[data-nav]'))){
+    e.preventDefault();
+    var href=el.getAttribute('href');
+    if(state.pdp)closePDP();
+    $$('.nav a').forEach(function(a){a.classList.remove('on');});
+    if(el.classList.contains('nav')||el.parentNode.classList.contains('nav'))el.classList.add('on');
+    var tgt=document.querySelector(href);
+    if(tgt)setTimeout(function(){tgt.scrollIntoView({behavior:'smooth',block:'start'});},20);
+    return;
+  }
+},false);
+
+function bump(key,d){
+  state.cart.forEach(function(l){if(l.key===key)l.qty=Math.max(1,l.qty+d);});
+  renderCart();
+}
+
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){
+    if($('#drw').classList.contains('on')){closeCart();return;}
+    if($('#srch').classList.contains('on')){toggleSearch(false);return;}
+    if($('#popAcct').classList.contains('on')){$('#popAcct').classList.remove('on');$('#btnAcct').setAttribute('aria-expanded','false');}
+  }
+  if(e.key==='Enter'||e.key===' '){
+    var q=e.target.closest&&e.target.closest('[data-qa]');
+    if(q){e.preventDefault();q.click();}
+  }
+});
+
+function toggleSearch(force){
+  var s=$('#srch'),on=typeof force==='boolean'?force:!s.classList.contains('on');
+  s.classList.toggle('on',on);
+  $('#btnSearch').setAttribute('aria-expanded',String(on));
+  if(on)setTimeout(function(){$('#srchIn').focus();},220);
+  else{$('#srchIn').value='';state.q='';renderGrid();}
+}
+$('#srchIn').addEventListener('input',function(){
+  state.q=this.value;
+  if(state.pdp)closePDP();
+  renderGrid();
+});
+$('#sort').addEventListener('change',function(){state.sort=this.value;renderGrid();});
+
+$('#annX').addEventListener('click',function(){
+  $('#ann').classList.add('gone');
+  document.documentElement.style.setProperty('--stick','70px');
+  setTimeout(function(){$('#ann').style.display='none';},440);
+});
+
+/* newsletter */
+$('#nlForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  var v=$('#nlIn').value.trim(),msg=$('#nlMsg'),row=$('#nlRow');
+  var ok=/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(v);
+  if(!v){msg.className='nl-msg bad';msg.textContent='Please enter your email address.';row.classList.add('bad');return;}
+  if(!ok){msg.className='nl-msg bad';msg.textContent='That address does not look right — please check it.';row.classList.add('bad');return;}
+  row.classList.remove('bad');
+  msg.className='nl-msg ok';
+  msg.textContent='Thank you. The next letter goes out on Thursday.';
+  $('#nlIn').value='';$('#nlIn').disabled=true;
+});
+$('#nlIn').addEventListener('input',function(){
+  $('#nlRow').classList.remove('bad');
+  var m=$('#nlMsg');m.className='nl-msg';m.textContent='Collection notes and early access. Two letters a month.';
+});
+
+/* scroll header */
+function onScroll(){
+  var y=window.pageYOffset||document.documentElement.scrollTop;
+  $('#hdr').classList.toggle('solid',y>60||!!state.pdp);
+}
+window.addEventListener('scroll',onScroll,{passive:true});
+
+/* ---------------- init ---------------- */
+$('#heroPnl').style.cssText=cwVars('bone');
+$('#heroPnl').innerHTML=heroSVG('bone');
+$('#jrnPnl').style.cssText=cwVars('olive');
+$('#jrnPnl').innerHTML=panelSVG('coat','olive','tile');
+$('#pay').innerHTML=payIcons();
+buildCats();
+renderChips();
+renderGrid();
+renderCart();
+onScroll();
+})();
+</script>
+</body>
+</html>

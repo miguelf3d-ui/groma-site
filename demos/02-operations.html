@@ -1,0 +1,1519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Halyard — Operations Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;450;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFFFFF;
+    --canvas:#F7F8F9;
+    --line:#E4E7EA;
+    --line-soft:#EDEFF2;
+    --text:#14171A;
+    --muted:#6B7280;
+    --muted-2:#9AA1AB;
+    --accent:#4F46E5;
+    --accent-weak:#EEF2FF;
+    --accent-line:#C7D2FE;
+    --green:#067647;
+    --green-bg:#ECFDF3;
+    --green-line:#ABEFC6;
+    --amber:#B45309;
+    --amber-bg:#FFFAEB;
+    --amber-line:#FEDF89;
+    --red:#B42318;
+    --red-bg:#FEF3F2;
+    --red-line:#FECDCA;
+    --r:6px;
+    --r-lg:8px;
+    --shadow-sm:0 1px 2px rgba(20,23,26,.05);
+    --shadow-md:0 4px 12px -2px rgba(20,23,26,.08), 0 2px 4px -2px rgba(20,23,26,.06);
+    --shadow-lg:0 16px 40px -8px rgba(20,23,26,.14), 0 4px 10px -4px rgba(20,23,26,.08);
+    --sidebar:240px;
+    --drawer:420px;
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    font-size:13px;
+    line-height:1.45;
+    color:var(--text);
+    background:var(--canvas);
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    font-feature-settings:"cv05" 1,"ss01" 1;
+  }
+  button,input,select{font:inherit;color:inherit}
+  button{background:none;border:0;padding:0;cursor:pointer}
+  ::selection{background:#DDD9FB}
+
+  :focus-visible{
+    outline:2px solid var(--accent);
+    outline-offset:2px;
+    border-radius:4px;
+  }
+
+  .mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums}
+  .num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+
+  /* ---------- shell ---------- */
+  .app{
+    display:grid;
+    grid-template-columns:var(--sidebar) minmax(0,1fr);
+    height:100vh;
+    overflow:hidden;
+  }
+
+  /* ---------- sidebar ---------- */
+  .sidebar{
+    background:var(--canvas);
+    border-right:1px solid var(--line);
+    display:flex;
+    flex-direction:column;
+    min-height:0;
+  }
+  .brand{
+    display:flex;align-items:center;gap:9px;
+    padding:14px 14px 12px;
+  }
+  .mark{
+    width:26px;height:26px;border-radius:7px;
+    background:linear-gradient(155deg,#6366F1 0%,#4F46E5 55%,#4338CA 100%);
+    display:grid;place-items:center;flex:none;
+    box-shadow:0 1px 2px rgba(67,56,202,.35), inset 0 1px 0 rgba(255,255,255,.22);
+  }
+  .brand-name{font-weight:600;font-size:13.5px;letter-spacing:-.01em}
+  .brand-tag{
+    font-size:9.5px;font-weight:550;letter-spacing:.05em;text-transform:uppercase;
+    color:var(--muted);background:var(--bg);border:1px solid var(--line);
+    padding:1px 5px;border-radius:4px;margin-left:auto;
+  }
+
+  .search{
+    margin:0 12px 12px;
+    display:flex;align-items:center;gap:7px;
+    height:30px;padding:0 8px;
+    background:var(--bg);
+    border:1px solid var(--line);
+    border-radius:var(--r);
+    color:var(--muted);
+    box-shadow:var(--shadow-sm);
+    width:calc(100% - 24px);
+    text-align:left;
+    transition:border-color .12s ease, box-shadow .12s ease;
+  }
+  .search:hover{border-color:#D3D8DE}
+  .search span{font-size:12.5px;flex:1;color:var(--muted)}
+  .kbd{
+    font-family:"IBM Plex Mono",monospace;font-size:10px;
+    color:var(--muted-2);background:var(--canvas);
+    border:1px solid var(--line);border-radius:4px;
+    padding:1px 4px;line-height:1.4;
+  }
+
+  .nav{padding:0 8px;overflow-y:auto;min-height:0;flex:1}
+  .nav-label{
+    font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--muted-2);padding:14px 8px 6px;
+  }
+  .nav-item{
+    display:flex;align-items:center;gap:9px;
+    width:100%;height:30px;padding:0 8px;
+    border-radius:var(--r);
+    color:#3F444B;font-size:13px;font-weight:450;
+    position:relative;
+    transition:background .1s ease,color .1s ease;
+  }
+  .nav-item svg{flex:none;color:var(--muted-2);transition:color .1s ease}
+  .nav-item:hover{background:#EEF0F3;color:var(--text)}
+  .nav-item:hover svg{color:var(--muted)}
+  .nav-item.active{background:var(--bg);color:var(--text);font-weight:550;box-shadow:var(--shadow-sm);border:1px solid var(--line)}
+  .nav-item.active svg{color:var(--accent)}
+  .nav-count{
+    margin-left:auto;font-size:11px;color:var(--muted-2);
+    font-variant-numeric:tabular-nums;
+  }
+  .nav-count.warn{color:var(--red);background:var(--red-bg);border:1px solid var(--red-line);border-radius:20px;padding:0 5px;font-size:10px;font-weight:550;line-height:15px}
+  .nav-item.active .nav-count{color:var(--muted)}
+
+  .view-item{
+    display:flex;align-items:center;gap:8px;
+    width:100%;height:28px;padding:0 8px;border-radius:var(--r);
+    color:#4B5158;font-size:12.5px;text-align:left;
+    transition:background .1s ease,color .1s ease;
+  }
+  .view-item:hover{background:#EEF0F3;color:var(--text)}
+  .view-item.active{background:var(--accent-weak);color:#3730A3;font-weight:500}
+  .view-dot{width:6px;height:6px;border-radius:50%;flex:none}
+  .view-item span.vname{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .view-item .nav-count{font-size:11px}
+
+  .user{
+    border-top:1px solid var(--line);
+    padding:10px 12px;
+    display:flex;align-items:center;gap:9px;
+    flex:none;
+  }
+  .avatar{
+    width:26px;height:26px;border-radius:50%;flex:none;
+    display:grid;place-items:center;
+    font-size:10.5px;font-weight:600;color:#fff;letter-spacing:.02em;
+    background:linear-gradient(150deg,#4F46E5,#7C3AED);
+  }
+  .user-meta{min-width:0;flex:1}
+  .user-name{font-size:12.5px;font-weight:550;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .user-role{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .icon-btn{
+    width:24px;height:24px;border-radius:var(--r);display:grid;place-items:center;
+    color:var(--muted-2);flex:none;transition:background .1s ease,color .1s ease;
+  }
+  .icon-btn:hover{background:#EAECEF;color:var(--text)}
+
+  /* ---------- main ---------- */
+  .main{
+    background:var(--bg);
+    display:flex;flex-direction:column;
+    min-width:0;min-height:0;
+    transition:margin-right .26s cubic-bezier(.32,.72,0,1);
+  }
+
+  .topbar{
+    height:52px;flex:none;
+    border-bottom:1px solid var(--line);
+    display:flex;align-items:center;gap:12px;
+    padding:0 16px 0 20px;
+  }
+  .crumbs{display:flex;align-items:center;gap:6px;font-size:13px;min-width:0}
+  .crumbs .c-mut{color:var(--muted)}
+  .crumbs .c-sep{color:#C9CED4}
+  .crumbs .c-cur{font-weight:550}
+  .crumb-chip{
+    font-size:10.5px;font-weight:550;color:var(--muted);
+    border:1px solid var(--line);border-radius:4px;padding:0 5px;margin-left:2px;
+    line-height:16px;
+  }
+  .spacer{flex:1}
+
+  .seg{
+    display:flex;align-items:center;gap:2px;
+    background:var(--canvas);border:1px solid var(--line);
+    border-radius:7px;padding:2px;
+  }
+  .seg button{
+    height:24px;padding:0 10px;border-radius:5px;
+    font-size:12.5px;font-weight:450;color:var(--muted);
+    display:flex;align-items:center;gap:6px;
+    transition:background .12s ease,color .12s ease,box-shadow .12s ease;
+    white-space:nowrap;
+  }
+  .seg button:hover{color:var(--text)}
+  .seg button[aria-pressed="true"]{
+    background:var(--bg);color:var(--text);font-weight:550;
+    box-shadow:var(--shadow-sm);
+  }
+  .seg .sc{font-size:10.5px;color:var(--muted-2);font-variant-numeric:tabular-nums}
+  .seg button[aria-pressed="true"] .sc{color:var(--muted)}
+
+  .btn{
+    height:30px;padding:0 10px;border-radius:var(--r);
+    border:1px solid var(--line);background:var(--bg);
+    font-size:12.5px;font-weight:500;color:#33383E;
+    display:inline-flex;align-items:center;gap:7px;
+    box-shadow:var(--shadow-sm);
+    transition:background .12s ease,border-color .12s ease,color .12s ease;
+    white-space:nowrap;
+  }
+  .btn:hover{background:#FAFBFC;border-color:#D3D8DE;color:var(--text)}
+  .btn svg{color:var(--muted)}
+  .btn:hover svg{color:#4B5158}
+  .btn-primary{
+    background:var(--accent);border-color:#4338CA;color:#fff;
+    box-shadow:0 1px 2px rgba(67,56,202,.28), inset 0 1px 0 rgba(255,255,255,.16);
+  }
+  .btn-primary:hover{background:#4338CA;border-color:#3730A3;color:#fff}
+  .btn-primary svg{color:rgba(255,255,255,.85)}
+  .btn-ghost{border-color:transparent;box-shadow:none;background:transparent;color:var(--muted)}
+  .btn-ghost:hover{background:var(--canvas);border-color:var(--line);color:var(--text)}
+  .btn-sm{height:26px;padding:0 8px;font-size:12px}
+
+  /* ---------- KPI strip ---------- */
+  .strip{flex:none;border-bottom:1px solid var(--line);position:relative}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr)}
+  .kpi{
+    padding:13px 18px 12px;
+    border-right:1px solid var(--line-soft);
+    display:flex;flex-direction:column;gap:5px;
+    min-width:0;
+  }
+  .kpi:last-child{border-right:0}
+  .kpi-top{display:flex;align-items:center;gap:6px}
+  .kpi-label{font-size:11.5px;color:var(--muted);font-weight:450;letter-spacing:.005em}
+  .kpi-row{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+  .kpi-val{font-size:22px;font-weight:600;letter-spacing:-.02em;line-height:1.1;font-variant-numeric:tabular-nums}
+  .kpi-val .unit{font-size:13px;font-weight:500;color:var(--muted);margin-left:2px;letter-spacing:0}
+  .kpi-foot{display:flex;align-items:center;gap:6px;margin-top:1px}
+  .delta{
+    display:inline-flex;align-items:center;gap:3px;
+    font-size:11.5px;font-weight:550;font-variant-numeric:tabular-nums;
+  }
+  .delta.up{color:var(--green)}
+  .delta.down{color:var(--red)}
+  .delta.warn{color:var(--amber)}
+  .delta-note{font-size:11px;color:var(--muted-2)}
+  .spark{flex:none;opacity:.95}
+
+  /* ---------- bulk bar ---------- */
+  .bulk{
+    position:absolute;inset:0;
+    background:linear-gradient(180deg,#F5F5FF, #EEF2FF);
+    border-bottom:1px solid var(--accent-line);
+    display:flex;align-items:center;gap:10px;
+    padding:0 18px;
+    opacity:0;pointer-events:none;
+    transform:translateY(-3px);
+    transition:opacity .14s ease, transform .14s ease;
+  }
+  .bulk.show{opacity:1;pointer-events:auto;transform:none}
+  .bulk-count{
+    font-size:12.5px;font-weight:600;color:#3730A3;
+    display:inline-flex;align-items:center;gap:7px;
+  }
+  .bulk-badge{
+    background:var(--accent);color:#fff;border-radius:5px;
+    min-width:20px;height:20px;padding:0 5px;
+    display:grid;place-items:center;font-size:11.5px;font-weight:600;
+    font-variant-numeric:tabular-nums;
+  }
+  .bulk-sep{width:1px;height:18px;background:var(--accent-line)}
+  .bulk .btn{background:rgba(255,255,255,.75);border-color:#CFD4F5}
+  .bulk .btn:hover{background:#fff;border-color:#B9C0F0}
+
+  /* ---------- toolbar ---------- */
+  .toolbar{
+    flex:none;height:42px;
+    display:flex;align-items:center;gap:10px;
+    padding:0 16px 0 20px;
+    border-bottom:1px solid var(--line);
+    background:var(--bg);
+  }
+  .finder{
+    display:flex;align-items:center;gap:7px;
+    height:28px;padding:0 8px;
+    border:1px solid var(--line);border-radius:var(--r);
+    background:var(--bg);min-width:246px;
+    transition:border-color .12s ease,box-shadow .12s ease;
+  }
+  .finder:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,70,229,.12)}
+  .finder input{
+    border:0;outline:0;background:none;width:100%;font-size:12.5px;
+  }
+  .finder input::placeholder{color:var(--muted-2)}
+  .finder svg{color:var(--muted-2);flex:none}
+  .clear-x{
+    width:16px;height:16px;border-radius:50%;display:none;place-items:center;
+    color:var(--muted-2);background:var(--canvas);flex:none;
+  }
+  .clear-x:hover{color:var(--text);background:#E8EAEE}
+  .finder.filled .clear-x{display:grid}
+
+  .filter-chip{
+    display:none;align-items:center;gap:6px;
+    height:26px;padding:0 6px 0 9px;border-radius:20px;
+    background:var(--accent-weak);border:1px solid var(--accent-line);
+    color:#3730A3;font-size:12px;font-weight:500;
+  }
+  .filter-chip.show{display:inline-flex}
+  .filter-chip button{
+    width:16px;height:16px;border-radius:50%;display:grid;place-items:center;color:#6366F1;
+  }
+  .filter-chip button:hover{background:#DDE1FB;color:#3730A3}
+  .result-count{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .result-count b{color:var(--text);font-weight:550}
+
+  /* ---------- table ---------- */
+  .table-wrap{flex:1;min-height:0;overflow:auto;background:var(--bg)}
+  table{
+    width:100%;min-width:768px;
+    border-collapse:separate;border-spacing:0;
+    table-layout:fixed;
+  }
+  thead th{
+    position:sticky;top:0;z-index:5;
+    background:var(--bg);
+    border-bottom:1px solid var(--line);
+    height:34px;
+    font-size:11px;font-weight:550;color:var(--muted);
+    letter-spacing:.02em;
+    text-align:left;
+    padding:0 10px;
+    white-space:nowrap;
+    user-select:none;
+  }
+  thead th::after{
+    content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:var(--line);
+  }
+  th.sortable{cursor:pointer}
+  th.sortable .th-in{display:inline-flex;align-items:center;gap:4px;height:34px;border-radius:4px;transition:color .1s ease}
+  th.sortable:hover .th-in{color:var(--text)}
+  th.num-col .th-in{justify-content:flex-end}
+  th.num-col{text-align:right}
+  .sort-ind{opacity:0;transition:opacity .12s ease,transform .12s ease;color:var(--accent);flex:none}
+  th.sortable:hover .sort-ind{opacity:.35}
+  th[aria-sort]:not([aria-sort="none"]) .sort-ind{opacity:1}
+  th[aria-sort="descending"] .sort-ind{transform:rotate(180deg)}
+  th[aria-sort]:not([aria-sort="none"]) .th-in{color:var(--text)}
+
+  tbody tr{
+    height:40px;
+    cursor:pointer;
+    transition:background .08s ease;
+  }
+  tbody td{
+    border-bottom:1px solid var(--line-soft);
+    padding:0 10px;
+    height:40px;
+    vertical-align:middle;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  tbody tr:hover td{background:#FAFBFC}
+  tbody tr.sel td{background:#F6F6FE}
+  tbody tr.sel:hover td{background:#F1F1FD}
+  tbody tr.active td{background:var(--accent-weak)}
+  tbody tr.active td:first-child{box-shadow:inset 2px 0 0 var(--accent)}
+  tbody tr:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+
+  .c-check{width:36px;padding-left:14px !important;padding-right:0 !important}
+  .c-id{width:104px}
+  .c-route{width:auto;min-width:190px}
+  .c-carrier{width:142px}
+  .c-status{width:126px}
+  .c-eta{width:118px}
+  .c-wt{width:88px;text-align:right}
+  .c-val{width:110px;text-align:right}
+  .c-act{width:42px;padding-left:0 !important;padding-right:10px !important}
+
+  input[type=checkbox]{
+    appearance:none;-webkit-appearance:none;
+    width:14px;height:14px;border-radius:4px;
+    border:1px solid #C6CBD2;background:var(--bg);
+    display:grid;place-items:center;margin:0;flex:none;
+    cursor:pointer;position:relative;
+    transition:background .1s ease,border-color .1s ease;
+  }
+  input[type=checkbox]:hover{border-color:#9AA1AB}
+  input[type=checkbox]:checked,input[type=checkbox]:indeterminate{
+    background:var(--accent);border-color:#4338CA;
+  }
+  input[type=checkbox]:checked::after{
+    content:"";width:8px;height:8px;
+    background:#fff;
+    clip-path:polygon(13% 47%,0 61%,37% 96%,100% 21%,86% 9%,35% 70%);
+  }
+  input[type=checkbox]:indeterminate::after{
+    content:"";width:7px;height:1.5px;background:#fff;border-radius:1px;
+  }
+
+  .id-cell{font-size:12px;font-weight:500;color:#2B3037;letter-spacing:-.01em}
+  .route{display:flex;align-items:center;gap:7px;min-width:0}
+  .route-node{display:flex;align-items:baseline;gap:5px;min-width:0}
+  .route-city{font-size:12.5px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .route-code{font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--muted-2);letter-spacing:-.02em;flex:none}
+  .route-arrow{color:#C2C7CE;flex:none}
+  .carrier{display:flex;align-items:center;gap:7px;min-width:0}
+  .carrier-mark{
+    width:16px;height:16px;border-radius:4px;flex:none;
+    display:grid;place-items:center;
+    font-size:8.5px;font-weight:600;color:#fff;letter-spacing:-.02em;
+  }
+  .carrier-name{font-size:12.5px;color:#3F444B;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+  .badge{
+    display:inline-flex;align-items:center;gap:5px;
+    height:20px;padding:0 7px 0 6px;
+    border-radius:var(--r);
+    font-size:11.5px;font-weight:500;
+    border:1px solid;
+    white-space:nowrap;
+  }
+  .badge .dot{width:6px;height:6px;border-radius:50%;flex:none}
+  .b-transit{background:var(--accent-weak);border-color:var(--accent-line);color:#3730A3}
+  .b-transit .dot{background:var(--accent)}
+  .b-delayed{background:var(--red-bg);border-color:var(--red-line);color:var(--red)}
+  .b-delayed .dot{background:#D92D20}
+  .b-customs{background:var(--amber-bg);border-color:var(--amber-line);color:var(--amber)}
+  .b-customs .dot{background:#DC6803}
+  .b-cleared{background:var(--green-bg);border-color:var(--green-line);color:var(--green)}
+  .b-cleared .dot{background:#12B76A}
+  .b-booked{background:var(--canvas);border-color:var(--line);color:#4B5158}
+  .b-booked .dot{background:#98A2B3}
+
+  .eta-d{font-size:12.5px;color:var(--text);font-variant-numeric:tabular-nums}
+  .eta-t{font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--muted-2);margin-left:5px}
+  .eta-late{color:var(--red);font-weight:500}
+  .wt{font-family:"IBM Plex Mono",monospace;font-size:12px;color:#3F444B;font-variant-numeric:tabular-nums}
+  .wt .u{color:var(--muted-2);font-size:10.5px;margin-left:2px}
+  .val{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--text);font-variant-numeric:tabular-nums;font-weight:500}
+
+  .row-act{
+    width:24px;height:24px;border-radius:var(--r);
+    display:grid;place-items:center;color:var(--muted-2);
+    opacity:0;transition:opacity .1s ease,background .1s ease,color .1s ease;
+    margin-left:auto;
+  }
+  tr:hover .row-act,.row-act:focus-visible,.row-act.open{opacity:1}
+  .row-act:hover{background:#EDEFF2;color:var(--text)}
+
+  /* ---------- empty state ---------- */
+  .empty{
+    display:none;
+    flex-direction:column;align-items:center;justify-content:center;
+    padding:64px 24px 80px;text-align:center;
+  }
+  .empty.show{display:flex}
+  .empty-icon{
+    width:44px;height:44px;border-radius:11px;
+    background:var(--canvas);border:1px solid var(--line);
+    display:grid;place-items:center;color:var(--muted-2);
+    margin-bottom:14px;box-shadow:var(--shadow-sm);
+  }
+  .empty h3{margin:0 0 4px;font-size:14px;font-weight:600;letter-spacing:-.01em}
+  .empty p{margin:0 0 16px;font-size:12.5px;color:var(--muted);max-width:340px;line-height:1.55}
+  .empty p .q{color:var(--text);font-weight:500}
+
+  /* ---------- footer ---------- */
+  .statusbar{
+    flex:none;height:30px;
+    border-top:1px solid var(--line);
+    background:var(--canvas);
+    display:flex;align-items:center;gap:14px;
+    padding:0 16px 0 20px;
+    font-size:11.5px;color:var(--muted);
+  }
+  .sb-item{display:inline-flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums}
+  .sb-item b{color:#3F444B;font-weight:550}
+  .sb-dot{width:5px;height:5px;border-radius:50%;background:#12B76A;box-shadow:0 0 0 3px rgba(18,183,106,.14)}
+
+  /* ---------- drawer ---------- */
+  .scrim{
+    position:fixed;inset:0;background:rgba(20,23,26,.18);
+    opacity:0;pointer-events:none;transition:opacity .22s ease;z-index:40;
+  }
+  .drawer{
+    position:fixed;top:0;right:0;bottom:0;
+    width:var(--drawer);max-width:94vw;
+    background:var(--bg);
+    border-left:1px solid var(--line);
+    box-shadow:var(--shadow-lg);
+    transform:translateX(102%);
+    transition:transform .26s cubic-bezier(.32,.72,0,1);
+    z-index:50;
+    display:flex;flex-direction:column;
+    will-change:transform;
+  }
+  .drawer.open{transform:none}
+  .dr-head{
+    flex:none;padding:14px 14px 12px 18px;border-bottom:1px solid var(--line);
+  }
+  .dr-top{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+  .dr-id{font-family:"IBM Plex Mono",monospace;font-size:12.5px;font-weight:500;letter-spacing:-.01em}
+  .dr-route{display:flex;align-items:center;gap:9px;margin-bottom:3px}
+  .dr-city{font-size:16px;font-weight:600;letter-spacing:-.015em}
+  .dr-sub{font-size:11.5px;color:var(--muted)}
+  .dr-sub .mono{font-size:11px}
+  .dr-body{flex:1;min-height:0;overflow-y:auto;padding:0 18px 24px}
+  .sect{padding:16px 0 4px;border-top:1px solid var(--line-soft)}
+  .sect:first-child{border-top:0}
+  .sect-h{
+    display:flex;align-items:center;justify-content:space-between;gap:8px;
+    font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--muted-2);margin-bottom:11px;
+  }
+  .meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px 14px;padding-bottom:14px}
+  .meta-k{font-size:11px;color:var(--muted);margin-bottom:2px}
+  .meta-v{font-size:12.5px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .meta-v.mono{font-size:11.5px}
+
+  .timeline{position:relative;padding-bottom:14px}
+  .tl{display:flex;gap:11px;position:relative;padding-bottom:14px}
+  .tl:last-child{padding-bottom:0}
+  .tl::before{
+    content:"";position:absolute;left:5px;top:14px;bottom:-2px;width:1px;background:var(--line);
+  }
+  .tl:last-child::before{display:none}
+  .tl-dot{
+    width:11px;height:11px;border-radius:50%;flex:none;margin-top:3px;
+    background:var(--bg);border:2px solid var(--accent);z-index:1;
+  }
+  .tl-dot.done{background:var(--accent);border-color:var(--accent)}
+  .tl-dot.alert{background:#D92D20;border-color:#D92D20}
+  .tl-dot.warn{background:#DC6803;border-color:#DC6803}
+  .tl-dot.pending{background:var(--bg);border-color:#D3D8DE}
+  .tl-body{min-width:0;flex:1}
+  .tl-t{font-size:12.5px;color:var(--text);line-height:1.4}
+  .tl-t.pending{color:var(--muted-2)}
+  .tl-m{font-size:11px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .tl-m .mono{font-size:10.5px;color:var(--muted-2)}
+  .tl-m .who{color:var(--muted)}
+
+  .doc{
+    display:flex;align-items:center;gap:9px;
+    padding:7px 8px;margin:0 -8px;border-radius:var(--r);
+    transition:background .1s ease;width:calc(100% + 16px);text-align:left;
+  }
+  .doc:hover{background:var(--canvas)}
+  .doc-ico{
+    width:24px;height:24px;border-radius:5px;flex:none;display:grid;place-items:center;
+    background:var(--canvas);border:1px solid var(--line);color:var(--muted);
+  }
+  .doc-n{font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .doc-m{font-size:10.5px;color:var(--muted-2);font-family:"IBM Plex Mono",monospace}
+  .doc-s{margin-left:auto;font-size:10.5px;font-weight:550;flex:none}
+  .doc-s.ok{color:var(--green)}
+  .doc-s.pend{color:var(--amber)}
+
+  .person{display:flex;align-items:center;gap:9px;padding:6px 0}
+  .person .avatar{width:24px;height:24px;font-size:9.5px}
+  .p-n{font-size:12.5px}
+  .p-r{font-size:11px;color:var(--muted)}
+  .p-tag{
+    margin-left:auto;font-size:10px;color:var(--muted);
+    border:1px solid var(--line);border-radius:4px;padding:1px 5px;
+  }
+
+  /* ---------- menu + toast ---------- */
+  .menu{
+    position:fixed;z-index:80;min-width:186px;
+    background:var(--bg);border:1px solid var(--line);border-radius:var(--r-lg);
+    box-shadow:var(--shadow-lg);padding:4px;
+    opacity:0;transform:scale(.97) translateY(-2px);transform-origin:top right;
+    pointer-events:none;transition:opacity .1s ease,transform .1s ease;
+  }
+  .menu.show{opacity:1;transform:none;pointer-events:auto}
+  .menu button{
+    display:flex;align-items:center;gap:8px;width:100%;
+    height:28px;padding:0 8px;border-radius:5px;
+    font-size:12.5px;color:#33383E;text-align:left;
+  }
+  .menu button:hover{background:var(--canvas);color:var(--text)}
+  .menu button svg{color:var(--muted-2);flex:none}
+  .menu button.danger{color:var(--red)}
+  .menu button.danger svg{color:var(--red)}
+  .menu button.danger:hover{background:var(--red-bg)}
+  .menu-sep{height:1px;background:var(--line-soft);margin:4px 0}
+  .menu-k{margin-left:auto;font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--muted-2)}
+
+  .toasts{position:fixed;left:20px;bottom:20px;z-index:90;display:flex;flex-direction:column;gap:8px}
+  .toast{
+    display:flex;align-items:center;gap:9px;
+    background:#1B1F24;color:#F2F4F6;
+    border-radius:var(--r-lg);padding:9px 12px;
+    font-size:12.5px;box-shadow:var(--shadow-lg);
+    animation:tin .22s cubic-bezier(.32,.72,0,1);
+  }
+  .toast svg{color:#5EEAD4;flex:none}
+  .toast .t-sub{color:#98A2B3;font-size:11.5px}
+  @keyframes tin{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}
+
+  /* ---------- density mode (narrow viewport or drawer pushing layout) ---------- */
+  .delta-note{white-space:nowrap}
+  .app.dense .route-city{display:none}
+  .app.dense .route-code{font-size:11.5px;color:#3F444B;letter-spacing:0}
+  .app.dense .delta-note{display:none}
+  .app.dense .kpi{padding:12px 13px;gap:4px}
+  .app.dense .kpi-val{font-size:19px}
+  .app.dense .spark{width:70px}
+  .app.dense table{min-width:734px}
+  .app.dense .c-check{width:30px;padding-left:11px !important}
+  .app.dense .c-id{width:90px}
+  .app.dense .c-route{min-width:108px}
+  .app.dense .c-carrier{width:104px}
+  .app.dense .c-status{width:110px}
+  .app.dense .c-eta{width:96px}
+  .app.dense .c-wt{width:70px}
+  .app.dense .c-val{width:92px}
+  .app.dense .c-act{width:32px}
+  .app.dense tbody td,.app.dense thead th{padding:0 8px}
+  .app.dense .eta-t{margin-left:4px}
+
+  /* ---------- responsive ---------- */
+  @media (min-width:1281px){
+    .app.drawer-open .main{margin-right:var(--drawer)}
+  }
+  @media (max-width:1280px){
+    .scrim.show{opacity:1;pointer-events:auto}
+  }
+  @media (max-width:1200px){
+    :root{--sidebar:212px}
+    .kpi{padding:12px 14px}
+    .kpi-val{font-size:20px}
+    .topbar,.toolbar{padding-left:16px}
+    .finder{min-width:190px}
+    .c-carrier{width:120px}
+    .c-status{width:118px}
+  }
+  @media (max-width:1080px){
+    .brand-tag{display:none}
+    .kpi-label{font-size:11px}
+    .seg button{padding:0 8px}
+    .seg .sc{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="mark" aria-hidden="true">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+          <path d="M4 3.2v9.6M12 3.2v9.6M4 8h8" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="brand-name">Halyard</div>
+      <div class="brand-tag">Ops</div>
+    </div>
+
+    <button class="search" id="globalSearch" aria-label="Search shipments, carriers and ports">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="7.2" cy="7.2" r="4.4" stroke="currentColor" stroke-width="1.4"/><path d="M10.6 10.6 13.5 13.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      <span>Search</span>
+      <span class="kbd">⌘K</span>
+    </button>
+
+    <nav class="nav">
+      <button class="nav-item" data-nav="Overview">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5" height="5" rx="1.4" stroke="currentColor" stroke-width="1.3"/><rect x="9" y="2" width="5" height="5" rx="1.4" stroke="currentColor" stroke-width="1.3"/><rect x="2" y="9" width="5" height="5" rx="1.4" stroke="currentColor" stroke-width="1.3"/><rect x="9" y="9" width="5" height="5" rx="1.4" stroke="currentColor" stroke-width="1.3"/></svg>
+        Overview
+      </button>
+      <button class="nav-item active" data-nav="Shipments" aria-current="page">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 1.9 14 5v6L8 14.1 2 11V5l6-3.1Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M2 5l6 3 6-3M8 8v6.1" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+        Shipments
+        <span class="nav-count">26</span>
+      </button>
+      <button class="nav-item" data-nav="Fleet">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M1.8 10.4h12.4l-1.1 2.5a1.4 1.4 0 0 1-1.3.8H4.2a1.4 1.4 0 0 1-1.3-.8L1.8 10.4Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M3.4 10.4V5.2h9.2v5.2M8 5.2V2.6" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+        Fleet
+      </button>
+      <button class="nav-item" data-nav="Carriers">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="1.6" y="4.6" width="8" height="6.4" rx="1.2" stroke="currentColor" stroke-width="1.3"/><path d="M9.6 6.8h2.6l2.2 2.4V11h-4.8V6.8Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><circle cx="4.6" cy="12.4" r="1.3" stroke="currentColor" stroke-width="1.3"/><circle cx="11.6" cy="12.4" r="1.3" stroke="currentColor" stroke-width="1.3"/></svg>
+        Carriers
+      </button>
+      <button class="nav-item" data-nav="Invoices">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.4 2h9.2v12l-2-1.2-2 1.2-2-1.2-2 1.2-1.2-.7V2Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M6 5.6h4M6 8.2h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Invoices
+        <span class="nav-count">4</span>
+      </button>
+      <button class="nav-item" data-nav="Exceptions">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 2.6 14.4 13H1.6L8 2.6Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M8 6.6v3M8 11.4h.01" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        Exceptions
+        <span class="nav-count warn">8</span>
+      </button>
+      <button class="nav-item" data-nav="Reports">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M2.4 13.4h11.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><rect x="3.4" y="8" width="2.6" height="3.6" rx=".8" stroke="currentColor" stroke-width="1.3"/><rect x="7.2" y="5" width="2.6" height="6.6" rx=".8" stroke="currentColor" stroke-width="1.3"/><rect x="11" y="2.6" width="2.6" height="9" rx=".8" stroke="currentColor" stroke-width="1.3"/></svg>
+        Reports
+      </button>
+
+      <div class="nav-label">Saved views</div>
+      <button class="view-item" data-view="delayed12">
+        <span class="view-dot" style="background:#D92D20"></span>
+        <span class="vname">Delayed &gt; 12h</span>
+        <span class="nav-count">7</span>
+      </button>
+      <button class="view-item" data-view="iberia">
+        <span class="view-dot" style="background:#4F46E5"></span>
+        <span class="vname">Iberia inbound</span>
+        <span class="nav-count">7</span>
+      </button>
+      <button class="view-item" data-view="highvalue">
+        <span class="view-dot" style="background:#067647"></span>
+        <span class="vname">High value &gt; €150k</span>
+        <span class="nav-count">8</span>
+      </button>
+      <button class="view-item" data-view="holds">
+        <span class="view-dot" style="background:#DC6803"></span>
+        <span class="vname">Customs holds</span>
+        <span class="nav-count">3</span>
+      </button>
+    </nav>
+
+    <div class="user">
+      <div class="avatar" aria-hidden="true">AM</div>
+      <div class="user-meta">
+        <div class="user-name">Ana Melo</div>
+        <div class="user-role">Operations manager · Porto</div>
+      </div>
+      <button class="icon-btn" aria-label="Account settings">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4.6 6.4 8 9.8l3.4-3.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main class="main" id="main">
+
+    <header class="topbar">
+      <div class="crumbs">
+        <span class="c-mut">Operations</span>
+        <span class="c-sep">/</span>
+        <span class="c-cur">Shipments</span>
+        <span class="crumb-chip">Live</span>
+      </div>
+      <div class="spacer"></div>
+
+      <div class="seg" role="group" aria-label="Filter by status">
+        <button data-seg="all" aria-pressed="true">All <span class="sc" data-segcount="all">26</span></button>
+        <button data-seg="active" aria-pressed="false">Active <span class="sc" data-segcount="active">18</span></button>
+        <button data-seg="delayed" aria-pressed="false">Delayed <span class="sc" data-segcount="delayed">5</span></button>
+        <button data-seg="cleared" aria-pressed="false">Cleared <span class="sc" data-segcount="cleared">5</span></button>
+      </div>
+
+      <button class="btn" id="dateBtn">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="2.2" y="3.2" width="11.6" height="10.6" rx="1.8" stroke="currentColor" stroke-width="1.3"/><path d="M2.2 6.4h11.6M5.4 1.9v2.4M10.6 1.9v2.4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        4 – 18 Mar 2026
+        <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M4.6 6.4 8 9.8l3.4-3.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+
+      <button class="btn btn-primary" id="newBtn">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 3.2v9.6M3.2 8h9.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        New shipment
+      </button>
+    </header>
+
+    <!-- KPI strip / bulk bar -->
+    <section class="strip">
+      <div class="kpis" id="kpis">
+        <div class="kpi">
+          <div class="kpi-top"><span class="kpi-label">In transit</span></div>
+          <div class="kpi-row">
+            <div>
+              <div class="kpi-val">128</div>
+              <div class="kpi-foot">
+                <span class="delta up">
+                  <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M6 9.6V2.4M6 2.4 2.8 5.6M6 2.4l3.2 3.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  6.2%
+                </span>
+                <span class="delta-note">vs last week</span>
+              </div>
+            </div>
+            <svg class="spark" width="84" height="30" viewBox="0 0 84 30" aria-hidden="true">
+              <defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4F46E5" stop-opacity=".16"/><stop offset="1" stop-color="#4F46E5" stop-opacity="0"/></linearGradient></defs>
+              <path d="M2 21 L9.4 19 L16.8 22 L24.2 17 L31.6 18 L39 13 L46.4 15 L53.8 10 L61.2 12 L68.6 7 L76 8 L82 4 L82 28 L2 28 Z" fill="url(#g1)"/>
+              <path d="M2 21 L9.4 19 L16.8 22 L24.2 17 L31.6 18 L39 13 L46.4 15 L53.8 10 L61.2 12 L68.6 7 L76 8 L82 4" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="82" cy="4" r="2" fill="#4F46E5"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="kpi">
+          <div class="kpi-top"><span class="kpi-label">Delayed</span></div>
+          <div class="kpi-row">
+            <div>
+              <div class="kpi-val">14</div>
+              <div class="kpi-foot">
+                <span class="delta down">
+                  <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M6 9.6V2.4M6 2.4 2.8 5.6M6 2.4l3.2 3.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  3
+                </span>
+                <span class="delta-note">above threshold</span>
+              </div>
+            </div>
+            <svg class="spark" width="84" height="30" viewBox="0 0 84 30" aria-hidden="true">
+              <defs><linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B42318" stop-opacity=".14"/><stop offset="1" stop-color="#B42318" stop-opacity="0"/></linearGradient></defs>
+              <path d="M2 18 L9.4 20 L16.8 17 L24.2 21 L31.6 19 L39 22 L46.4 16 L53.8 18 L61.2 13 L68.6 15 L76 9 L82 6 L82 28 L2 28 Z" fill="url(#g2)"/>
+              <path d="M2 18 L9.4 20 L16.8 17 L24.2 21 L31.6 19 L39 22 L46.4 16 L53.8 18 L61.2 13 L68.6 15 L76 9 L82 6" fill="none" stroke="#B42318" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="82" cy="6" r="2" fill="#B42318"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="kpi">
+          <div class="kpi-top"><span class="kpi-label">Awaiting customs</span></div>
+          <div class="kpi-row">
+            <div>
+              <div class="kpi-val">9</div>
+              <div class="kpi-foot">
+                <span class="delta up">
+                  <svg width="10" height="10" viewBox="0 0 12 12" fill="none" style="transform:rotate(180deg)"><path d="M6 9.6V2.4M6 2.4 2.8 5.6M6 2.4l3.2 3.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  2
+                </span>
+                <span class="delta-note">cleared faster</span>
+              </div>
+            </div>
+            <svg class="spark" width="84" height="30" viewBox="0 0 84 30" aria-hidden="true">
+              <defs><linearGradient id="g3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B45309" stop-opacity=".14"/><stop offset="1" stop-color="#B45309" stop-opacity="0"/></linearGradient></defs>
+              <path d="M2 8 L9.4 6 L16.8 11 L24.2 9 L31.6 13 L39 11 L46.4 15 L53.8 13 L61.2 17 L68.6 16 L76 20 L82 19 L82 28 L2 28 Z" fill="url(#g3)"/>
+              <path d="M2 8 L9.4 6 L16.8 11 L24.2 9 L31.6 13 L39 11 L46.4 15 L53.8 13 L61.2 17 L68.6 16 L76 20 L82 19" fill="none" stroke="#B45309" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="82" cy="19" r="2" fill="#B45309"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="kpi">
+          <div class="kpi-top"><span class="kpi-label">Revenue MTD</span></div>
+          <div class="kpi-row">
+            <div>
+              <div class="kpi-val">€2.84<span class="unit">M</span></div>
+              <div class="kpi-foot">
+                <span class="delta up">
+                  <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M6 9.6V2.4M6 2.4 2.8 5.6M6 2.4l3.2 3.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  11.4%
+                </span>
+                <span class="delta-note">vs Feb</span>
+              </div>
+            </div>
+            <svg class="spark" width="84" height="30" viewBox="0 0 84 30" aria-hidden="true">
+              <defs><linearGradient id="g4" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#067647" stop-opacity=".16"/><stop offset="1" stop-color="#067647" stop-opacity="0"/></linearGradient></defs>
+              <path d="M2 23 L9.4 21 L16.8 22 L24.2 18 L31.6 19 L39 15 L46.4 16 L53.8 12 L61.2 13 L68.6 9 L76 7 L82 3 L82 28 L2 28 Z" fill="url(#g4)"/>
+              <path d="M2 23 L9.4 21 L16.8 22 L24.2 18 L31.6 19 L39 15 L46.4 16 L53.8 12 L61.2 13 L68.6 9 L76 7 L82 3" fill="none" stroke="#067647" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="82" cy="3" r="2" fill="#067647"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="bulk" id="bulkBar" role="toolbar" aria-label="Bulk actions">
+        <span class="bulk-count"><span class="bulk-badge" id="bulkN">0</span> selected</span>
+        <span class="bulk-sep"></span>
+        <button class="btn btn-sm" data-bulk="assign">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><circle cx="6.4" cy="5.4" r="2.6" stroke="currentColor" stroke-width="1.3"/><path d="M1.8 13.2c.4-2.3 2.3-3.6 4.6-3.6 1 0 1.9.2 2.6.7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M12 9.2v4M10 11.2h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          Assign
+        </button>
+        <button class="btn btn-sm" data-bulk="status">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M2.6 5.2h7.6M2.6 5.2 5 2.8M2.6 5.2 5 7.6M13.4 10.8H5.8M13.4 10.8 11 8.4M13.4 10.8 11 13.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Change status
+        </button>
+        <button class="btn btn-sm" data-bulk="export">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M8 10.4V2.6M8 2.6 5.2 5.4M8 2.6l2.8 2.8M2.8 10.4v1.8a1.4 1.4 0 0 0 1.4 1.4h7.6a1.4 1.4 0 0 0 1.4-1.4v-1.8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Export
+        </button>
+        <div class="spacer"></div>
+        <button class="btn btn-sm btn-ghost" id="bulkClear">Clear</button>
+      </div>
+    </section>
+
+    <!-- toolbar -->
+    <div class="toolbar">
+      <label class="finder" id="finder">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="7.2" cy="7.2" r="4.4" stroke="currentColor" stroke-width="1.4"/><path d="M10.6 10.6 13.5 13.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        <input id="filterInput" type="text" placeholder="Filter by ID, port, carrier or consignee…" autocomplete="off" spellcheck="false" aria-label="Filter shipments" />
+        <button class="clear-x" id="filterClear" aria-label="Clear filter" type="button">
+          <svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </button>
+      </label>
+
+      <div class="filter-chip" id="viewChip">
+        <span class="view-dot" id="viewChipDot" style="background:#4F46E5"></span>
+        <span id="viewChipName">Saved view</span>
+        <button id="viewChipClear" aria-label="Clear saved view">
+          <svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+
+      <div class="spacer"></div>
+      <span class="result-count" id="resultCount"><b>26</b> of 26 shipments</span>
+      <button class="btn btn-sm" id="colsBtn">
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><rect x="2.2" y="2.6" width="11.6" height="10.8" rx="1.6" stroke="currentColor" stroke-width="1.3"/><path d="M6.4 2.6v10.8M10 2.6v10.8" stroke="currentColor" stroke-width="1.3"/></svg>
+        Columns
+      </button>
+    </div>
+
+    <!-- table -->
+    <div class="table-wrap" id="tableWrap">
+      <table id="grid">
+        <thead>
+          <tr>
+            <th class="c-check"><input type="checkbox" id="checkAll" aria-label="Select all shipments" /></th>
+            <th class="c-id sortable" data-sort="id" aria-sort="none"><span class="th-in">Shipment <svg class="sort-ind" width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M6 2.6v6.8M6 2.6 3.2 5.4M6 2.6l2.8 2.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></th>
+            <th class="c-route sortable" data-sort="route" aria-sort="none"><span class="th-in">Route <svg class="sort-ind" width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M6 2.6v6.8M6 2.6 3.2 5.4M6 2.6l2.8 2.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></th>
+            <th class="c-carrier sortable" data-sort="carrier" aria-sort="none"><span class="th-in">Carrier <svg class="sort-ind" width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M6 2.6v6.8M6 2.6 3.2 5.4M6 2.6l2.8 2.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></th>
+            <th class="c-status sortable" data-sort="status" aria-sort="none"><span class="th-in">Status <svg class="sort-ind" width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M6 2.6v6.8M6 2.6 3.2 5.4M6 2.6l2.8 2.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></th>
+            <th class="c-eta sortable" data-sort="eta" aria-sort="ascending"><span class="th-in">ETA <svg class="sort-ind" width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M6 2.6v6.8M6 2.6 3.2 5.4M6 2.6l2.8 2.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></th>
+            <th class="c-wt num-col sortable" data-sort="wt" aria-sort="none"><span class="th-in">Weight <svg class="sort-ind" width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M6 2.6v6.8M6 2.6 3.2 5.4M6 2.6l2.8 2.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></th>
+            <th class="c-val num-col sortable" data-sort="val" aria-sort="none"><span class="th-in">Value <svg class="sort-ind" width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M6 2.6v6.8M6 2.6 3.2 5.4M6 2.6l2.8 2.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></th>
+            <th class="c-act"><span class="th-in"></span></th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+
+      <div class="empty" id="emptyState">
+        <div class="empty-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3 20.5 7.5v9L12 21 3.5 16.5v-9L12 3Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M3.5 7.5 12 12l8.5-4.5M12 12v9" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M4 4l16 16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </div>
+        <h3>No shipments match these filters</h3>
+        <p id="emptyMsg">Nothing in the 4 – 18 Mar window matches <span class="q" id="emptyQ">your search</span>. Try a port code like <span class="q">NLRTM</span>, or widen the status filter.</p>
+        <button class="btn" id="emptyClear">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M13.4 8a5.4 5.4 0 1 1-1.6-3.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M13.6 2.2v3.2h-3.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Clear filters
+        </button>
+      </div>
+    </div>
+
+    <footer class="statusbar">
+      <span class="sb-item"><span class="sb-dot"></span> Live · synced <span class="mono" id="syncTime">09:41</span></span>
+      <span class="sb-item" id="sbCount"><b>26</b> shipments</span>
+      <span class="sb-item" id="sbWeight"><b>566.1</b> t gross</span>
+      <span class="sb-item" id="sbValue"><b>€3.67M</b> declared</span>
+      <div class="spacer"></div>
+      <span class="sb-item">Window <b>4 – 18 Mar 2026</b></span>
+      <span class="sb-item">CET (UTC+1)</span>
+    </footer>
+  </main>
+</div>
+
+<div class="scrim" id="scrim"></div>
+
+<!-- ============ DRAWER ============ -->
+<aside class="drawer" id="drawer" role="dialog" aria-modal="false" aria-label="Shipment details">
+  <div class="dr-head">
+    <div class="dr-top">
+      <span class="dr-id" id="drId">HLY-0000</span>
+      <span id="drBadge"></span>
+      <div class="spacer"></div>
+      <button class="icon-btn" id="drMore" aria-label="More actions">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="3.4" cy="8" r="1.2" fill="currentColor"/><circle cx="8" cy="8" r="1.2" fill="currentColor"/><circle cx="12.6" cy="8" r="1.2" fill="currentColor"/></svg>
+      </button>
+      <button class="icon-btn" id="drClose" aria-label="Close details">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="dr-route">
+      <span class="dr-city" id="drFrom">—</span>
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" style="color:#C2C7CE"><path d="M2.6 8h10.2M9.4 4.6 12.8 8l-3.4 3.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span class="dr-city" id="drTo">—</span>
+    </div>
+    <div class="dr-sub" id="drSub">—</div>
+  </div>
+
+  <div class="dr-body">
+    <div class="sect">
+      <div class="sect-h"><span>Consignment</span><button class="btn btn-sm btn-ghost" id="drEdit">Edit</button></div>
+      <div class="meta-grid" id="drMeta"></div>
+    </div>
+
+    <div class="sect">
+      <div class="sect-h"><span>Timeline</span><span class="mono" style="font-size:10px;color:var(--muted-2)" id="drTz">CET</span></div>
+      <div class="timeline" id="drTimeline"></div>
+    </div>
+
+    <div class="sect">
+      <div class="sect-h"><span>Documents</span><span id="drDocCount" style="font-variant-numeric:tabular-nums"></span></div>
+      <div id="drDocs"></div>
+    </div>
+
+    <div class="sect">
+      <div class="sect-h"><span>Assigned</span><button class="btn btn-sm btn-ghost" id="drAssign">+ Add</button></div>
+      <div id="drPeople"></div>
+    </div>
+  </div>
+</aside>
+
+<div class="menu" id="rowMenu" role="menu">
+  <button role="menuitem" data-act="open">
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M2 8s2.2-4 6-4 6 4 6 4-2.2 4-6 4-6-4-6-4Z" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8" r="1.7" stroke="currentColor" stroke-width="1.3"/></svg>
+    View details <span class="menu-k">↵</span>
+  </button>
+  <button role="menuitem" data-act="assign">
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="6.4" cy="5.4" r="2.6" stroke="currentColor" stroke-width="1.3"/><path d="M1.8 13.2c.4-2.3 2.3-3.6 4.6-3.6 1 0 1.9.2 2.6.7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M12 9.2v4M10 11.2h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+    Assign owner
+  </button>
+  <button role="menuitem" data-act="copy">
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="5.4" y="5.4" width="8" height="8" rx="1.6" stroke="currentColor" stroke-width="1.3"/><path d="M10.6 5.4V4a1.6 1.6 0 0 0-1.6-1.6H4A1.6 1.6 0 0 0 2.4 4v5a1.6 1.6 0 0 0 1.6 1.6h1.4" stroke="currentColor" stroke-width="1.3"/></svg>
+    Copy shipment ID
+  </button>
+  <div class="menu-sep"></div>
+  <button role="menuitem" data-act="docs">
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M3.4 2.6h5.4l3.8 3.8v7a1 1 0 0 1-1 1H3.4a1 1 0 0 1-1-1V3.6a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M8.6 2.6v3.8h3.8" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+    Request documents
+  </button>
+  <button role="menuitem" class="danger" data-act="flag">
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M3.6 2.4v11.2M3.6 3.2h8l-1.6 2.8L11.6 8.8h-8" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+    Flag as exception
+  </button>
+</div>
+
+<div class="toasts" id="toasts"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  const STATUS = {
+    transit:{label:"In transit", cls:"b-transit", rank:1},
+    delayed:{label:"Delayed",    cls:"b-delayed", rank:0},
+    customs:{label:"At customs", cls:"b-customs", rank:2},
+    cleared:{label:"Cleared",    cls:"b-cleared", rank:4},
+    booked: {label:"Booked",     cls:"b-booked",  rank:3}
+  };
+
+  const CARRIER_COLOR = {
+    "Maersk Line":"#0B5CA8","MSC":"#1B2C6B","Hapag-Lloyd":"#D97706","CMA CGM":"#0F766E",
+    "Unifeeder":"#4338CA","Samskip":"#0E7490","DFDS Seaways":"#1D4ED8","Grimaldi Lines":"#B91C1C",
+    "X-Press Feeders":"#7C3AED","Finnlines":"#065F46","Ekol Logistics":"#C2410C","Girteka Transport":"#334155"
+  };
+
+  const D = [
+    {id:"HLY-4471",o:"Leixões",oc:"PTLEI",d:"Rotterdam",dc:"NLRTM",carrier:"Maersk Line",status:"transit",eta:"2026-03-12T06:40",wt:24.6,val:184200,cons:"Norrvind Industri AB",vessel:"Maersk Setúbal",cont:"MSKU 481 992-3",mode:"Sea FCL",inco:"DAP",ref:"CUS-PT-88214",voy:"612W"},
+    {id:"HLY-4468",o:"Algeciras",oc:"ESALG",d:"Felixstowe",dc:"GBFXT",carrier:"MSC",status:"delayed",eta:"2026-03-11T22:15",wt:31.2,val:226800,cons:"Bergmann Werkzeug GmbH",vessel:"MSC Ionia",cont:"MSCU 773 411-8",mode:"Sea FCL",inco:"CIF",ref:"CUS-ES-40917",voy:"224A"},
+    {id:"HLY-4465",o:"Rotterdam",oc:"NLRTM",d:"Gdańsk",dc:"PLGDN",carrier:"Unifeeder",status:"customs",eta:"2026-03-10T13:05",wt:18.4,val:97300,cons:"Politek Sp. z o.o.",vessel:"Baltic Trader",cont:"UNIU 229 043-1",mode:"Sea LCL",inco:"DAP",ref:"CUS-NL-33207",voy:"UF118"},
+    {id:"HLY-4462",o:"Hamburg",oc:"DEHAM",d:"Leixões",dc:"PTLEI",carrier:"Hapag-Lloyd",status:"transit",eta:"2026-03-13T09:20",wt:12.8,val:64150,cons:"Vasco Cerâmica Lda",vessel:"Elbe Runner",cont:"HLXU 556 019-2",mode:"Sea FCL",inco:"FOB",ref:"CUS-DE-71440",voy:"907S"},
+    {id:"HLY-4459",o:"Antwerp",oc:"BEANR",d:"Valencia",dc:"ESVLC",carrier:"CMA CGM",status:"cleared",eta:"2026-03-09T17:45",wt:27.9,val:143900,cons:"Ferretti Componenti SpA",vessel:"CMA CGM Loire",cont:"CMAU 601 877-2",mode:"Sea FCL",inco:"DAP",ref:"CUS-BE-20558",voy:"318E"},
+    {id:"HLY-4456",o:"Felixstowe",oc:"GBFXT",d:"Bremerhaven",dc:"DEBRV",carrier:"Samskip",status:"transit",eta:"2026-03-12T11:30",wt:9.6,val:51400,cons:"Aalborg Kemi A/S",vessel:"Northern Star",cont:"SKIU 114 763-0",mode:"Sea LCL",inco:"DAP",ref:"CUS-GB-66102",voy:"SK44"},
+    {id:"HLY-4453",o:"Sines",oc:"PTSIN",d:"Le Havre",dc:"FRLEH",carrier:"Grimaldi Lines",status:"booked",eta:"2026-03-16T05:00",wt:41.5,val:312750,cons:"Delacroix Métaux SAS",vessel:"Grande Iberia",cont:"GRIU 990 334-1",mode:"Ro-Ro",inco:"CIF",ref:"CUS-PT-88377",voy:"IB27"},
+    {id:"HLY-4450",o:"Piraeus",oc:"GRPIR",d:"Trieste",dc:"ITTRS",carrier:"MSC",status:"delayed",eta:"2026-03-10T20:10",wt:22.1,val:118600,cons:"Ferretti Componenti SpA",vessel:"MSC Adriatica",cont:"MSCU 448 209-5",mode:"Sea FCL",inco:"DAP",ref:"CUS-GR-51228",voy:"131N"},
+    {id:"HLY-4447",o:"Gothenburg",oc:"SEGOT",d:"Aarhus",dc:"DKAAR",carrier:"DFDS Seaways",status:"cleared",eta:"2026-03-08T07:25",wt:15.3,val:82750,cons:"Nordfisk Seafood AS",vessel:"Ficaria Seaways",cont:"DFDU 332 088-4",mode:"Ro-Ro",inco:"DAP",ref:"CUS-SE-14903",voy:"DF09"},
+    {id:"HLY-4444",o:"Valencia",oc:"ESVLC",d:"Genoa",dc:"ITGOA",carrier:"CMA CGM",status:"transit",eta:"2026-03-12T15:50",wt:19.7,val:106400,cons:"Ferretti Componenti SpA",vessel:"CMA CGM Tyrrhenian",cont:"CMAU 771 230-5",mode:"Sea FCL",inco:"DAP",ref:"CUS-ES-40988",voy:"402E"},
+    {id:"HLY-4441",o:"Rotterdam",oc:"NLRTM",d:"Leixões",dc:"PTLEI",carrier:"Maersk Line",status:"customs",eta:"2026-03-11T04:35",wt:33.8,val:241500,cons:"Oporto Têxteis SA",vessel:"Maersk Kalmar",cont:"MSKU 660 118-7",mode:"Sea FCL",inco:"CIF",ref:"CUS-NL-33291",voy:"744S"},
+    {id:"HLY-4438",o:"Bilbao",oc:"ESBIO",d:"Dublin",dc:"IEDUB",carrier:"X-Press Feeders",status:"transit",eta:"2026-03-13T18:05",wt:11.2,val:58900,cons:"Van Dijk Agrifoods BV",vessel:"X-Press Kilimanjaro",cont:"XPRU 208 774-6",mode:"Sea LCL",inco:"DAP",ref:"CUS-ES-41022",voy:"XP16"},
+    {id:"HLY-4435",o:"Zeebrugge",oc:"BEZEE",d:"Southampton",dc:"GBSOU",carrier:"Grimaldi Lines",status:"delayed",eta:"2026-03-11T09:40",wt:28.4,val:167300,cons:"Bergmann Werkzeug GmbH",vessel:"Grande Britannia",cont:"GRIU 447 902-0",mode:"Ro-Ro",inco:"DAP",ref:"CUS-BE-20614",voy:"GB08"},
+    {id:"HLY-4432",o:"Hamburg",oc:"DEHAM",d:"Tallinn",dc:"EETLL",carrier:"Unifeeder",status:"transit",eta:"2026-03-14T12:15",wt:16.9,val:88250,cons:"Kaunas Baltic UAB",vessel:"Baltic Sun",cont:"UNIU 553 118-9",mode:"Sea FCL",inco:"DAP",ref:"CUS-DE-71508",voy:"UF204"},
+    {id:"HLY-4429",o:"Marseille-Fos",oc:"FRFOS",d:"Algeciras",dc:"ESALG",carrier:"MSC",status:"cleared",eta:"2026-03-07T21:30",wt:25.5,val:132700,cons:"Delacroix Métaux SAS",vessel:"MSC Provence",cont:"MSCU 118 903-4",mode:"Sea FCL",inco:"FOB",ref:"CUS-FR-58120",voy:"077W"},
+    {id:"HLY-4426",o:"Antwerp",oc:"BEANR",d:"Gdańsk",dc:"PLGDN",carrier:"Samskip",status:"booked",eta:"2026-03-17T06:10",wt:20.3,val:111450,cons:"Politek Sp. z o.o.",vessel:"Samskip Innovator",cont:"SKIU 902 774-1",mode:"Rail intermodal",inco:"DAP",ref:"CUS-BE-20702",voy:"SK61"},
+    {id:"HLY-4423",o:"Felixstowe",oc:"GBFXT",d:"Leixões",dc:"PTLEI",carrier:"Hapag-Lloyd",status:"transit",eta:"2026-03-13T02:55",wt:14.1,val:73600,cons:"Vasco Cerâmica Lda",vessel:"Bremen Express",cont:"HLXU 330 918-5",mode:"Sea FCL",inco:"DAP",ref:"CUS-GB-66190",voy:"114S"},
+    {id:"HLY-4420",o:"Constanța",oc:"ROCND",d:"Piraeus",dc:"GRPIR",carrier:"MSC",status:"customs",eta:"2026-03-10T16:40",wt:37.6,val:268900,cons:"Helvetia Präzision AG",vessel:"MSC Levante",cont:"MSCU 664 019-3",mode:"Sea FCL",inco:"CIF",ref:"CUS-RO-90114",voy:"288S"},
+    {id:"HLY-4417",o:"Le Havre",oc:"FRLEH",d:"Bilbao",dc:"ESBIO",carrier:"CMA CGM",status:"transit",eta:"2026-03-12T08:30",wt:8.9,val:44300,cons:"Delacroix Métaux SAS",vessel:"CMA CGM Iberia",cont:"CMAU 220 761-8",mode:"Sea LCL",inco:"DAP",ref:"CUS-FR-58203",voy:"519W"},
+    {id:"HLY-4414",o:"Riga",oc:"LVRIX",d:"Bremerhaven",dc:"DEBRV",carrier:"Unifeeder",status:"delayed",eta:"2026-03-11T13:20",wt:23.7,val:129850,cons:"Kaunas Baltic UAB",vessel:"Baltic Trader",cont:"UNIU 771 044-2",mode:"Sea FCL",inco:"DAP",ref:"CUS-LV-70118",voy:"UF126"},
+    {id:"HLY-4411",o:"Leixões",oc:"PTLEI",d:"Antwerp",dc:"BEANR",carrier:"Maersk Line",status:"cleared",eta:"2026-03-08T19:05",wt:30.1,val:198400,cons:"Van Dijk Agrifoods BV",vessel:"Maersk Setúbal",cont:"MSKU 118 774-9",mode:"Sea FCL",inco:"DAP",ref:"CUS-PT-88102",voy:"611E"},
+    {id:"HLY-4408",o:"Trieste",oc:"ITTRS",d:"Hamburg",dc:"DEHAM",carrier:"Ekol Logistics",status:"transit",eta:"2026-03-14T07:45",wt:17.4,val:92600,cons:"Bergmann Werkzeug GmbH",vessel:"Ekol Danube",cont:"EKOU 449 118-3",mode:"Rail intermodal",inco:"DAP",ref:"CUS-IT-62055",voy:"EK73"},
+    {id:"HLY-4405",o:"Southampton",oc:"GBSOU",d:"Rotterdam",dc:"NLRTM",carrier:"DFDS Seaways",status:"booked",eta:"2026-03-16T23:15",wt:12.6,val:67900,cons:"Aalborg Kemi A/S",vessel:"Optima Seaways",cont:"DFDU 990 118-6",mode:"Ro-Ro",inco:"DAP",ref:"CUS-GB-66244",voy:"DF31"},
+    {id:"HLY-4402",o:"Algeciras",oc:"ESALG",d:"Sines",dc:"PTSIN",carrier:"MSC",status:"transit",eta:"2026-03-12T20:25",wt:26.8,val:151200,cons:"Oporto Têxteis SA",vessel:"MSC Atlântico",cont:"MSCU 337 902-1",mode:"Sea FCL",inco:"DAP",ref:"CUS-ES-41100",voy:"195W"},
+    {id:"HLY-4399",o:"Gdańsk",oc:"PLGDN",d:"Gothenburg",dc:"SEGOT",carrier:"Finnlines",status:"cleared",eta:"2026-03-09T10:50",wt:21.9,val:114750,cons:"Nordfisk Seafood AS",vessel:"Finnmaid",cont:"FNLU 118 449-7",mode:"Ro-Ro",inco:"DAP",ref:"CUS-PL-45012",voy:"FN22"},
+    {id:"HLY-4396",o:"Dublin",oc:"IEDUB",d:"Felixstowe",dc:"GBFXT",carrier:"Girteka Transport",status:"delayed",eta:"2026-03-11T05:35",wt:7.8,val:39600,cons:"Van Dijk Agrifoods BV",vessel:"Unit 4412 (road)",cont:"GIRU 220 118-4",mode:"Road FTL",inco:"DAP",ref:"CUS-IE-31009",voy:"RT88"}
+  ];
+
+  const PEOPLE = [
+    {n:"Ana Melo",r:"Operations manager",i:"AM",c:"linear-gradient(150deg,#4F46E5,#7C3AED)"},
+    {n:"Joris Bakker",r:"Customs broker",i:"JB",c:"linear-gradient(150deg,#0E7490,#0F766E)"},
+    {n:"Katrin Lindqvist",r:"Account lead",i:"KL",c:"linear-gradient(150deg,#B45309,#C2410C)"},
+    {n:"Tomasz Wieczorek",r:"Terminal liaison",i:"TW",c:"linear-gradient(150deg,#1D4ED8,#0B5CA8)"},
+    {n:"Élodie Marchand",r:"Freight coordinator",i:"ÉM",c:"linear-gradient(150deg,#067647,#0E7490)"},
+    {n:"Rui Barbosa",r:"Dispatch, Porto",i:"RB",c:"linear-gradient(150deg,#B42318,#B45309)"}
+  ];
+
+  const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const NOW = new Date("2026-03-11T09:41:00");
+
+  const pad=n=>String(n).padStart(2,"0");
+  const fmtDate=dt=>dt.getDate()+" "+MONTHS[dt.getMonth()];
+  const fmtTime=dt=>pad(dt.getHours())+":"+pad(dt.getMinutes());
+  const fmtEuro=v=>"€"+v.toLocaleString("en-GB");
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const initials=s=>s.split(/\s+/).slice(0,2).map(w=>w[0]).join("").toUpperCase();
+
+  const state={seg:"all",q:"",view:null,sort:{key:"eta",dir:"asc"},sel:new Set(),active:null};
+
+  const VIEWS={
+    delayed12:{name:"Delayed > 12h",color:"#D92D20",fn:r=>r.status==="delayed"||(r.status==="customs"&&r.wt>20)},
+    iberia:{name:"Iberia inbound",color:"#4F46E5",fn:r=>["PTLEI","PTSIN","ESALG","ESVLC","ESBIO"].includes(r.dc)},
+    highvalue:{name:"High value > €150k",color:"#067647",fn:r=>r.val>150000},
+    holds:{name:"Customs holds",color:"#DC6803",fn:r=>r.status==="customs"}
+  };
+
+  const $=s=>document.querySelector(s);
+  const tbody=$("#tbody"), emptyState=$("#emptyState"), grid=$("#grid");
+
+  /* ---------- toast ---------- */
+  let toastT;
+  function toast(msg,sub){
+    const box=$("#toasts");
+    box.innerHTML="";
+    const el=document.createElement("div");
+    el.className="toast";
+    el.innerHTML='<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3.4 8.4 6.4 11.4l6.2-6.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>'+esc(msg)+'</span>'+(sub?'<span class="t-sub">'+esc(sub)+'</span>':'');
+    box.appendChild(el);
+    clearTimeout(toastT);
+    toastT=setTimeout(()=>{box.innerHTML="";},2600);
+  }
+
+  /* ---------- filtering / sorting ---------- */
+  function segMatch(r){
+    if(state.seg==="all")return true;
+    if(state.seg==="active")return r.status==="transit"||r.status==="customs"||r.status==="booked";
+    if(state.seg==="delayed")return r.status==="delayed";
+    if(state.seg==="cleared")return r.status==="cleared";
+    return true;
+  }
+  function qMatch(r){
+    const q=state.q.trim().toLowerCase();
+    if(!q)return true;
+    return [r.id,r.o,r.oc,r.d,r.dc,r.carrier,r.cons,r.vessel,r.mode,r.cont,r.ref,STATUS[r.status].label]
+      .join(" ").toLowerCase().includes(q);
+  }
+  function visible(){
+    let rows=D.filter(r=>segMatch(r)&&qMatch(r));
+    if(state.view)rows=rows.filter(VIEWS[state.view].fn);
+    const {key,dir}=state.sort, m=dir==="asc"?1:-1;
+    rows.sort((a,b)=>{
+      let x,y;
+      switch(key){
+        case "eta": x=Date.parse(a.eta); y=Date.parse(b.eta); break;
+        case "wt": x=a.wt; y=b.wt; break;
+        case "val": x=a.val; y=b.val; break;
+        case "status": x=STATUS[a.status].rank; y=STATUS[b.status].rank; break;
+        case "route": return m*((a.o+a.d).localeCompare(b.o+b.d));
+        case "carrier": return m*(a.carrier.localeCompare(b.carrier));
+        default: return m*(a.id.localeCompare(b.id));
+      }
+      return m*(x-y);
+    });
+    return rows;
+  }
+
+  /* ---------- render table ---------- */
+  function rowHTML(r){
+    const s=STATUS[r.status], dt=new Date(r.eta), late=r.status==="delayed";
+    const cc=CARRIER_COLOR[r.carrier]||"#6B7280";
+    return '<tr data-id="'+r.id+'" tabindex="0" class="'+(state.sel.has(r.id)?"sel ":"")+(state.active===r.id?"active":"")+'">'
+      +'<td class="c-check"><input type="checkbox" data-check="'+r.id+'" aria-label="Select '+r.id+'"'+(state.sel.has(r.id)?" checked":"")+'></td>'
+      +'<td class="c-id"><span class="mono id-cell">'+r.id+'</span></td>'
+      +'<td class="c-route"><div class="route">'
+        +'<span class="route-node"><span class="route-city">'+esc(r.o)+'</span><span class="route-code">'+r.oc+'</span></span>'
+        +'<svg class="route-arrow" width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8h9M8.8 4.8 12 8l-3.2 3.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+        +'<span class="route-node"><span class="route-city">'+esc(r.d)+'</span><span class="route-code">'+r.dc+'</span></span>'
+      +'</div></td>'
+      +'<td class="c-carrier"><div class="carrier"><span class="carrier-mark" style="background:'+cc+'">'+initials(r.carrier)+'</span><span class="carrier-name">'+esc(r.carrier)+'</span></div></td>'
+      +'<td class="c-status"><span class="badge '+s.cls+'"><span class="dot"></span>'+s.label+'</span></td>'
+      +'<td class="c-eta"><span class="eta-d'+(late?" eta-late":"")+'">'+fmtDate(dt)+'</span><span class="eta-t">'+fmtTime(dt)+'</span></td>'
+      +'<td class="c-wt"><span class="wt">'+r.wt.toFixed(1)+'<span class="u">t</span></span></td>'
+      +'<td class="c-val"><span class="val">'+fmtEuro(r.val)+'</span></td>'
+      +'<td class="c-act"><button class="row-act" data-menu="'+r.id+'" aria-label="Actions for '+r.id+'"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="3.4" cy="8" r="1.2" fill="currentColor"/><circle cx="8" cy="8" r="1.2" fill="currentColor"/><circle cx="12.6" cy="8" r="1.2" fill="currentColor"/></svg></button></td>'
+    +'</tr>';
+  }
+
+  function render(){
+    const rows=visible();
+    tbody.innerHTML=rows.map(rowHTML).join("");
+    const none=rows.length===0;
+    emptyState.classList.toggle("show",none);
+    grid.style.display=none?"none":"";
+    if(none){
+      const q=state.q.trim();
+      $("#emptyQ").textContent=q?'“'+q+'”':(state.view?VIEWS[state.view].name:"this status filter");
+    }
+
+    $("#resultCount").innerHTML="<b>"+rows.length+"</b> of "+D.length+" shipments";
+    const wt=rows.reduce((a,r)=>a+r.wt,0), val=rows.reduce((a,r)=>a+r.val,0);
+    $("#sbCount").innerHTML="<b>"+rows.length+"</b> shipments";
+    $("#sbWeight").innerHTML="<b>"+wt.toFixed(1)+"</b> t gross";
+    $("#sbValue").innerHTML="<b>€"+(val/1e6).toFixed(2)+"M</b> declared";
+
+    const all=$("#checkAll"), selVis=rows.filter(r=>state.sel.has(r.id)).length;
+    all.checked=rows.length>0&&selVis===rows.length;
+    all.indeterminate=selVis>0&&selVis<rows.length;
+
+    document.querySelectorAll("th.sortable").forEach(th=>{
+      th.setAttribute("aria-sort", th.dataset.sort===state.sort.key ? (state.sort.dir==="asc"?"ascending":"descending") : "none");
+    });
+  }
+
+  function updateBulk(){
+    const n=state.sel.size, bar=$("#bulkBar");
+    $("#bulkN").textContent=n;
+    bar.classList.toggle("show",n>0);
+    $("#kpis").style.visibility=n>0?"hidden":"";
+  }
+
+  /* ---------- counts in segmented control ---------- */
+  (function segCounts(){
+    const c={all:D.length,active:0,delayed:0,cleared:0};
+    D.forEach(r=>{
+      if(r.status==="delayed")c.delayed++;
+      else if(r.status==="cleared")c.cleared++;
+      else c.active++;
+    });
+    Object.keys(c).forEach(k=>{
+      const el=document.querySelector('[data-segcount="'+k+'"]');
+      if(el)el.textContent=c[k];
+    });
+  })();
+
+  /* ---------- drawer ---------- */
+  function timelineFor(r){
+    const eta=new Date(r.eta), h=ms=>new Date(eta.getTime()-ms*3600000);
+    if(r.status==="booked"){
+      return [
+        {t:"Booking request raised for "+r.cons, m:"Ref "+r.ref, w:"Ana Melo", d:h(150), k:"done"},
+        {t:"Space confirmed with "+r.carrier, m:r.vessel+" · voyage "+r.voy, w:"Katrin Lindqvist", d:h(122), k:"done"},
+        {t:"Export declaration lodged", m:"Entry "+r.ref+" · "+r.inco, w:"Joris Bakker", d:h(60), k:"done"},
+        {t:"Collection booked at "+r.o, m:r.cont+" · "+r.mode, w:"Rui Barbosa", d:h(42), k:"done"},
+        {t:"Scheduled departure from "+r.o, m:"Cut-off 12h before sailing", w:"", d:h(30), k:"pending"}
+      ];
+    }
+    const t=[
+      {t:"Booking confirmed with "+r.carrier, m:"Ref "+r.ref, w:"Ana Melo", d:h(126), k:"done"},
+      {t:"Container gated in at "+r.o+" terminal", m:r.cont, w:"Terminal ops", d:h(102), k:"done"},
+      {t:"Loaded on "+r.vessel+" · voyage "+r.voy, m:r.mode+" · "+r.inco, w:"Rui Barbosa", d:h(88), k:"done"},
+      null,
+      null
+    ];
+    if(r.status==="delayed"){
+      t[3]={t:"Delay reported — berth congestion at "+r.d, m:"Revised ETA +14h", w:"Carrier feed", d:h(19), k:"alert"};
+      t[4]={t:"Awaiting new berthing window", m:"Discharge not yet scheduled", w:"", d:eta, k:"pending"};
+    }else if(r.status==="customs"){
+      t[3]={t:"Held for documentation review", m:"Entry "+r.ref+" · SAD incomplete", w:"Joris Bakker", d:h(26), k:"warn"};
+      t[4]={t:"Customs release pending", m:"Broker response due", w:"", d:eta, k:"pending"};
+    }else if(r.status==="cleared"){
+      t[3]={t:"Discharged at "+r.d+" and customs cleared", m:"Entry "+r.ref, w:"Joris Bakker", d:h(11), k:"done"};
+      t[4]={t:"Delivered to "+r.cons, m:"POD signed", w:"Élodie Marchand", d:h(2), k:"done"};
+    }else{
+      t[3]={t:"Departed "+r.o+" on schedule", m:"Transit "+Math.max(2,Math.round(r.wt/6))+" days", w:"Carrier feed", d:h(52), k:"done"};
+      t[4]={t:"Estimated arrival "+r.d, m:"Berth window confirmed", w:"", d:eta, k:"pending"};
+    }
+    return t;
+  }
+
+  function docsFor(r){
+    const base=[
+      {n:"Bill of lading",f:r.id+"-BL.pdf",s:"Verified",ok:true},
+      {n:"Commercial invoice",f:r.id+"-INV.pdf",s:"Verified",ok:true},
+      {n:"Packing list",f:r.id+"-PKL.pdf",s:"Verified",ok:true}
+    ];
+    if(r.mode==="Road FTL"||r.mode==="Rail intermodal")base.push({n:"CMR consignment note",f:r.id+"-CMR.pdf",s:"Verified",ok:true});
+    if(r.status==="customs")base.push({n:"Customs declaration (SAD)",f:r.id+"-SAD.pdf",s:"Pending",ok:false});
+    else if(r.status!=="booked")base.push({n:"Certificate of origin",f:r.id+"-COO.pdf",s:"Verified",ok:true});
+    else base.push({n:"Export declaration",f:r.id+"-EXD.pdf",s:"Pending",ok:false});
+    return base;
+  }
+
+  function peopleFor(r){
+    const i=D.indexOf(r);
+    const set=[PEOPLE[0],PEOPLE[1+(i%5)]];
+    if(i%3===0)set.push(PEOPLE[2+(i%4)]);
+    const out=[],seen=new Set();
+    set.forEach(p=>{if(p&&!seen.has(p.n)){seen.add(p.n);out.push(p);}});
+    return out;
+  }
+
+  function openDrawer(id){
+    const r=D.find(x=>x.id===id); if(!r)return;
+    state.active=id;
+    const s=STATUS[r.status], dt=new Date(r.eta);
+
+    $("#drId").textContent=r.id;
+    $("#drBadge").innerHTML='<span class="badge '+s.cls+'"><span class="dot"></span>'+s.label+'</span>';
+    $("#drFrom").textContent=r.o;
+    $("#drTo").textContent=r.d;
+    $("#drSub").innerHTML='<span class="mono">'+r.oc+'</span> → <span class="mono">'+r.dc+'</span> · '+esc(r.mode)+' · ETA '+fmtDate(dt)+' '+fmtTime(dt);
+
+    const meta=[
+      ["Carrier",esc(r.carrier),false],
+      ["Vessel / unit",esc(r.vessel),false],
+      ["Container",r.cont,true],
+      ["Voyage",r.voy,true],
+      ["Consignee",esc(r.cons),false],
+      ["Incoterm",r.inco+" · "+r.mode,false],
+      ["Gross weight",r.wt.toFixed(1)+" t",true],
+      ["Declared value",fmtEuro(r.val),true],
+      ["Customs entry",r.ref,true],
+      ["Booked by","Ana Melo",false]
+    ];
+    $("#drMeta").innerHTML=meta.map(m=>'<div><div class="meta-k">'+m[0]+'</div><div class="meta-v'+(m[2]?" mono":"")+'">'+m[1]+'</div></div>').join("");
+
+    $("#drTimeline").innerHTML=timelineFor(r).map(e=>
+      '<div class="tl"><span class="tl-dot '+e.k+'"></span><div class="tl-body">'
+      +'<div class="tl-t'+(e.k==="pending"?" pending":"")+'">'+esc(e.t)+'</div>'
+      +'<div class="tl-m"><span class="mono">'+fmtDate(e.d)+' '+fmtTime(e.d)+'</span>'
+      +(e.m?'<span>·</span><span>'+esc(e.m)+'</span>':'')
+      +(e.w?'<span>·</span><span class="who">'+esc(e.w)+'</span>':'')
+      +'</div></div></div>').join("");
+
+    const docs=docsFor(r);
+    $("#drDocCount").textContent=docs.length;
+    $("#drDocs").innerHTML=docs.map(d=>
+      '<button class="doc" type="button"><span class="doc-ico"><svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3.6 2.4h5l3.8 3.8v7.4H3.6V2.4Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M8.6 2.4v3.8h3.8" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></span>'
+      +'<span style="min-width:0"><span class="doc-n" style="display:block">'+esc(d.n)+'</span><span class="doc-m">'+d.f+'</span></span>'
+      +'<span class="doc-s '+(d.ok?"ok":"pend")+'">'+d.s+'</span></button>').join("");
+
+    $("#drPeople").innerHTML=peopleFor(r).map((p,i)=>
+      '<div class="person"><span class="avatar" style="background:'+p.c+'">'+p.i+'</span>'
+      +'<span><span class="p-n" style="display:block">'+esc(p.n)+'</span><span class="p-r">'+esc(p.r)+'</span></span>'
+      +'<span class="p-tag">'+(i===0?"Owner":"Watcher")+'</span></div>').join("");
+
+    $("#drawer").classList.add("open");
+    $("#app").classList.add("drawer-open");
+    $("#scrim").classList.add("show");
+    density();
+    render();
+  }
+
+  function closeDrawer(){
+    state.active=null;
+    $("#drawer").classList.remove("open");
+    $("#app").classList.remove("drawer-open");
+    $("#scrim").classList.remove("show");
+    density();
+    render();
+  }
+
+  function density(){
+    const w=window.innerWidth, open=$("#app").classList.contains("drawer-open");
+    $("#app").classList.toggle("dense", w<=1080 || (open && w>=1281 && w<1600));
+  }
+
+  /* ---------- row menu ---------- */
+  const menu=$("#rowMenu"); let menuFor=null;
+  function openMenu(btn,id){
+    menuFor=id;
+    menu.classList.add("show");
+    const r=btn.getBoundingClientRect(), mw=190;
+    let top=r.bottom+6, left=Math.max(8,r.right-mw);
+    if(top+220>window.innerHeight)top=r.top-6-220;
+    menu.style.top=top+"px"; menu.style.left=left+"px";
+    btn.classList.add("open");
+  }
+  function closeMenu(){
+    menu.classList.remove("show");
+    document.querySelectorAll(".row-act.open").forEach(b=>b.classList.remove("open"));
+    menuFor=null;
+  }
+
+  /* ---------- events ---------- */
+  tbody.addEventListener("click",e=>{
+    const mBtn=e.target.closest("[data-menu]");
+    if(mBtn){ e.stopPropagation(); const id=mBtn.dataset.menu; if(menuFor===id){closeMenu();}else{closeMenu();openMenu(mBtn,id);} return; }
+    const cb=e.target.closest("[data-check]");
+    if(cb){ e.stopPropagation(); const id=cb.dataset.check;
+      if(cb.checked)state.sel.add(id); else state.sel.delete(id);
+      updateBulk(); render(); return; }
+    const tr=e.target.closest("tr[data-id]");
+    if(tr)openDrawer(tr.dataset.id);
+  });
+  tbody.addEventListener("keydown",e=>{
+    const tr=e.target.closest("tr[data-id]");
+    if(!tr)return;
+    if(e.key==="Enter"||e.key===" "){ e.preventDefault(); openDrawer(tr.dataset.id); }
+    if(e.key==="ArrowDown"&&tr.nextElementSibling){e.preventDefault();tr.nextElementSibling.focus();}
+    if(e.key==="ArrowUp"&&tr.previousElementSibling){e.preventDefault();tr.previousElementSibling.focus();}
+  });
+
+  $("#checkAll").addEventListener("change",e=>{
+    const rows=visible();
+    if(e.target.checked)rows.forEach(r=>state.sel.add(r.id));
+    else rows.forEach(r=>state.sel.delete(r.id));
+    updateBulk(); render();
+  });
+
+  document.querySelectorAll("th.sortable").forEach(th=>{
+    th.addEventListener("click",()=>{
+      const k=th.dataset.sort;
+      if(state.sort.key===k)state.sort.dir=state.sort.dir==="asc"?"desc":"asc";
+      else state.sort={key:k,dir:(k==="wt"||k==="val")?"desc":"asc"};
+      render();
+    });
+  });
+
+  document.querySelectorAll(".seg button").forEach(b=>{
+    b.addEventListener("click",()=>{
+      state.seg=b.dataset.seg;
+      document.querySelectorAll(".seg button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
+      render();
+    });
+  });
+
+  const finder=$("#finder"), fInput=$("#filterInput");
+  fInput.addEventListener("input",()=>{
+    state.q=fInput.value;
+    finder.classList.toggle("filled",fInput.value.length>0);
+    render();
+  });
+  $("#filterClear").addEventListener("click",()=>{
+    fInput.value=""; state.q=""; finder.classList.remove("filled"); fInput.focus(); render();
+  });
+
+  function setView(key){
+    state.view=key;
+    document.querySelectorAll(".view-item").forEach(v=>v.classList.toggle("active",v.dataset.view===key));
+    const chip=$("#viewChip");
+    if(key){
+      chip.classList.add("show");
+      $("#viewChipName").textContent=VIEWS[key].name;
+      $("#viewChipDot").style.background=VIEWS[key].color;
+    }else chip.classList.remove("show");
+    render();
+  }
+  document.querySelectorAll(".view-item").forEach(v=>{
+    v.addEventListener("click",()=>setView(state.view===v.dataset.view?null:v.dataset.view));
+  });
+  $("#viewChipClear").addEventListener("click",()=>setView(null));
+
+  function clearFilters(){
+    state.seg="all"; state.q=""; fInput.value=""; finder.classList.remove("filled");
+    document.querySelectorAll(".seg button").forEach(x=>x.setAttribute("aria-pressed",String(x.dataset.seg==="all")));
+    setView(null);
+  }
+  $("#emptyClear").addEventListener("click",clearFilters);
+
+  $("#bulkClear").addEventListener("click",()=>{ state.sel.clear(); updateBulk(); render(); });
+  document.querySelectorAll("[data-bulk]").forEach(b=>{
+    b.addEventListener("click",()=>{
+      const n=state.sel.size, a=b.dataset.bulk;
+      if(a==="assign")toast(n+" shipments assigned to Joris Bakker","Customs queue");
+      if(a==="status")toast("Status updated on "+n+" shipments","Marked At customs");
+      if(a==="export")toast("Exported "+n+" shipments","halyard-export.csv");
+      state.sel.clear(); updateBulk(); render();
+    });
+  });
+
+  document.querySelectorAll(".nav-item").forEach(b=>{
+    b.addEventListener("click",()=>{
+      document.querySelectorAll(".nav-item").forEach(x=>{x.classList.remove("active");x.removeAttribute("aria-current");});
+      b.classList.add("active"); b.setAttribute("aria-current","page");
+      if(b.dataset.nav!=="Shipments")toast(b.dataset.nav+" is not part of this prototype","Shipments is live");
+    });
+  });
+
+  $("#newBtn").addEventListener("click",()=>toast("New shipment draft created","HLY-4474 · unsaved"));
+  $("#dateBtn").addEventListener("click",()=>toast("Date range 4 – 18 Mar 2026","26 shipments in window"));
+  $("#colsBtn").addEventListener("click",()=>toast("Column layout saved","Applies to Shipments"));
+  $("#globalSearch").addEventListener("click",()=>fInput.focus());
+  $("#drClose").addEventListener("click",closeDrawer);
+  $("#scrim").addEventListener("click",closeDrawer);
+  $("#drEdit").addEventListener("click",()=>toast("Consignment unlocked for editing"));
+  $("#drAssign").addEventListener("click",()=>toast("Added Katrin Lindqvist as watcher"));
+  $("#drMore").addEventListener("click",()=>toast("Shipment actions","Duplicate, split, archive"));
+
+  menu.addEventListener("click",e=>{
+    const b=e.target.closest("[data-act]"); if(!b)return;
+    const id=menuFor, act=b.dataset.act;
+    closeMenu();
+    if(act==="open")openDrawer(id);
+    if(act==="assign")toast(id+" assigned to Joris Bakker");
+    if(act==="copy")toast("Copied "+id+" to clipboard");
+    if(act==="docs")toast("Document request sent","Consignee notified");
+    if(act==="flag")toast(id+" flagged as exception","Escalated to duty manager");
+  });
+
+  document.addEventListener("click",e=>{
+    if(!e.target.closest("#rowMenu")&&!e.target.closest("[data-menu]"))closeMenu();
+  });
+  window.addEventListener("resize",()=>{closeMenu();density();},{passive:true});
+  $("#tableWrap").addEventListener("scroll",closeMenu,{passive:true});
+
+  document.addEventListener("keydown",e=>{
+    if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="k"){ e.preventDefault(); fInput.focus(); fInput.select(); return; }
+    if(e.key==="Escape"){
+      if(menu.classList.contains("show")){closeMenu();return;}
+      if($("#drawer").classList.contains("open")){closeDrawer();return;}
+      if(state.sel.size){state.sel.clear();updateBulk();render();return;}
+      if(document.activeElement===fInput&&fInput.value){fInput.value="";state.q="";finder.classList.remove("filled");render();}
+    }
+  });
+
+  $("#syncTime").textContent=fmtTime(NOW);
+  density();
+  render();
+  updateBulk();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,2057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ledgerline — Revenue reconciliation for subscription businesses</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Inter:wght@400;450;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============ tokens ============ */
+:root{
+  --paper:#FFFFFF;
+  --canvas:#F6F7F9;
+  --deep:#0C0F14;
+  --line:#E5E8EC;
+  --line-soft:#EEF0F3;
+  --ink:#0C0F14;
+  --muted:#5B6572;
+  --accent:#2563EB;
+  --accent-ink:#1D4FD8;
+  --accent-wash:#EFF4FF;
+  --accent-line:#CFE0FF;
+  --ok:#0E9F6E;
+  --warn:#B45309;
+  --warn-wash:#FEF6EC;
+  --danger:#C2410C;
+
+  --r-sm:8px;
+  --r:10px;
+  --r-lg:12px;
+  --r-xl:16px;
+
+  --sans:'Inter','Inter Tight',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --display:'Inter Tight','Inter',system-ui,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
+
+  --shadow-soft:0 1px 2px rgba(12,15,20,.04), 0 8px 24px -12px rgba(12,15,20,.10);
+  --shadow-lift:0 1px 2px rgba(12,15,20,.05), 0 24px 60px -28px rgba(12,15,20,.24);
+  --maxw:1200px;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%; scroll-behavior:smooth}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:var(--sans); font-size:16px; line-height:1.55;
+  font-feature-settings:"cv05" 1,"ss01" 1;
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+}
+img,svg{display:block; max-width:100%}
+a{color:inherit; text-decoration:none}
+button{font:inherit; color:inherit}
+h1,h2,h3,h4{font-family:var(--display); margin:0; letter-spacing:-.022em; font-weight:600; line-height:1.1}
+p{margin:0}
+ul{margin:0; padding:0; list-style:none}
+.mono{font-family:var(--mono); font-variant-numeric:tabular-nums}
+.num{font-variant-numeric:tabular-nums; font-feature-settings:"tnum" 1}
+
+:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:2px;
+  border-radius:6px;
+}
+.on-deep :focus-visible{outline-color:#8FB4FF}
+
+/* ============ layout ============ */
+.wrap{max-width:var(--maxw); margin:0 auto; padding:0 32px}
+.section{padding:104px 0; position:relative}
+.section--tight{padding:76px 0}
+.canvas{background:var(--canvas)}
+.hairline-top{border-top:1px solid var(--line)}
+
+.eyebrow{
+  font-size:12px; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--muted);
+}
+.eyebrow--accent{color:var(--accent)}
+.h2{font-size:44px; letter-spacing:-.03em}
+.h3{font-size:27px; letter-spacing:-.025em}
+.lede{font-size:17.5px; color:var(--muted); line-height:1.6; max-width:62ch}
+.section-head{max-width:720px}
+.section-head .h2{margin:14px 0 16px}
+
+/* ============ buttons ============ */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  height:42px; padding:0 18px; border-radius:var(--r-sm);
+  font-size:14.5px; font-weight:550; letter-spacing:-.008em;
+  border:1px solid transparent; cursor:pointer; white-space:nowrap;
+  transition:background .16s ease, border-color .16s ease, color .16s ease, transform .16s ease, box-shadow .16s ease;
+}
+.btn:active{transform:translateY(.5px)}
+.btn--primary{background:var(--accent); color:#fff; box-shadow:0 1px 2px rgba(37,99,235,.28), inset 0 1px 0 rgba(255,255,255,.14)}
+.btn--primary:hover{background:var(--accent-ink)}
+.btn--ghost{background:var(--paper); color:var(--ink); border-color:var(--line)}
+.btn--ghost:hover{background:var(--canvas); border-color:#D6DAE0}
+.btn--quiet{background:transparent; color:var(--muted); height:36px; padding:0 12px}
+.btn--quiet:hover{color:var(--ink)}
+.btn--lg{height:46px; padding:0 22px; font-size:15px}
+.btn--onDeep{background:#fff; color:var(--deep)}
+.btn--onDeep:hover{background:#E9EDF3}
+.btn--onDeepGhost{background:transparent; color:#fff; border-color:rgba(255,255,255,.22)}
+.btn--onDeepGhost:hover{background:rgba(255,255,255,.07); border-color:rgba(255,255,255,.34)}
+.arrow{transition:transform .18s ease}
+.btn:hover .arrow{transform:translateX(2px)}
+
+.link-arrow{
+  display:inline-flex; align-items:center; gap:6px; color:var(--accent);
+  font-size:14.5px; font-weight:550;
+}
+.link-arrow:hover{color:var(--accent-ink)}
+.link-arrow svg{transition:transform .18s ease}
+.link-arrow:hover svg{transform:translateX(2px)}
+
+/* ============ header ============ */
+.hdr{
+  position:sticky; top:0; z-index:100;
+  border-bottom:1px solid transparent;
+  transition:background .22s ease, border-color .22s ease, backdrop-filter .22s ease, box-shadow .22s ease;
+}
+.hdr.is-stuck{
+  background:rgba(255,255,255,.86);
+  backdrop-filter:saturate(180%) blur(14px);
+  -webkit-backdrop-filter:saturate(180%) blur(14px);
+  border-bottom-color:var(--line);
+}
+.hdr__in{height:64px; display:flex; align-items:center; gap:32px}
+.logo{display:flex; align-items:center; gap:9px; font-family:var(--display); font-weight:600; font-size:16.5px; letter-spacing:-.02em}
+.logo__mark{width:24px; height:24px; flex:none}
+.nav{display:flex; align-items:center; gap:2px; margin-left:6px}
+.nav a{
+  padding:7px 11px; border-radius:7px; font-size:14.5px; color:var(--muted);
+  font-weight:500; transition:color .15s ease, background .15s ease;
+}
+.nav a:hover{color:var(--ink); background:var(--canvas)}
+.hdr__right{margin-left:auto; display:flex; align-items:center; gap:8px}
+
+/* ============ hero ============ */
+.hero{position:relative; padding:76px 0 0; overflow:hidden}
+.hero__bg{position:absolute; inset:-64px 0 auto 0; height:760px; z-index:0; pointer-events:none}
+.hero__grid{
+  position:absolute; inset:0;
+  background-image:linear-gradient(to right, rgba(12,15,20,.05) 1px, transparent 1px),
+                   linear-gradient(to bottom, rgba(12,15,20,.05) 1px, transparent 1px);
+  background-size:64px 64px;
+  -webkit-mask-image:radial-gradient(ellipse 70% 62% at 50% 22%, #000 0%, transparent 74%);
+  mask-image:radial-gradient(ellipse 70% 62% at 50% 22%, #000 0%, transparent 74%);
+}
+.hero__glow{
+  position:absolute; left:50%; top:-160px; transform:translateX(-50%);
+  width:1000px; height:520px; border-radius:50%;
+  background:radial-gradient(closest-side, rgba(37,99,235,.13), rgba(37,99,235,0) 72%);
+  filter:blur(6px);
+}
+.hero__in{position:relative; z-index:1; text-align:center}
+.chip{
+  display:inline-flex; align-items:center; gap:9px; height:30px; padding:0 12px 0 10px;
+  border:1px solid var(--line); border-radius:999px; background:rgba(255,255,255,.7);
+  font-size:12.5px; color:var(--muted); font-weight:500; backdrop-filter:blur(4px);
+}
+.chip__dot{width:6px; height:6px; border-radius:50%; background:var(--ok); box-shadow:0 0 0 3px rgba(14,159,110,.14)}
+.chip b{color:var(--ink); font-weight:600}
+.hero h1{
+  font-size:57px; letter-spacing:-.038em; line-height:1.06; margin:26px auto 20px; max-width:21ch;
+  font-weight:600;
+}
+.hero h1 em{font-style:normal; color:var(--muted)}
+.hero__sub{font-size:18.5px; color:var(--muted); max-width:62ch; margin:0 auto; line-height:1.58}
+.hero__cta{display:flex; gap:10px; justify-content:center; margin:32px 0 18px}
+.hero__trust{
+  display:inline-flex; align-items:center; gap:10px; font-size:13px; color:var(--muted);
+}
+.hero__trust .sep{width:3px; height:3px; border-radius:50%; background:#C3C9D2}
+
+/* ============ app mock (shared) ============ */
+.app{
+  background:var(--paper); border:1px solid var(--line); border-radius:var(--r-lg);
+  overflow:hidden; box-shadow:var(--shadow-soft);
+}
+.app--hero{
+  margin-top:52px; box-shadow:var(--shadow-lift); border-radius:14px;
+  position:relative; z-index:1;
+}
+.app__chrome{
+  height:38px; display:flex; align-items:center; gap:10px; padding:0 12px;
+  border-bottom:1px solid var(--line); background:linear-gradient(#FCFCFD,#F7F8FA);
+}
+.dots{display:flex; gap:6px}
+.dots i{width:9px; height:9px; border-radius:50%; background:#DDE1E7; display:block}
+.app__url{
+  flex:1; max-width:340px; height:22px; border-radius:6px; background:var(--paper);
+  border:1px solid var(--line); display:flex; align-items:center; gap:6px; padding:0 8px;
+  font-family:var(--mono); font-size:10.5px; color:#8A93A0; margin:0 auto;
+}
+.app__body{display:grid; grid-template-columns:200px 1fr; min-height:452px}
+.side{border-right:1px solid var(--line); background:#FCFCFD; padding:14px 10px; display:flex; flex-direction:column; gap:2px}
+.side__label{font-size:10.5px; font-weight:600; letter-spacing:.07em; text-transform:uppercase; color:#98A1AD; padding:12px 10px 6px}
+.side__item{
+  display:flex; align-items:center; gap:9px; padding:6.5px 10px; border-radius:7px;
+  font-size:13px; color:var(--muted); font-weight:500;
+}
+.side__item.is-active{background:var(--accent-wash); color:var(--accent-ink); font-weight:550}
+.side__item .badge{margin-left:auto; font-family:var(--mono); font-size:10.5px; color:#98A1AD}
+.side__item.is-active .badge{color:var(--accent)}
+.side__item .warnbadge{
+  margin-left:auto; font-family:var(--mono); font-size:10px; font-weight:600;
+  background:var(--warn-wash); color:var(--warn); padding:1px 5px; border-radius:5px;
+}
+
+.main{display:grid; grid-template-columns:1fr 244px; min-width:0}
+.pane{min-width:0; display:flex; flex-direction:column}
+.pane__head{
+  padding:16px 20px 14px; border-bottom:1px solid var(--line-soft);
+  display:flex; align-items:flex-end; gap:12px;
+}
+.pane__title{font-family:var(--display); font-size:15.5px; font-weight:600; letter-spacing:-.02em}
+.pane__meta{font-size:11.5px; color:#98A1AD; font-family:var(--mono)}
+.pane__tools{margin-left:auto; display:flex; gap:6px}
+.minibtn{
+  height:26px; padding:0 9px; border:1px solid var(--line); border-radius:7px; background:var(--paper);
+  font-size:11.5px; color:var(--muted); display:inline-flex; align-items:center; gap:5px; font-weight:500;
+}
+.minibtn--accent{background:var(--accent); border-color:var(--accent); color:#fff}
+
+/* table */
+.tbl{width:100%; border-collapse:collapse; font-size:12.5px}
+.tbl th{
+  text-align:left; font-weight:600; font-size:10.5px; letter-spacing:.06em; text-transform:uppercase;
+  color:#98A1AD; padding:9px 12px; border-bottom:1px solid var(--line); background:#FBFCFD; white-space:nowrap;
+}
+.tbl td{padding:0 12px; border-bottom:1px solid var(--line-soft); height:44px; vertical-align:middle; white-space:nowrap}
+.tbl tbody tr{transition:background .14s ease}
+.tbl tbody tr:hover{background:#FAFBFD}
+.tbl .r{text-align:right}
+.cell-id{font-family:var(--mono); font-size:11.5px; color:var(--ink); font-weight:500}
+.cell-sub{font-size:10.5px; color:#98A1AD; font-family:var(--mono)}
+.cell-amt{font-family:var(--mono); font-size:12px; font-variant-numeric:tabular-nums; font-weight:500}
+.src{display:inline-flex; align-items:center; gap:7px; font-size:12px; color:var(--muted)}
+.src__ic{width:16px; height:16px; border-radius:4px; flex:none}
+
+.pill{
+  display:inline-flex; align-items:center; gap:5px; height:20px; padding:0 8px; border-radius:999px;
+  font-size:11px; font-weight:550; letter-spacing:-.005em; white-space:nowrap;
+}
+.pill i{width:5px; height:5px; border-radius:50%; display:block}
+.pill--ok{background:#E9F7F1; color:#0B7A55}
+.pill--ok i{background:#0E9F6E}
+.pill--warn{background:var(--warn-wash); color:var(--warn)}
+.pill--warn i{background:#D97706}
+.pill--bad{background:#FDF0EA; color:var(--danger)}
+.pill--bad i{background:#EA580C}
+.pill--info{background:var(--accent-wash); color:var(--accent-ink)}
+.pill--info i{background:var(--accent)}
+
+.conf{display:flex; align-items:center; gap:8px; min-width:98px}
+.conf__track{flex:1; height:4px; border-radius:999px; background:#EDEFF3; overflow:hidden}
+.conf__fill{height:100%; border-radius:999px; background:var(--accent); width:0; transition:width 1.1s cubic-bezier(.22,1,.36,1)}
+.conf__fill--ok{background:#12A97A}
+.conf__fill--warn{background:#E0A020}
+.conf__fill--bad{background:#E4794A}
+.conf__val{font-family:var(--mono); font-size:10.5px; color:var(--muted); width:30px; text-align:right}
+
+/* summary rail */
+.rail{border-left:1px solid var(--line); background:#FCFCFD; padding:16px 16px 18px; display:flex; flex-direction:column; gap:16px}
+.rail__title{font-size:10.5px; font-weight:600; letter-spacing:.07em; text-transform:uppercase; color:#98A1AD}
+.stat-big{font-family:var(--display); font-size:31px; font-weight:600; letter-spacing:-.03em; line-height:1}
+.stat-cap{font-size:11.5px; color:var(--muted); margin-top:5px}
+.bars{display:flex; flex-direction:column; gap:9px}
+.bar-row{display:flex; align-items:center; gap:8px; font-size:11.5px}
+.bar-row .lbl{color:var(--muted); width:74px; flex:none}
+.bar-row .trk{display:block; flex:1; height:6px; background:#EDEFF3; border-radius:999px; overflow:hidden}
+.bar-row .fil{display:block; height:100%; border-radius:999px; width:0; transition:width 1.2s cubic-bezier(.22,1,.36,1)}
+.bar-row .v{font-family:var(--mono); font-size:11px; width:26px; text-align:right; color:var(--ink)}
+.rail__note{
+  font-size:11.5px; color:var(--muted); line-height:1.5; padding-top:14px; border-top:1px solid var(--line-soft);
+}
+.rail__note b{color:var(--ink); font-weight:600}
+.runstate{
+  display:flex; align-items:center; gap:8px; padding:9px 10px; border:1px solid var(--line);
+  border-radius:var(--r-sm); background:var(--paper); font-size:11.5px; color:var(--muted);
+}
+.spin{width:12px; height:12px; flex:none; animation:spin 1.6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ============ logo wall ============ */
+.logowall{padding:48px 0 56px; border-top:1px solid var(--line); border-bottom:1px solid var(--line); background:var(--paper)}
+.logowall__lbl{text-align:center; font-size:12.5px; color:var(--muted); letter-spacing:.01em}
+.logogrid{
+  margin-top:30px; display:grid; grid-template-columns:repeat(8,1fr); gap:18px; align-items:center;
+}
+.logogrid svg{width:100%; height:30px; overflow:visible; color:#9AA3AF; transition:color .2s ease}
+.logogrid a:hover svg, .logogrid div:hover svg{color:#4B5563}
+
+/* ============ problem ============ */
+.cols3{display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-top:56px}
+.pcard{
+  background:var(--paper); border:1px solid var(--line); border-radius:var(--r-lg); padding:22px 22px 24px;
+  display:flex; flex-direction:column; gap:16px;
+}
+.pcard__viz{height:132px; border-radius:var(--r-sm); background:var(--canvas); border:1px solid var(--line-soft); overflow:hidden}
+.pcard h3{font-size:17.5px; letter-spacing:-.02em}
+.pcard p{font-size:14.5px; color:var(--muted); line-height:1.6}
+.pcard__tag{font-family:var(--mono); font-size:11px; color:var(--danger); background:#FDF0EA; padding:2px 7px; border-radius:5px; align-self:flex-start}
+
+/* ============ feature rows ============ */
+.frow{display:grid; grid-template-columns:minmax(0,404px) minmax(0,1fr); gap:72px; align-items:center}
+.frow + .frow{margin-top:112px}
+.frow--flip{grid-template-columns:minmax(0,1fr) minmax(0,404px)}
+.frow--flip .frow__copy{order:2}
+.frow--flip .frow__viz{order:1}
+.frow__copy h3{font-size:31px; letter-spacing:-.028em; margin:14px 0 14px}
+.frow__copy p{font-size:16.5px; color:var(--muted); line-height:1.62}
+.flist{margin-top:24px; display:flex; flex-direction:column; gap:12px}
+.flist li{display:flex; gap:10px; font-size:14.5px; color:var(--muted); line-height:1.5}
+.flist b{color:var(--ink); font-weight:600}
+.tick{flex:none; margin-top:3px; color:var(--accent)}
+.frow .link-arrow{margin-top:24px}
+
+/* rules builder */
+.rules{padding:0}
+.rules__head{
+  display:flex; align-items:center; gap:10px; padding:14px 16px; border-bottom:1px solid var(--line);
+}
+.rules__name{font-family:var(--display); font-size:14.5px; font-weight:600; letter-spacing:-.018em}
+.rules__body{padding:16px}
+.rule-when{
+  display:flex; align-items:center; gap:8px; font-size:11px; font-weight:600; letter-spacing:.06em;
+  text-transform:uppercase; color:#98A1AD; margin-bottom:10px;
+}
+.rule-when .ln{flex:1; height:1px; background:var(--line)}
+.cond{
+  display:grid; grid-template-columns:44px minmax(0,1.25fr) minmax(0,1fr) minmax(0,1.35fr) 26px;
+  gap:8px; align-items:center; margin-bottom:8px;
+}
+.cond__op{
+  font-family:var(--mono); font-size:10.5px; color:var(--muted); background:var(--canvas);
+  border:1px solid var(--line); border-radius:6px; height:30px; display:flex; align-items:center; justify-content:center;
+}
+.fld{
+  height:30px; border:1px solid var(--line); border-radius:7px; background:var(--paper);
+  display:flex; align-items:center; gap:6px; padding:0 8px; font-size:12px; color:var(--ink); min-width:0;
+}
+.fld--mono{font-family:var(--mono); font-size:11.5px}
+.fld--op{background:var(--canvas); color:var(--muted); justify-content:center; font-size:11.5px}
+.fld span{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.fld .caret{margin-left:auto; color:#B4BBC5; flex:none}
+.cond__x{color:#C3C9D2; display:flex; justify-content:center}
+.rule-add{
+  height:30px; border:1px dashed var(--line); border-radius:7px; color:var(--muted); font-size:12px;
+  display:flex; align-items:center; justify-content:center; gap:6px; margin-top:2px;
+}
+.rule-then{
+  margin-top:16px; border-top:1px solid var(--line); padding-top:16px;
+}
+.then-box{
+  border:1px solid var(--accent-line); background:var(--accent-wash); border-radius:var(--r-sm);
+  padding:11px 12px; display:flex; align-items:center; gap:10px; font-size:12.5px; color:var(--accent-ink);
+}
+.rules__foot{
+  border-top:1px solid var(--line); background:#FCFCFD; padding:11px 16px;
+  display:flex; align-items:center; gap:10px; font-size:11.5px; color:var(--muted);
+}
+.rules__foot .mono{color:var(--ink)}
+
+/* exceptions + diff */
+.exc{display:grid; grid-template-columns:236px minmax(0,1fr)}
+.exc__list{border-right:1px solid var(--line); background:#FCFCFD}
+.exc__lh{padding:12px 14px; border-bottom:1px solid var(--line); font-size:10.5px; font-weight:600; letter-spacing:.07em; text-transform:uppercase; color:#98A1AD; display:flex; align-items:center; gap:8px}
+.exc__lh span{margin-left:auto; font-family:var(--mono); letter-spacing:0; text-transform:none; color:#B4BBC5}
+.exc-item{
+  width:100%; text-align:left; background:transparent; border:0; border-bottom:1px solid var(--line-soft);
+  padding:11px 14px; cursor:pointer; display:block; position:relative; transition:background .14s ease;
+}
+.exc-item::before{content:""; position:absolute; left:0; top:0; bottom:0; width:2px; background:transparent; transition:background .14s ease}
+.exc-item:hover{background:#F4F6F9}
+.exc-item.is-active{background:var(--paper)}
+.exc-item.is-active::before{background:var(--accent)}
+.exc-item__top{display:flex; align-items:center; gap:8px; margin-bottom:4px}
+.exc-item__id{font-family:var(--mono); font-size:11px; color:var(--ink); font-weight:500}
+.exc-item__amt{margin-left:auto; font-family:var(--mono); font-size:11px; color:var(--muted)}
+.exc-item__reason{font-size:12px; color:var(--muted); line-height:1.4}
+.exc-item.is-active .exc-item__reason{color:var(--ink)}
+.exc__more{padding:11px 14px; font-size:11.5px; color:#98A1AD; border-bottom:1px solid var(--line-soft)}
+.exc__detail{padding:16px 18px 18px; display:flex; flex-direction:column; min-width:0}
+.exc__dhead{display:flex; align-items:flex-start; gap:10px; margin-bottom:14px}
+.exc__dhead > div{min-width:0}
+.exc__dmeta{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.exc__dtitle{font-family:var(--display); font-size:15px; font-weight:600; letter-spacing:-.02em}
+.exc__dmeta{font-family:var(--mono); font-size:11px; color:#98A1AD}
+.diff{display:grid; grid-template-columns:96px 1fr 1fr; border:1px solid var(--line); border-radius:var(--r-sm); overflow:hidden}
+.diff__hd{
+  background:#FBFCFD; border-bottom:1px solid var(--line); padding:8px 10px;
+  font-size:10.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:#98A1AD;
+  display:flex; align-items:center; gap:6px;
+}
+.diff__k{padding:8px 10px; font-size:11.5px; color:var(--muted); border-bottom:1px solid var(--line-soft); font-family:var(--mono)}
+.diff__v{
+  padding:8px 10px; font-size:11.5px; font-family:var(--mono); color:var(--ink);
+  border-bottom:1px solid var(--line-soft); border-left:1px solid var(--line-soft);
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap; transition:background .18s ease, color .18s ease;
+}
+.diff__row:last-child .diff__k,.diff__row:last-child .diff__v{border-bottom:0}
+.diff__row{display:contents}
+.is-diff .diff__k{color:var(--danger); font-weight:500}
+.is-diff .diff__v{background:#FDF3EE; color:#9A3412; font-weight:500}
+.is-diff .diff__v--r{background:#FDECE4}
+.diff__delta{
+  margin-top:12px; display:flex; align-items:center; gap:10px; font-size:12px; color:var(--muted);
+  border:1px solid var(--line); border-radius:var(--r-sm); padding:10px 12px; background:#FCFCFD;
+}
+.diff__delta b{font-family:var(--mono); color:var(--danger); font-weight:600}
+.diff__actions{margin-top:12px; display:flex; gap:8px}
+
+/* close timeline */
+.close{padding:0}
+.close__head{padding:16px 18px 14px; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:12px}
+.close__prog{margin-left:auto; display:flex; align-items:center; gap:10px; font-size:12px; color:var(--muted)}
+.close__ring{width:34px; height:34px; flex:none}
+.gantt{padding:16px 18px 18px}
+.gantt__scale{display:grid; grid-template-columns:184px repeat(6,1fr); gap:0; margin-bottom:10px}
+.gantt__scale div{font-family:var(--mono); font-size:10px; color:#A6AEB9; text-align:center}
+.gantt__scale div:first-child{text-align:left}
+.grow{display:grid; grid-template-columns:184px 1fr; align-items:center; gap:0; height:38px}
+.grow__lbl{display:flex; align-items:center; gap:7px; font-size:12px; white-space:nowrap; color:var(--ink); padding-right:12px}
+.grow__lbl .who{font-family:var(--mono); font-size:10px; color:#A6AEB9; margin-left:auto}
+.gtrack{position:relative; height:38px; border-left:1px solid var(--line-soft)}
+.gtrack::after{
+  content:""; position:absolute; inset:0;
+  background-image:linear-gradient(to right, var(--line-soft) 1px, transparent 1px);
+  background-size:calc(100%/6) 100%;
+}
+.gbar{
+  position:absolute; top:11px; height:16px; border-radius:5px; display:flex; align-items:center;
+  padding:0 8px; font-size:10.5px; font-family:var(--mono); color:#fff; z-index:1; overflow:hidden;
+  transform-origin:left center; animation:gbar .7s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes gbar{from{transform:scaleX(.02); opacity:0} to{transform:scaleX(1); opacity:1}}
+.gbar--done{background:#0E9F6E}
+.gbar--now{background:var(--accent)}
+.gbar--now::after{
+  content:""; position:absolute; inset:0; background:repeating-linear-gradient(115deg,rgba(255,255,255,.16) 0 6px,transparent 6px 12px);
+}
+.gbar--queued{background:#DDE1E7; color:#6B7280}
+.gbar--risk{background:#E0A020}
+.gnow{position:absolute; top:-6px; bottom:-6px; width:1px; background:rgba(194,65,12,.5); z-index:2}
+.gnow::after{
+  content:"now"; position:absolute; bottom:-15px; left:50%; transform:translateX(-50%);
+  font-family:var(--mono); font-size:9px; color:var(--danger); background:var(--paper); padding:0 4px;
+}
+.close__foot{border-top:1px solid var(--line); padding:12px 18px; display:flex; gap:24px; background:#FCFCFD}
+.cfoot{font-size:11.5px; color:var(--muted)}
+.cfoot b{display:block; font-family:var(--display); font-size:17px; color:var(--ink); font-weight:600; letter-spacing:-.02em}
+
+/* ============ tabs ============ */
+.tabs{display:flex; gap:6px; border-bottom:1px solid var(--line); margin-top:40px; overflow-x:auto}
+.tab{
+  position:relative; background:transparent; border:0; cursor:pointer; padding:12px 16px 14px;
+  display:flex; align-items:center; gap:9px; font-size:14.5px; font-weight:500; color:var(--muted);
+  border-radius:8px 8px 0 0; transition:color .16s ease;
+}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink); font-weight:600}
+.tab::after{
+  content:""; position:absolute; left:12px; right:12px; bottom:-1px; height:2px; background:var(--accent);
+  border-radius:2px; transform:scaleX(0); transition:transform .22s cubic-bezier(.22,1,.36,1);
+}
+.tab[aria-selected="true"]::after{transform:scaleX(1)}
+.tab__ic{width:18px; height:18px; border-radius:5px; flex:none}
+.tabpanel{display:none; margin-top:28px}
+.tabpanel.is-active{display:block; animation:fade .32s cubic-bezier(.22,1,.36,1) both}
+@keyframes fade{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
+.integ{display:grid; grid-template-columns:minmax(0,1fr) 300px; gap:0; border:1px solid var(--line); border-radius:var(--r-lg); overflow:hidden; background:var(--paper); box-shadow:var(--shadow-soft)}
+.integ__main{padding:22px 24px 24px; min-width:0}
+.integ__title{font-family:var(--display); font-size:19px; font-weight:600; letter-spacing:-.022em}
+.integ__desc{font-size:14px; color:var(--muted); margin-top:6px; line-height:1.55; max-width:56ch}
+.maphead{display:grid; grid-template-columns:1fr 40px 1fr; gap:0; margin-top:22px; font-size:10.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:#98A1AD}
+.maphead div:last-child{text-align:left}
+.maprow{
+  display:grid; grid-template-columns:1fr 40px 1fr; align-items:center; gap:0; margin-top:8px;
+}
+.mapcell{
+  border:1px solid var(--line); border-radius:7px; height:34px; display:flex; align-items:center; gap:8px;
+  padding:0 10px; font-family:var(--mono); font-size:11.5px; color:var(--ink); background:var(--paper); min-width:0;
+}
+.mapcell span{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.mapcell .type{margin-left:auto; font-size:10px; color:#A6AEB9; flex:none}
+.maparrow{display:flex; align-items:center; justify-content:center; color:#C3C9D2}
+.mapcell--tgt{background:#FCFCFD}
+.transform{
+  font-family:var(--mono); font-size:10.5px; color:var(--accent-ink); background:var(--accent-wash);
+  border:1px solid var(--accent-line); border-radius:5px; padding:1px 6px; flex:none;
+}
+.integ__side{border-left:1px solid var(--line); background:#FCFCFD; padding:22px 20px; display:flex; flex-direction:column; gap:18px}
+.kv{display:flex; flex-direction:column; gap:3px}
+.kv dt{font-size:11px; color:#98A1AD; letter-spacing:.04em; text-transform:uppercase; font-weight:600}
+.kv dd{margin:0; font-size:13.5px; color:var(--ink); font-family:var(--mono); font-variant-numeric:tabular-nums}
+.integ__side .divider{height:1px; background:var(--line)}
+.evlog{display:flex; flex-direction:column; gap:7px}
+.evlog li{display:flex; align-items:center; gap:8px; font-family:var(--mono); font-size:10.5px; color:var(--muted)}
+.evlog .t{color:#B4BBC5}
+
+/* ============ metrics band ============ */
+.deepband{background:var(--deep); color:#fff; position:relative; overflow:hidden}
+.deepband::before{
+  content:""; position:absolute; inset:0;
+  background-image:linear-gradient(to right, rgba(255,255,255,.045) 1px, transparent 1px),
+                   linear-gradient(to bottom, rgba(255,255,255,.045) 1px, transparent 1px);
+  background-size:64px 64px;
+  -webkit-mask-image:radial-gradient(ellipse 80% 90% at 50% 0%, #000, transparent 72%);
+  mask-image:radial-gradient(ellipse 80% 90% at 50% 0%, #000, transparent 72%);
+}
+.deepband .wrap{position:relative}
+.metrics{display:grid; grid-template-columns:repeat(4,1fr); gap:0; margin-top:52px}
+.metric{padding:0 32px; border-left:1px solid rgba(255,255,255,.11)}
+.metric:first-child{padding-left:0; border-left:0}
+.metric__v{font-family:var(--display); font-size:52px; font-weight:600; letter-spacing:-.04em; line-height:1}
+.metric__l{font-size:14.5px; color:#fff; margin-top:12px; font-weight:500}
+.metric__s{font-size:11.5px; color:#8A93A0; margin-top:8px; line-height:1.5}
+
+/* ============ testimonials ============ */
+.tgrid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-top:52px}
+.tcard{
+  background:var(--paper); border:1px solid var(--line); border-radius:var(--r-lg); padding:26px 24px 22px;
+  display:flex; flex-direction:column; gap:20px; transition:border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+.tcard:hover{border-color:#D6DAE0; box-shadow:var(--shadow-soft); transform:translateY(-2px)}
+.tcard__q{font-size:15.5px; line-height:1.6; color:var(--ink); letter-spacing:-.008em}
+.tcard__q::before{content:"“"}
+.tcard__q::after{content:"”"}
+.tcard__by{display:flex; align-items:center; gap:12px; margin-top:auto; padding-top:18px; border-top:1px solid var(--line-soft)}
+.avatar{width:38px; height:38px; border-radius:9px; flex:none}
+.tcard__n{font-size:13.5px; font-weight:600; letter-spacing:-.01em}
+.tcard__t{font-size:12px; color:var(--muted); margin-top:1px}
+
+/* ============ pricing ============ */
+.toggle{
+  display:inline-flex; align-items:center; gap:4px; padding:4px; background:var(--canvas);
+  border:1px solid var(--line); border-radius:999px; margin-top:26px;
+}
+.toggle button{
+  height:32px; padding:0 16px; border-radius:999px; border:0; background:transparent; cursor:pointer;
+  font-size:13.5px; font-weight:550; color:var(--muted); transition:background .18s ease, color .18s ease, box-shadow .18s ease;
+  display:inline-flex; align-items:center; gap:7px;
+}
+.toggle button[aria-pressed="true"]{background:var(--paper); color:var(--ink); box-shadow:0 1px 2px rgba(12,15,20,.07)}
+.save{font-size:11px; font-weight:600; color:#0B7A55; background:#E9F7F1; padding:1px 6px; border-radius:5px}
+
+.pgrid{display:grid; grid-template-columns:repeat(3,1fr); gap:0; margin-top:44px; border:1px solid var(--line); border-radius:var(--r-lg); background:var(--paper); overflow:hidden}
+.tier{padding:28px 26px 30px; border-left:1px solid var(--line); display:flex; flex-direction:column; position:relative}
+.tier:first-child{border-left:0}
+.tier--pop{background:#FCFDFF; box-shadow:inset 0 0 0 1px var(--accent-line)}
+.tier__flag{
+  position:absolute; top:0; left:0; right:0; height:3px; background:var(--accent);
+}
+.tier__top{display:flex; align-items:center; gap:8px}
+.tier__name{font-family:var(--display); font-size:17px; font-weight:600; letter-spacing:-.02em}
+.tier__pop{font-size:10.5px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--accent); background:var(--accent-wash); border:1px solid var(--accent-line); padding:2px 7px; border-radius:999px; margin-left:auto}
+.tier__for{font-size:13px; color:var(--muted); margin-top:8px; min-height:38px; line-height:1.45}
+.tier__price{display:flex; align-items:baseline; gap:6px; margin-top:18px}
+.tier__cur{font-family:var(--display); font-size:24px; font-weight:600; letter-spacing:-.03em; align-self:flex-start; margin-top:6px}
+.tier__amt{font-family:var(--display); font-size:44px; font-weight:600; letter-spacing:-.04em; font-variant-numeric:tabular-nums; line-height:1}
+.tier__per{font-size:13px; color:var(--muted)}
+.tier__bill{font-size:11.5px; color:var(--muted); margin-top:8px; height:17px}
+.tier .btn{margin-top:20px; width:100%}
+.tier__inc{font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:#98A1AD; margin:26px 0 12px}
+.plist{display:flex; flex-direction:column; gap:10px}
+.plist li{display:flex; gap:9px; font-size:13.5px; color:var(--muted); line-height:1.45}
+.plist b{color:var(--ink); font-weight:600; font-variant-numeric:tabular-nums}
+.plist .tick{margin-top:2px}
+.plist .dash{color:#C3C9D2; flex:none; margin-top:2px}
+.plist li.off{color:#A6AEB9}
+.entrow{
+  margin-top:0; border:1px solid var(--line); border-top:0; border-radius:0 0 var(--r-lg) var(--r-lg);
+  background:var(--canvas); padding:22px 26px; display:flex; align-items:center; gap:28px;
+}
+.entrow h4{font-family:var(--display); font-size:16px; font-weight:600; letter-spacing:-.02em}
+.entrow p{font-size:13.5px; color:var(--muted); margin-top:4px; max-width:70ch}
+.entrow .btn{margin-left:auto; flex:none}
+.pnote{margin-top:16px; font-size:12.5px; color:var(--muted); text-align:center}
+
+/* ============ faq ============ */
+.faq{margin-top:8px; border-top:1px solid var(--line)}
+.faq__item{border-bottom:1px solid var(--line)}
+.faq__q{
+  width:100%; background:transparent; border:0; cursor:pointer; text-align:left;
+  padding:22px 44px 22px 0; display:flex; align-items:flex-start; gap:16px; position:relative;
+  font-family:var(--display); font-size:17.5px; font-weight:550; letter-spacing:-.018em; color:var(--ink);
+}
+.faq__q:hover{color:var(--accent-ink)}
+.faq__ic{
+  position:absolute; right:2px; top:24px; width:16px; height:16px; color:var(--muted); flex:none;
+  transition:transform .24s cubic-bezier(.22,1,.36,1), color .18s ease;
+}
+.faq__q[aria-expanded="true"] .faq__ic{transform:rotate(45deg); color:var(--accent)}
+.faq__a{overflow:hidden; height:0; transition:height .3s cubic-bezier(.22,1,.36,1)}
+.faq__a > div{padding:0 80px 24px 0; font-size:15.5px; color:var(--muted); line-height:1.65}
+.faq__a b{color:var(--ink); font-weight:600}
+.faq__a .mono{font-size:14px; color:var(--ink)}
+
+.faqgrid{display:grid; grid-template-columns:minmax(0,340px) minmax(0,1fr); gap:72px; align-items:start}
+.faqside{position:sticky; top:96px}
+.faqside .h2{font-size:38px; margin-bottom:14px}
+.faqbox{
+  margin-top:26px; border:1px solid var(--line); border-radius:var(--r-lg); padding:18px; background:var(--paper);
+  display:flex; gap:12px; align-items:flex-start;
+}
+.faqbox p{font-size:13.5px; color:var(--muted); line-height:1.55}
+.faqbox strong{display:block; color:var(--ink); font-size:14px; margin-bottom:3px; font-weight:600}
+
+/* ============ cta ============ */
+.cta{padding:96px 0; text-align:center}
+.cta h2{font-size:46px; letter-spacing:-.035em; max-width:18ch; margin:0 auto 18px}
+.cta p{font-size:17.5px; color:#98A1AD; max-width:56ch; margin:0 auto; line-height:1.6}
+.cta__btns{display:flex; gap:10px; justify-content:center; margin-top:34px}
+.cta__mini{margin-top:22px; font-size:13px; color:#6E7787}
+
+/* ============ footer ============ */
+.foot{background:var(--deep); color:#fff; padding:72px 0 0}
+.foot__top{display:grid; grid-template-columns:minmax(0,1.5fr) repeat(5,minmax(0,1fr)); gap:32px; padding-bottom:56px}
+.foot__brand .logo{color:#fff; margin-bottom:14px}
+.foot__brand p{font-size:13.5px; color:#8A93A0; line-height:1.6; max-width:30ch}
+.status{
+  display:inline-flex; align-items:center; gap:8px; margin-top:20px; height:28px; padding:0 11px;
+  border:1px solid rgba(255,255,255,.14); border-radius:999px; font-size:12px; color:#C6CBD3;
+}
+.status__dot{width:7px; height:7px; border-radius:50%; background:#22C55E; position:relative}
+.status__dot::after{
+  content:""; position:absolute; inset:-4px; border-radius:50%; border:1px solid rgba(34,197,94,.5);
+  animation:pulse 2.4s ease-out infinite;
+}
+@keyframes pulse{0%{transform:scale(.7); opacity:1} 100%{transform:scale(1.5); opacity:0}}
+.fcol h5{font-size:12px; font-weight:600; letter-spacing:.07em; text-transform:uppercase; color:#fff; margin:0 0 16px; font-family:var(--sans)}
+.fcol ul{display:flex; flex-direction:column; gap:11px}
+.fcol a{font-size:13.5px; color:#8A93A0; transition:color .15s ease}
+.fcol a:hover{color:#fff}
+.foot__bottom{
+  border-top:1px solid rgba(255,255,255,.1); padding:22px 0 34px; display:flex; align-items:center; gap:24px;
+}
+.foot__bottom small{font-size:12.5px; color:#6E7787}
+.badges{margin-left:auto; display:flex; align-items:center; gap:10px}
+.badges svg{height:30px; width:auto; color:#6E7787; transition:color .18s ease}
+.badges a:hover svg{color:#C6CBD3}
+
+/* ============ reveal ============ */
+.rv{opacity:0; transform:translateY(16px); transition:opacity .62s cubic-bezier(.22,1,.36,1), transform .62s cubic-bezier(.22,1,.36,1)}
+.rv.in{opacity:1; transform:none}
+.rv-d1{transition-delay:.06s} .rv-d2{transition-delay:.12s} .rv-d3{transition-delay:.18s}
+@media (prefers-reduced-motion:reduce){
+  .rv{opacity:1; transform:none; transition:none}
+  *{animation-duration:.001ms !important; animation-iteration-count:1 !important}
+  html{scroll-behavior:auto}
+}
+
+/* ============ responsive ============ */
+@media (max-width:1180px){
+  .wrap{padding:0 24px}
+  .hero h1{font-size:52px}
+  .h2{font-size:38px}
+  .frow{grid-template-columns:minmax(0,340px) minmax(0,1fr); gap:44px}
+  .frow--flip{grid-template-columns:minmax(0,1fr) minmax(0,340px)}
+  .metric__v{font-size:44px}
+  .metric{padding:0 22px}
+  .foot__top{gap:24px}
+  .faqgrid{gap:48px}
+}
+@media (max-width:1024px){
+  .nav a{padding:7px 8px; font-size:14px}
+  .app__body{grid-template-columns:170px 1fr}
+  .main{grid-template-columns:1fr 218px}
+  .logogrid{grid-template-columns:repeat(4,1fr); gap:20px 12px}
+  .tier{padding:24px 20px 26px}
+  .tier__amt{font-size:38px}
+  .exc{grid-template-columns:206px minmax(0,1fr)}
+  .foot__top{grid-template-columns:repeat(3,1fr); row-gap:40px}
+  .foot__brand{grid-column:1 / -1}
+}
+@media (max-width:900px){
+  .section{padding:72px 0}
+  .hero h1{font-size:42px}
+  .cols3,.tgrid{grid-template-columns:1fr}
+  .frow,.frow--flip{grid-template-columns:1fr; gap:32px}
+  .frow--flip .frow__copy{order:1} .frow--flip .frow__viz{order:2}
+  .metrics{grid-template-columns:1fr 1fr; gap:32px 0}
+  .metric:nth-child(3){padding-left:0; border-left:0}
+  .pgrid{grid-template-columns:1fr}
+  .tier{border-left:0; border-top:1px solid var(--line)}
+  .faqgrid{grid-template-columns:1fr}
+  .faqside{position:static}
+  .nav{display:none}
+  .app__body{grid-template-columns:1fr} .side{display:none}
+  .main{grid-template-columns:1fr} .rail{display:none}
+  .integ{grid-template-columns:1fr} .integ__side{border-left:0; border-top:1px solid var(--line)}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ HEADER ═══════════════ -->
+<header class="hdr" id="hdr">
+  <div class="wrap hdr__in">
+    <a class="logo" href="#top" aria-label="Ledgerline home">
+      <svg class="logo__mark" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <rect x="1" y="1" width="22" height="22" rx="6.5" fill="#0C0F14"/>
+        <path d="M6.5 8.25h7.5M6.5 12h11M6.5 15.75h5" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/>
+        <circle cx="17" cy="16" r="3.1" fill="#2563EB" stroke="#0C0F14" stroke-width="1.4"/>
+      </svg>
+      Ledgerline
+    </a>
+    <nav class="nav" aria-label="Main">
+      <a href="#product">Product</a>
+      <a href="#solutions">Solutions</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#docs">Docs</a>
+      <a href="#customers">Customers</a>
+    </nav>
+    <div class="hdr__right">
+      <a class="btn btn--quiet" href="#signin">Sign in</a>
+      <a class="btn btn--primary" href="#demo">Book a demo</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<section class="hero">
+  <div class="hero__bg" aria-hidden="true">
+    <div class="hero__glow"></div>
+    <div class="hero__grid"></div>
+  </div>
+  <div class="wrap hero__in">
+    <span class="chip rv"><i class="chip__dot"></i> <b>SOC 2 Type II</b> · EU data residency</span>
+    <h1 class="rv rv-d1">Your payments and your ledger <em>disagree.</em> Find out on day 1, not day 9.</h1>
+    <p class="hero__sub rv rv-d2">Ledgerline matches every payment, invoice and journal entry across your PSPs and ERP, then puts the ones that don't reconcile in a queue with the exact field that broke. No more 40-tab workbooks at month end.</p>
+    <div class="hero__cta rv rv-d2">
+      <a class="btn btn--primary btn--lg" href="#demo">Book a demo <svg class="arrow" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3 7h8m0 0L7.5 3.5M11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      <a class="btn btn--ghost btn--lg" href="#docs">Read the docs</a>
+    </div>
+    <p class="hero__trust rv rv-d3">
+      <span>Reconciling <strong style="color:var(--ink);font-weight:600">€4.2B</strong> annually</span>
+      <span class="sep"></span>
+      <span>240+ finance teams</span>
+      <span class="sep"></span>
+      <span>Live in 3 weeks, median</span>
+    </p>
+  </div>
+
+  <!-- ── product visual ── -->
+  <div class="wrap">
+    <div class="app app--hero rv rv-d3" role="img" aria-label="Ledgerline reconciliation workspace showing matched and unmatched transactions for the August 2026 run.">
+      <div class="app__chrome" aria-hidden="true">
+        <div class="dots"><i></i><i></i><i></i></div>
+        <div class="app__url">
+          <svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M3.5 5V3.5a2.5 2.5 0 015 0V5" stroke="currentColor" stroke-width="1.2"/><rect x="2.2" y="5" width="7.6" height="5.2" rx="1.4" fill="currentColor" opacity=".5"/></svg>
+          app.ledgerline.io/runs/2026-08-A
+        </div>
+        <div style="width:54px"></div>
+      </div>
+      <div class="app__body">
+        <aside class="side" aria-hidden="true">
+          <div class="side__item is-active">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1.5" y="2" width="11" height="10" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M1.5 5.2h11M5.2 5.2V12" stroke="currentColor" stroke-width="1.3"/></svg>
+            Reconciliation <span class="badge">A</span>
+          </div>
+          <div class="side__item">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1.8l5 2.4v3.3c0 2.7-2 4.5-5 5.1-3-.6-5-2.4-5-5.1V4.2l5-2.4z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+            Exceptions <span class="warnbadge">31</span>
+          </div>
+          <div class="side__item">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 11.5V7m3.3 4.5V4m3.4 7.5V6M12 11.5V2.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            Rules <span class="badge">18</span>
+          </div>
+          <div class="side__item">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.2" stroke="currentColor" stroke-width="1.3"/><path d="M7 4.2V7l1.9 1.6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            Close calendar
+          </div>
+          <div class="side__label">Sources</div>
+          <div class="side__item">
+            <span class="src__ic" style="background:#635BFF"></span> Stripe <span class="badge">14.2k</span>
+          </div>
+          <div class="side__item">
+            <span class="src__ic" style="background:#0ABF53"></span> Adyen <span class="badge">3.9k</span>
+          </div>
+          <div class="side__item">
+            <span class="src__ic" style="background:#1E3A8A"></span> NetSuite <span class="badge">9.7k</span>
+          </div>
+          <div class="side__item">
+            <span class="src__ic" style="background:#0F766E"></span> HSBC MT940 <span class="badge">612</span>
+          </div>
+        </aside>
+
+        <div class="main">
+          <div class="pane">
+            <div class="pane__head">
+              <div>
+                <div class="pane__title">August 2026 · Run A</div>
+                <div class="pane__meta">28,412 records · started 09:04 CET</div>
+              </div>
+              <div class="pane__tools" aria-hidden="true">
+                <span class="minibtn">
+                  <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M1.5 2.5h9M3 6h6m-4.5 3.5h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+                  Filter
+                </span>
+                <span class="minibtn minibtn--accent">Resolve 31</span>
+              </div>
+            </div>
+            <table class="tbl">
+              <thead>
+                <tr>
+                  <th>Reference</th>
+                  <th>Source</th>
+                  <th class="r">Amount</th>
+                  <th>Match confidence</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><div class="cell-id">INV-40218</div><div class="cell-sub">py_3QkT8sLm2</div></td>
+                  <td><span class="src"><span class="src__ic" style="background:#635BFF"></span>Stripe</span></td>
+                  <td class="r cell-amt">€12,480.00</td>
+                  <td><div class="conf"><div class="conf__track"><div class="conf__fill conf__fill--ok" data-w="100"></div></div><span class="conf__val">100%</span></div></td>
+                  <td><span class="pill pill--ok"><i></i>Matched</span></td>
+                </tr>
+                <tr>
+                  <td><div class="cell-id">INV-40219</div><div class="cell-sub">ady_8812LKQ</div></td>
+                  <td><span class="src"><span class="src__ic" style="background:#0ABF53"></span>Adyen</span></td>
+                  <td class="r cell-amt">€3,905.50</td>
+                  <td><div class="conf"><div class="conf__track"><div class="conf__fill conf__fill--ok" data-w="98"></div></div><span class="conf__val">98%</span></div></td>
+                  <td><span class="pill pill--ok"><i></i>Matched</span></td>
+                </tr>
+                <tr>
+                  <td><div class="cell-id">INV-40221</div><div class="cell-sub">JE-2026-08-114</div></td>
+                  <td><span class="src"><span class="src__ic" style="background:#1E3A8A"></span>NetSuite</span></td>
+                  <td class="r cell-amt">€47,200.00</td>
+                  <td><div class="conf"><div class="conf__track"><div class="conf__fill conf__fill--warn" data-w="61"></div></div><span class="conf__val">61%</span></div></td>
+                  <td><span class="pill pill--warn"><i></i>Needs review</span></td>
+                </tr>
+                <tr>
+                  <td><div class="cell-id">INV-40224</div><div class="cell-sub">py_3QkTAr9pX</div></td>
+                  <td><span class="src"><span class="src__ic" style="background:#635BFF"></span>Stripe</span></td>
+                  <td class="r cell-amt">€820.00</td>
+                  <td><div class="conf"><div class="conf__track"><div class="conf__fill conf__fill--ok" data-w="100"></div></div><span class="conf__val">100%</span></div></td>
+                  <td><span class="pill pill--ok"><i></i>Matched</span></td>
+                </tr>
+                <tr>
+                  <td><div class="cell-id">INV-40227</div><div class="cell-sub">MT940/0812/17</div></td>
+                  <td><span class="src"><span class="src__ic" style="background:#0F766E"></span>HSBC</span></td>
+                  <td class="r cell-amt">€156,000.00</td>
+                  <td><div class="conf"><div class="conf__track"><div class="conf__fill conf__fill--bad" data-w="12"></div></div><span class="conf__val">12%</span></div></td>
+                  <td><span class="pill pill--bad"><i></i>Unmatched</span></td>
+                </tr>
+                <tr>
+                  <td><div class="cell-id">INV-40231</div><div class="cell-sub">ady_8814RTB</div></td>
+                  <td><span class="src"><span class="src__ic" style="background:#0ABF53"></span>Adyen</span></td>
+                  <td class="r cell-amt">€2,140.75</td>
+                  <td><div class="conf"><div class="conf__track"><div class="conf__fill conf__fill--ok" data-w="100"></div></div><span class="conf__val">100%</span></div></td>
+                  <td><span class="pill pill--ok"><i></i>Matched</span></td>
+                </tr>
+                <tr>
+                  <td><div class="cell-id">INV-40233</div><div class="cell-sub">py_3QkTCw1zH</div></td>
+                  <td><span class="src"><span class="src__ic" style="background:#635BFF"></span>Stripe</span></td>
+                  <td class="r cell-amt">€9,318.40</td>
+                  <td><div class="conf"><div class="conf__track"><div class="conf__fill conf__fill--ok" data-w="94"></div></div><span class="conf__val">94%</span></div></td>
+                  <td><span class="pill pill--ok"><i></i>Matched</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <aside class="rail" aria-hidden="true">
+            <div class="runstate">
+              <svg class="spin" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.4" stroke="#E5E8EC" stroke-width="2"/><path d="M8 1.6a6.4 6.4 0 016.4 6.4" stroke="#2563EB" stroke-width="2" stroke-linecap="round"/></svg>
+              Run in progress · 82%
+            </div>
+            <div>
+              <div class="rail__title">Auto-matched</div>
+              <div class="stat-big num" data-count="98.6" data-suffix="%">98.6%</div>
+              <div class="stat-cap">28,381 of 28,412 records</div>
+            </div>
+            <div class="bars">
+              <div class="rail__title" style="margin-bottom:2px">Break-down</div>
+              <div class="bar-row"><span class="lbl">Exact</span><span class="trk"><span class="fil" data-w="86" style="background:#0E9F6E"></span></span><span class="v">86%</span></div>
+              <div class="bar-row"><span class="lbl">Rule-based</span><span class="trk"><span class="fil" data-w="12" style="background:#2563EB"></span></span><span class="v">12%</span></div>
+              <div class="bar-row"><span class="lbl">Review</span><span class="trk"><span class="fil" data-w="2" style="background:#E0A020"></span></span><span class="v">2%</span></div>
+            </div>
+            <div>
+              <div class="rail__title" style="margin-bottom:8px">Open value</div>
+              <div class="stat-big num" style="font-size:24px">€214,806</div>
+              <div class="stat-cap">31 exceptions · 0.07% of run</div>
+            </div>
+            <p class="rail__note">Largest break: <b>€156,000.00</b> HSBC credit with no matching invoice. Assigned to <b>M. Reinholdt</b>.</p>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ LOGO WALL ═══════════════ -->
+<section class="logowall" id="customers" style="margin-top:80px">
+  <div class="wrap">
+    <p class="logowall__lbl rv">Trusted by finance teams at</p>
+    <div class="logogrid rv rv-d1">
+      <!-- 1 Northsail -->
+      <div><svg viewBox="0 0 100 26" fill="none" aria-label="Northsail"><path d="M4 21V5l11 12V5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><text x="22" y="19" font-family="Inter Tight, sans-serif" font-size="14.5" font-weight="600" letter-spacing="-.02em" fill="currentColor">Northsail</text></svg></div>
+      <!-- 2 Kestrel -->
+      <div><svg viewBox="0 0 86 26" fill="none" aria-label="Kestrel"><path d="M5 4l8 9-8 9M13 13h5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><text x="22" y="19" font-family="Inter Tight, sans-serif" font-size="14.5" font-weight="600" letter-spacing="-.02em" fill="currentColor">Kestrel</text></svg></div>
+      <!-- 3 Bramble -->
+      <div><svg viewBox="0 0 86 26" fill="none" aria-label="Bramble"><circle cx="8" cy="9" r="3.6" stroke="currentColor" stroke-width="2"/><circle cx="13" cy="17" r="3.6" stroke="currentColor" stroke-width="2"/><text x="21" y="19" font-family="Inter Tight, sans-serif" font-size="14.5" font-weight="600" letter-spacing="-.02em" fill="currentColor">Bramble</text></svg></div>
+      <!-- 4 Vireo -->
+      <div><svg viewBox="0 0 68 26" fill="none" aria-label="Vireo Systems"><path d="M3 5l6 15 6-15" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><text x="19" y="19" font-family="Inter Tight, sans-serif" font-size="14.5" font-weight="600" letter-spacing="-.02em" fill="currentColor">Vireo</text></svg></div>
+      <!-- 5 Palladio -->
+      <div><svg viewBox="0 0 98 26" fill="none" aria-label="Palladio"><rect x="3.2" y="4.2" width="15.6" height="15.6" rx="4" stroke="currentColor" stroke-width="2"/><path d="M8 15V9h3a2 2 0 010 4H8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><text x="24" y="19" font-family="Inter Tight, sans-serif" font-size="14.5" font-weight="600" letter-spacing="-.02em" fill="currentColor">Palladio</text></svg></div>
+      <!-- 6 Ternpoint -->
+      <div><svg viewBox="0 0 102 26" fill="none" aria-label="Ternpoint"><path d="M3 6h14M10 6v14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><text x="21" y="19" font-family="Inter Tight, sans-serif" font-size="14.5" font-weight="600" letter-spacing="-.02em" fill="currentColor">Ternpoint</text></svg></div>
+      <!-- 7 Marlowe -->
+      <div><svg viewBox="0 0 84 26" fill="none" aria-label="Marlowe"><path d="M3 20V6l5.5 8L14 6v14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><text x="20" y="19" font-family="Inter Tight, sans-serif" font-size="14.5" font-weight="600" letter-spacing="-.02em" fill="currentColor">Marlowe</text></svg></div>
+      <!-- 8 Cadenza -->
+      <div><svg viewBox="0 0 86 26" fill="none" aria-label="Cadenza"><path d="M16 8.2a6.4 6.4 0 100 9.6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><text x="21" y="19" font-family="Inter Tight, sans-serif" font-size="14.5" font-weight="600" letter-spacing="-.02em" fill="currentColor">Cadenza</text></svg></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ PROBLEM ═══════════════ -->
+<section class="section canvas" id="solutions">
+  <div class="wrap">
+    <div class="section-head rv">
+      <span class="eyebrow eyebrow--accent">The month-end tax</span>
+      <h2 class="h2">Reconciliation is still a spreadsheet problem at companies doing €200M+</h2>
+      <p class="lede">Every subscription business ends up with the same three failure modes. They're not caused by bad accountants — they're caused by systems that were never designed to agree with each other.</p>
+    </div>
+
+    <div class="cols3">
+      <!-- 1 -->
+      <article class="pcard rv">
+        <div class="pcard__viz">
+          <svg viewBox="0 0 300 132" fill="none" aria-hidden="true">
+            <rect width="300" height="132" fill="#F6F7F9"/>
+            <rect x="26" y="24" width="104" height="84" rx="6" fill="#fff" stroke="#E5E8EC"/>
+            <rect x="170" y="24" width="104" height="84" rx="6" fill="#fff" stroke="#E5E8EC"/>
+            <g stroke="#E5E8EC"><path d="M26 40h104M26 56h104M26 72h104M26 88h104M170 40h104M170 56h104M170 72h104M170 88h104"/></g>
+            <g fill="#C3C9D2"><rect x="34" y="45" width="42" height="5" rx="2.5"/><rect x="88" y="45" width="30" height="5" rx="2.5"/><rect x="34" y="61" width="52" height="5" rx="2.5"/><rect x="94" y="61" width="24" height="5" rx="2.5"/><rect x="34" y="77" width="36" height="5" rx="2.5"/><rect x="88" y="77" width="30" height="5" rx="2.5"/><rect x="34" y="93" width="46" height="5" rx="2.5"/><rect x="90" y="93" width="28" height="5" rx="2.5"/></g>
+            <g fill="#C3C9D2"><rect x="178" y="45" width="38" height="5" rx="2.5"/><rect x="230" y="45" width="34" height="5" rx="2.5"/><rect x="178" y="61" width="48" height="5" rx="2.5"/><rect x="236" y="61" width="28" height="5" rx="2.5"/><rect x="178" y="77" width="40" height="5" rx="2.5"/><rect x="228" y="77" width="36" height="5" rx="2.5"/><rect x="178" y="93" width="44" height="5" rx="2.5"/><rect x="232" y="93" width="32" height="5" rx="2.5"/></g>
+            <path d="M132 48c14 0 22 14 36 14" stroke="#C3C9D2" stroke-width="1.4" stroke-dasharray="3 3"/>
+            <path d="M132 64c14 0 22 -14 36 -14" stroke="#C3C9D2" stroke-width="1.4" stroke-dasharray="3 3"/>
+            <path d="M132 80c14 0 22 14 36 14" stroke="#EA580C" stroke-width="1.6"/>
+            <circle cx="150" cy="87" r="9" fill="#FDF0EA" stroke="#EA580C" stroke-width="1.4"/>
+            <path d="M147 84l6 6m0-6l-6 6" stroke="#EA580C" stroke-width="1.5" stroke-linecap="round"/>
+            <rect x="26" y="12" width="46" height="7" rx="3.5" fill="#B4BBC5"/>
+            <rect x="170" y="12" width="52" height="7" rx="3.5" fill="#B4BBC5"/>
+          </svg>
+        </div>
+        <span class="pcard__tag">~14 hrs / cycle</span>
+        <h3>CSV matching by eye</h3>
+        <p>Payout files from three PSPs, a bank statement in MT940 and an ERP export that uses a different invoice key. Someone sorts by amount and hopes nothing shares a value.</p>
+      </article>
+
+      <!-- 2 -->
+      <article class="pcard rv rv-d1">
+        <div class="pcard__viz">
+          <svg viewBox="0 0 300 132" fill="none" aria-hidden="true">
+            <rect width="300" height="132" fill="#F6F7F9"/>
+            <g stroke="#E5E8EC" stroke-width="1"><path d="M30 108h240"/></g>
+            <g font-family="JetBrains Mono, monospace" font-size="8" fill="#B4BBC5">
+              <text x="30" y="122">D1</text><text x="78" y="122">D2</text><text x="126" y="122">D3</text><text x="174" y="122">D4</text><text x="222" y="122">D5</text><text x="262" y="122">D6</text>
+            </g>
+            <rect x="30" y="92" width="26" height="14" rx="3" fill="#DDE1E7"/>
+            <rect x="78" y="84" width="26" height="22" rx="3" fill="#DDE1E7"/>
+            <rect x="126" y="70" width="26" height="36" rx="3" fill="#C3C9D2"/>
+            <rect x="174" y="44" width="26" height="62" rx="3" fill="#E0A020"/>
+            <rect x="222" y="22" width="26" height="84" rx="3" fill="#EA580C"/>
+            <rect x="262" y="60" width="18" height="46" rx="3" fill="#DDE1E7"/>
+            <path d="M30 36h240" stroke="#EA580C" stroke-width="1.2" stroke-dasharray="4 3"/>
+            <rect x="196" y="26" width="72" height="16" rx="4" fill="#fff" stroke="#E5E8EC"/>
+            <text x="204" y="37" font-family="JetBrains Mono, monospace" font-size="8" fill="#C2410C">21:40 filed</text>
+            <text x="30" y="30" font-family="Inter, sans-serif" font-size="8.5" font-weight="600" fill="#8A93A0">HOURS LOGGED</text>
+          </svg>
+        </div>
+        <span class="pcard__tag">Day 5 crunch</span>
+        <h3>The close compresses into 48 hours</h3>
+        <p>Nothing can be reviewed until the feeds land, so five days of work gets done in two. Controllers approve journals at 21:40 because the board pack ships tomorrow.</p>
+      </article>
+
+      <!-- 3 -->
+      <article class="pcard rv rv-d2">
+        <div class="pcard__viz">
+          <svg viewBox="0 0 300 132" fill="none" aria-hidden="true">
+            <rect width="300" height="132" fill="#F6F7F9"/>
+            <rect x="88" y="16" width="124" height="100" rx="7" fill="#fff" stroke="#E5E8EC"/>
+            <g fill="#EDEFF3"><rect x="102" y="30" width="70" height="6" rx="3"/><rect x="102" y="44" width="96" height="5" rx="2.5"/><rect x="102" y="55" width="82" height="5" rx="2.5"/><rect x="102" y="66" width="90" height="5" rx="2.5"/></g>
+            <rect x="102" y="82" width="96" height="22" rx="4" fill="#FDF0EA" stroke="#F0BFA6"/>
+            <text x="110" y="96" font-family="JetBrains Mono, monospace" font-size="8" fill="#C2410C">no audit trail</text>
+            <circle cx="212" cy="24" r="12" fill="#fff" stroke="#E5E8EC"/>
+            <path d="M212 19v6m0 3.4v.6" stroke="#EA580C" stroke-width="2" stroke-linecap="round"/>
+            <g stroke="#C3C9D2" stroke-width="1.3" stroke-dasharray="3 3"><path d="M40 46h44M40 66h44M40 86h44"/></g>
+            <g fill="#DDE1E7"><rect x="18" y="42" width="22" height="9" rx="2"/><rect x="18" y="62" width="22" height="9" rx="2"/><rect x="18" y="82" width="22" height="9" rx="2"/></g>
+            <g stroke="#C3C9D2" stroke-width="1.3" stroke-dasharray="3 3"><path d="M216 56h44M216 76h44"/></g>
+            <g fill="#DDE1E7"><rect x="260" y="52" width="22" height="9" rx="2"/><rect x="260" y="72" width="22" height="9" rx="2"/></g>
+          </svg>
+        </div>
+        <span class="pcard__tag">PBC list risk</span>
+        <h3>Adjustments nobody can explain</h3>
+        <p>A €40k plug clears the variance in March. In September the auditor asks who approved it and against which document. The email thread is gone and so is the analyst.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ FEATURES ═══════════════ -->
+<section class="section" id="product">
+  <div class="wrap">
+    <div class="section-head rv" style="margin-bottom:72px">
+      <span class="eyebrow eyebrow--accent">How it works</span>
+      <h2 class="h2">Three surfaces. That's the whole product.</h2>
+      <p class="lede">Ingest, decide, close. Ledgerline doesn't try to be your ERP or your billing system — it sits between them and makes sure they agree.</p>
+    </div>
+
+    <!-- ── Feature 1: rules ── -->
+    <div class="frow rv">
+      <div class="frow__copy">
+        <span class="eyebrow">01 — Matching engine</span>
+        <h3>Rules you can read out loud in an audit</h3>
+        <p>Start with exact reference matching, then add tolerance rules for the messy 12%: FX rounding, partial captures, aggregated payouts, customer-side reference typos. Every rule is versioned, and every match records which rule fired.</p>
+        <ul class="flist">
+          <li><svg class="tick" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2.5 7.4l3 3 6-6.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Amount and date tolerances</b> — absolute or percentage, per source and per currency pair.</span></li>
+          <li><svg class="tick" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2.5 7.4l3 3 6-6.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Many-to-one matching</b> — one €48,210 Adyen payout against 84 invoices, netted of scheme fees.</span></li>
+          <li><svg class="tick" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2.5 7.4l3 3 6-6.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Dry runs on history</b> — test a rule against the last 6 closes before you enable it.</span></li>
+        </ul>
+        <a class="link-arrow" href="#docs">Rule reference <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3 7h8m0 0L7.5 3.5M11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </div>
+      <div class="frow__viz">
+        <div class="app rules">
+          <div class="rules__head">
+            <span style="width:8px;height:8px;border-radius:2px;background:var(--accent);display:block"></span>
+            <span class="rules__name">R-07 · Adyen payout netting</span>
+            <span class="pill pill--ok" style="margin-left:auto"><i></i>Enabled</span>
+            <span class="mono" style="font-size:10.5px;color:#98A1AD">v4</span>
+          </div>
+          <div class="rules__body">
+            <div class="rule-when">When all of<span class="ln"></span></div>
+
+            <div class="cond">
+              <div class="cond__op">IF</div>
+              <div class="fld fld--mono"><span>source.channel</span><svg class="caret" width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2.5 4l2.5 2.5L7.5 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+              <div class="fld fld--op">is</div>
+              <div class="fld fld--mono"><span>adyen.settlement</span><svg class="caret" width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2.5 4l2.5 2.5L7.5 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+              <div class="cond__x"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+            </div>
+
+            <div class="cond">
+              <div class="cond__op">AND</div>
+              <div class="fld fld--mono"><span>ledger.invoice_ref</span><svg class="caret" width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2.5 4l2.5 2.5L7.5 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+              <div class="fld fld--op">contains</div>
+              <div class="fld fld--mono"><span>merchant_reference</span><svg class="caret" width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2.5 4l2.5 2.5L7.5 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+              <div class="cond__x"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+            </div>
+
+            <div class="cond">
+              <div class="cond__op">AND</div>
+              <div class="fld fld--mono"><span>abs(Δ amount)</span><svg class="caret" width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2.5 4l2.5 2.5L7.5 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+              <div class="fld fld--op">≤</div>
+              <div class="fld fld--mono"><span>0.02 EUR + fees</span><svg class="caret" width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2.5 4l2.5 2.5L7.5 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+              <div class="cond__x"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+            </div>
+
+            <div class="cond">
+              <div class="cond__op">AND</div>
+              <div class="fld fld--mono"><span>value_date</span><svg class="caret" width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2.5 4l2.5 2.5L7.5 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+              <div class="fld fld--op">within</div>
+              <div class="fld fld--mono"><span>2 business days</span><svg class="caret" width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2.5 4l2.5 2.5L7.5 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+              <div class="cond__x"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+            </div>
+
+            <div class="rule-add">
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M6 2.5v7M2.5 6h7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Add condition
+            </div>
+
+            <div class="rule-then">
+              <div class="rule-when">Then<span class="ln"></span></div>
+              <div class="then-box">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2.5 7.4l3 3 6-6.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Match many-to-one · post fee difference to <span class="mono" style="font-size:11px">6210 · PSP fees</span>
+              </div>
+            </div>
+          </div>
+          <div class="rules__foot">
+            <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.4" stroke="currentColor" stroke-width="1.3"/><path d="M7 4.4V7l1.8 1.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            Dry run on Feb–Jul: matched <span class="mono">18,204</span> · false positives <span class="mono">0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Feature 2: exceptions + diff ── -->
+    <div class="frow frow--flip rv">
+      <div class="frow__copy">
+        <span class="eyebrow">02 — Exceptions queue</span>
+        <h3>The break is highlighted before you open the record</h3>
+        <p>Ledgerline doesn't just tell you two records failed to match. It shows both sides field by field, marks exactly what differs, proposes the treatment, and keeps the approval trail attached to the entry forever.</p>
+        <ul class="flist">
+          <li><svg class="tick" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2.5 7.4l3 3 6-6.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Field-level diff</b> across payment, invoice and journal — no tab-switching between four systems.</span></li>
+          <li><svg class="tick" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2.5 7.4l3 3 6-6.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Ownership and SLA</b> — breaks route by entity, size and age; anything over 5 days escalates.</span></li>
+          <li><svg class="tick" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2.5 7.4l3 3 6-6.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Immutable trail</b> — who resolved it, on what evidence, exported straight into your PBC pack.</span></li>
+        </ul>
+        <p style="font-size:13px;color:var(--muted);margin-top:20px">Hover a break in the queue to see its diff.</p>
+      </div>
+      <div class="frow__viz">
+        <div class="app exc">
+          <div class="exc__list">
+            <div class="exc__lh">Open breaks <span id="excCount">31</span></div>
+            <div id="excList"></div>
+            <div class="exc__more">27 more · sorted by open value</div>
+          </div>
+          <div class="exc__detail">
+            <div class="exc__dhead">
+              <div>
+                <div class="exc__dtitle" id="excTitle">Amount mismatch</div>
+                <div class="exc__dmeta" id="excMeta">EXC-2291 · 2d open · M. Reinholdt</div>
+              </div>
+              <span class="pill pill--warn" style="margin-left:auto"><i></i>Awaiting review</span>
+            </div>
+            <div class="diff" id="diffTable">
+              <div class="diff__hd" style="border-right:0">Field</div>
+              <div class="diff__hd" id="diffHdL" style="border-left:1px solid var(--line)">Stripe payout</div>
+              <div class="diff__hd" id="diffHdR" style="border-left:1px solid var(--line)">NetSuite journal</div>
+            </div>
+            <div class="diff__delta">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1.8l6.4 11.4H1.6L8 1.8z" stroke="#C2410C" stroke-width="1.4" stroke-linejoin="round"/><path d="M8 6.2v3.1m0 1.8v.5" stroke="#C2410C" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span id="diffDelta">Difference of <b>€180.00</b> — matches the scheme fee posted on 03 Aug.</span>
+            </div>
+            <div class="diff__actions">
+              <button class="minibtn minibtn--accent" type="button">Accept suggested treatment</button>
+              <button class="minibtn" type="button">Reassign</button>
+              <button class="minibtn" type="button">Add note</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Feature 3: close timeline ── -->
+    <div class="frow rv">
+      <div class="frow__copy">
+        <span class="eyebrow">03 — Close control</span>
+        <h3>Everyone can see where the close actually is</h3>
+        <p>A single timeline for the whole close: what's done, what's blocked, who owns it, and how much unreconciled value is still sitting open. Your CFO stops asking for status updates because the status is on a screen.</p>
+        <ul class="flist">
+          <li><svg class="tick" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2.5 7.4l3 3 6-6.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Dependency-aware tasks</b> — FX revaluation can't start until the sub-ledger is clean.</span></li>
+          <li><svg class="tick" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2.5 7.4l3 3 6-6.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Entity roll-up</b> — 14 entities, one view, with local GAAP flags where they apply.</span></li>
+          <li><svg class="tick" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2.5 7.4l3 3 6-6.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Sign-off with evidence</b> — locking a period snapshots every supporting record.</span></li>
+        </ul>
+      </div>
+      <div class="frow__viz">
+        <div class="app close">
+          <div class="close__head">
+            <div>
+              <div class="pane__title">August close · Group</div>
+              <div class="pane__meta">14 entities · target D+4</div>
+            </div>
+            <div class="close__prog">
+              <svg class="close__ring" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+                <circle cx="18" cy="18" r="15" stroke="#EDEFF3" stroke-width="4"/>
+                <circle cx="18" cy="18" r="15" stroke="#2563EB" stroke-width="4" stroke-linecap="round"
+                        stroke-dasharray="94.2" stroke-dashoffset="30" transform="rotate(-90 18 18)"/>
+              </svg>
+              <span><strong style="color:var(--ink);font-weight:600">68%</strong> complete</span>
+            </div>
+          </div>
+          <div class="gantt">
+            <div class="gantt__scale" aria-hidden="true">
+              <div>Task</div><div>D+1</div><div>D+2</div><div>D+3</div><div>D+4</div><div>D+5</div><div>D+6</div>
+            </div>
+
+            <div class="grow">
+              <div class="grow__lbl"><span class="pill pill--ok" style="width:20px;padding:0;justify-content:center"><i></i></span> Ingest PSP feeds <span class="who">SYS</span></div>
+              <div class="gtrack"><div class="gbar gbar--done" style="left:0%; width:26%; animation-delay:.05s">done</div></div>
+            </div>
+            <div class="grow">
+              <div class="grow__lbl"><span class="pill pill--ok" style="width:20px;padding:0;justify-content:center"><i></i></span> Auto-match run A <span class="who">SYS</span></div>
+              <div class="gtrack"><div class="gbar gbar--done" style="left:14%; width:24%; animation-delay:.12s">98.6%</div></div>
+            </div>
+            <div class="grow">
+              <div class="grow__lbl"><span class="pill pill--info" style="width:20px;padding:0;justify-content:center"><i></i></span> Exceptions review <span class="who">MR</span></div>
+              <div class="gtrack"><div class="gbar gbar--now" style="left:32%; width:31%; animation-delay:.2s">31 open</div></div>
+            </div>
+            <div class="grow">
+              <div class="grow__lbl"><span class="pill pill--warn" style="width:20px;padding:0;justify-content:center"><i></i></span> FX revaluation <span class="who">PR</span></div>
+              <div class="gtrack"><div class="gbar gbar--risk" style="left:56%; width:20%; animation-delay:.28s">blocked</div></div>
+            </div>
+            <div class="grow">
+              <div class="grow__lbl"><span class="pill pill--warn" style="width:20px;padding:0;justify-content:center;background:#EDEFF3"><i style="background:#B4BBC5"></i></span> Intercompany net <span class="who">TE</span></div>
+              <div class="gtrack"><div class="gbar gbar--queued" style="left:64%; width:18%; animation-delay:.34s">queued</div></div>
+            </div>
+            <div class="grow" style="height:44px">
+              <div class="grow__lbl"><span class="pill pill--warn" style="width:20px;padding:0;justify-content:center;background:#EDEFF3"><i style="background:#B4BBC5"></i></span> Lock &amp; sign-off <span class="who">CFO</span></div>
+              <div class="gtrack"><div class="gbar gbar--queued" style="left:82%; width:14%; animation-delay:.4s">D+5</div><div class="gnow" style="left:52%; top:-198px; bottom:9px"></div></div>
+            </div>
+          </div>
+          <div class="close__foot">
+            <div class="cfoot"><b class="mono">D+2.4</b>elapsed</div>
+            <div class="cfoot"><b class="mono">€214,806</b>unreconciled</div>
+            <div class="cfoot"><b class="mono">11 / 14</b>entities clean</div>
+            <div class="cfoot"><b class="mono">4</b>journals pending approval</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ INTEGRATION TABS ═══════════════ -->
+<section class="section canvas" id="docs">
+  <div class="wrap">
+    <div class="section-head rv">
+      <span class="eyebrow eyebrow--accent">Integrations</span>
+      <h2 class="h2">Connected in an afternoon, mapped on day one</h2>
+      <p class="lede">Read-only OAuth or API keys, backfilled to the start of your current financial year. Field mappings ship with sensible defaults you can override per entity.</p>
+    </div>
+
+    <div class="tabs rv rv-d1" role="tablist" aria-label="Integrations">
+      <button class="tab" role="tab" id="tab-stripe" aria-controls="panel-stripe" aria-selected="true" data-k="stripe">
+        <span class="tab__ic" style="background:#635BFF"></span> Stripe
+      </button>
+      <button class="tab" role="tab" id="tab-adyen" aria-controls="panel-adyen" aria-selected="false" tabindex="-1" data-k="adyen">
+        <span class="tab__ic" style="background:#0ABF53"></span> Adyen
+      </button>
+      <button class="tab" role="tab" id="tab-netsuite" aria-controls="panel-netsuite" aria-selected="false" tabindex="-1" data-k="netsuite">
+        <span class="tab__ic" style="background:#1E3A8A"></span> NetSuite
+      </button>
+      <button class="tab" role="tab" id="tab-xero" aria-controls="panel-xero" aria-selected="false" tabindex="-1" data-k="xero">
+        <span class="tab__ic" style="background:#0F766E"></span> Xero
+      </button>
+    </div>
+
+    <div id="panels"></div>
+
+    <p class="pnote rv" style="margin-top:22px">Also connected by customers: Braintree, GoCardless, Mollie, Chargebee, Sage Intacct, SAP S/4HANA, Snowflake and any SFTP drop of CSV, MT940 or CAMT.053.</p>
+  </div>
+</section>
+
+<!-- ═══════════════ METRICS ═══════════════ -->
+<section class="section deepband">
+  <div class="wrap">
+    <div class="section-head rv on-deep" style="max-width:640px">
+      <span class="eyebrow" style="color:#8FB4FF">Outcomes</span>
+      <h2 class="h2" style="color:#fff; margin:14px 0 0">What changes in the first two closes</h2>
+    </div>
+    <div class="metrics">
+      <div class="metric rv">
+        <div class="metric__v num" data-count="98.6" data-suffix="%">98.6%</div>
+        <div class="metric__l">Auto-match rate</div>
+        <p class="metric__s">Median across 240 production accounts, rolling 90 days to 30 Jun 2026.</p>
+      </div>
+      <div class="metric rv rv-d1">
+        <div class="metric__v num" data-count="4.1" data-prefix="−" data-suffix=" d">−4.1 d</div>
+        <div class="metric__l">Faster monthly close</div>
+        <p class="metric__s">Change in days-to-close vs. the customer's own pre-Ledgerline baseline, n=112.</p>
+      </div>
+      <div class="metric rv rv-d2">
+        <div class="metric__v"><span class="num" data-count="4.2" data-prefix="€" data-suffix="B">€4.2B</span></div>
+        <div class="metric__l">Reconciled annually</div>
+        <p class="metric__s">Gross transaction value processed on the platform, trailing 12 months.</p>
+      </div>
+      <div class="metric rv rv-d3">
+        <div class="metric__v num" data-count="71" data-suffix="%">71%</div>
+        <div class="metric__l">Fewer manual journals</div>
+        <p class="metric__s">Self-reported by 88 finance teams in the March 2026 customer survey.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ TESTIMONIALS ═══════════════ -->
+<section class="section">
+  <div class="wrap">
+    <div class="section-head rv">
+      <span class="eyebrow eyebrow--accent">Customers</span>
+      <h2 class="h2">From the people who own the number</h2>
+    </div>
+    <div class="tgrid">
+      <article class="tcard rv">
+        <p class="tcard__q">We were keeping a 40-tab workbook that only two people understood, and one of them left in January. The first Ledgerline close took eleven days because we had to clean four years of reference formats. The second took three.</p>
+        <div class="tcard__by">
+          <svg class="avatar" viewBox="0 0 38 38" aria-hidden="true">
+            <rect width="38" height="38" rx="9" fill="#EFF4FF"/>
+            <text x="19" y="24" text-anchor="middle" font-family="Inter Tight, sans-serif" font-size="13.5" font-weight="600" fill="#2563EB">MR</text>
+          </svg>
+          <div>
+            <div class="tcard__n">Marta Reinholdt</div>
+            <div class="tcard__t">Head of Finance, Northsail</div>
+          </div>
+        </div>
+      </article>
+
+      <article class="tcard rv rv-d1">
+        <p class="tcard__q">What sold my controllers wasn't the match rate. It was that when something breaks, the screen tells you which field is wrong instead of making you open Stripe, NetSuite and a bank portal side by side at 8pm.</p>
+        <div class="tcard__by">
+          <svg class="avatar" viewBox="0 0 38 38" aria-hidden="true">
+            <rect width="38" height="38" rx="9" fill="#E9F7F1"/>
+            <text x="19" y="24" text-anchor="middle" font-family="Inter Tight, sans-serif" font-size="13.5" font-weight="600" fill="#0B7A55">PR</text>
+          </svg>
+          <div>
+            <div class="tcard__n">Priya Raghunathan</div>
+            <div class="tcard__t">Group Financial Controller, Kestrel</div>
+          </div>
+        </div>
+      </article>
+
+      <article class="tcard rv rv-d2">
+        <p class="tcard__q">Our auditors used to sample 60 manual journals and ask about half of them. This year they pulled the Ledgerline trail themselves and closed the section in two days. That is worth more to me than the time we save internally.</p>
+        <div class="tcard__by">
+          <svg class="avatar" viewBox="0 0 38 38" aria-hidden="true">
+            <rect width="38" height="38" rx="9" fill="#F3F0FF"/>
+            <text x="19" y="24" text-anchor="middle" font-family="Inter Tight, sans-serif" font-size="13.5" font-weight="600" fill="#5B4BC4">TE</text>
+          </svg>
+          <div>
+            <div class="tcard__n">Tom Ekwueme</div>
+            <div class="tcard__t">Director of Revenue Accounting, Palladio</div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ PRICING ═══════════════ -->
+<section class="section canvas" id="pricing">
+  <div class="wrap">
+    <div class="section-head rv" style="max-width:660px">
+      <span class="eyebrow eyebrow--accent">Pricing</span>
+      <h2 class="h2">Priced on matched volume, not seats</h2>
+      <p class="lede">Everyone on your finance team gets an account. You pay for the transactions we reconcile — so the price tracks the work, not the headcount.</p>
+      <div class="toggle" role="group" aria-label="Billing period">
+        <button type="button" id="btnMonthly" aria-pressed="true">Monthly</button>
+        <button type="button" id="btnAnnual" aria-pressed="false">Annual <span class="save">−17%</span></button>
+      </div>
+    </div>
+
+    <div class="pgrid rv rv-d1">
+      <!-- Starter -->
+      <div class="tier">
+        <div class="tier__top"><span class="tier__name">Starter</span></div>
+        <p class="tier__for">Single entity, one or two payment providers, up to 25k transactions a month.</p>
+        <div class="tier__price">
+          <span class="tier__cur">€</span>
+          <span class="tier__amt" data-m="490" data-a="408">490</span>
+          <span class="tier__per">/ month</span>
+        </div>
+        <div class="tier__bill" data-bill>Billed monthly, cancel any time</div>
+        <a class="btn btn--ghost" href="#demo">Start a 30-day pilot</a>
+        <div class="tier__inc">Includes</div>
+        <ul class="plist">
+          <li><svg class="tick" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2.5 7.4l3 3 6-6.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>25,000</b> matched transactions / mo</span></li>
+          <li><svg class="tick" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2.5 7.4l3 3 6-6.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>2</b> source connections</span></li>
+          <li><svg class="tick" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2.5 7.4l3 3 6-6.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Exceptions queue &amp; audit trail</span></li>
+          <li><svg class="tick" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2.5 7.4l3 3 6-6.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Unlimited users</span></li>
+          <li class="off"><span class="dash">—</span><span>Multi-entity consolidation</span></li>
+          <li class="off"><span class="dash">—</span><span>SSO / SCIM provisioning</span></li>
+        </ul>
+      </div>
+
+      <!-- Growth -->
+      <div class="tier tier--pop">
+        <div class="tier__flag"></div>
+        <div class="tier__top"><span class="tier__name">Growth</span><span class="tier__pop">Most popular</span></div>
+        <p class="tier__for">Multi-entity groups running 3+ providers with a formal month-end calendar.</p>
+        <div class="tier__price">
+          <span class="tier__cur">€</span>
+          <span class="tier__amt" data-m="1400" data-a="1167">1,400</span>
+          <span class="tier__per">/ month</span>
+        </div>
+        <div class="tier__bill" data-bill>Billed monthly, cancel any time</div>
+        <a class="btn btn--primary" href="#demo">Book a demo</a>
+        <div class="tier__inc">Everything in Starter, plus</div>
+        <ul class="plist">
+          <li><svg class="tick" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2.5 7.4l3 3 6-6.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>250,000</b> matched transactions / mo</span></li>
+          <li><svg class="tick" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2.5 7.4l3 3 6-6.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Unlimited</b> source connections</span></li>
+          <li><svg class="tick" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2.5 7.4l3 3 6-6.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Multi-entity consolidation &amp; FX reval</span></li>
+          <li><svg class="tick" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2.5 7.4l3 3 6-6.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Close calendar with SLA routing</span></li>
+          <li><svg class="tick" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2.5 7.4l3 3 6-6.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>SSO (SAML 2.0) and audit export API</span></li>
+          <li class="off"><span class="dash">—</span><span>Dedicated VPC / EU-only tenancy</span></li>
+        </ul>
+      </div>
+
+      <!-- Scale -->
+      <div class="tier">
+        <div class="tier__top"><span class="tier__name">Scale</span></div>
+        <p class="tier__for">High-volume marketplaces and groups with statutory reporting in several jurisdictions.</p>
+        <div class="tier__price">
+          <span class="tier__cur">€</span>
+          <span class="tier__amt" data-m="3200" data-a="2667">3,200</span>
+          <span class="tier__per">/ month</span>
+        </div>
+        <div class="tier__bill" data-bill>Billed monthly, cancel any time</div>
+        <a class="btn btn--ghost" href="#demo">Talk to sales</a>
+        <div class="tier__inc">Everything in Growth, plus</div>
+        <ul class="plist">
+          <li><svg class="tick" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2.5 7.4l3 3 6-6.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>2,000,000</b> matched transactions / mo</span></li>
+          <li><svg class="tick" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2.5 7.4l3 3 6-6.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Dedicated VPC, EU or UK residency</span></li>
+          <li><svg class="tick" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2.5 7.4l3 3 6-6.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Custom rule packs built with our team</span></li>
+          <li><svg class="tick" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2.5 7.4l3 3 6-6.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>99.9% uptime SLA, 1-hour P1 response</span></li>
+          <li><svg class="tick" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2.5 7.4l3 3 6-6.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Named close-success manager</span></li>
+          <li><svg class="tick" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2.5 7.4l3 3 6-6.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Quarterly control walkthrough for auditors</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="entrow rv rv-d2">
+      <div>
+        <h4>Enterprise &amp; regulated entities</h4>
+        <p>Single-tenant deployment, your own KMS keys, penetration-test reports, DORA and MiFID-adjacent control mapping, and a signed DPA with sub-processor notice periods. Procurement gets a security pack the same day.</p>
+      </div>
+      <a class="btn btn--ghost" href="#demo">Contact enterprise sales</a>
+    </div>
+
+    <p class="pnote rv">All plans include unlimited users, sandbox environments and historical backfill to the start of your current financial year. Overage is billed at €0.004 per matched transaction.</p>
+  </div>
+</section>
+
+<!-- ═══════════════ FAQ ═══════════════ -->
+<section class="section">
+  <div class="wrap faqgrid">
+    <div class="faqside rv">
+      <span class="eyebrow eyebrow--accent">FAQ</span>
+      <h2 class="h2" style="margin-top:14px">Questions finance teams actually ask</h2>
+      <p class="lede" style="font-size:16px">If something here matters to your controls environment, ask us on the call — we'd rather lose the deal early than in month three.</p>
+      <div class="faqbox">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style="flex:none;margin-top:2px;color:var(--accent)" aria-hidden="true"><rect x="1.6" y="3.2" width="14.8" height="11.6" rx="2.4" stroke="currentColor" stroke-width="1.4"/><path d="M2.4 5l6.6 4.6L15.6 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        <p><strong>Still unsure?</strong>Send your last close's exception list. We'll run it and tell you honestly what we'd have matched.</p>
+      </div>
+    </div>
+
+    <div class="faq rv rv-d1" id="faq"></div>
+  </div>
+</section>
+
+<!-- ═══════════════ CTA ═══════════════ -->
+<section class="deepband cta">
+  <div class="wrap on-deep">
+    <h2 class="rv" style="color:#fff">See it run against your own last close</h2>
+    <p class="rv rv-d1">A 30-minute call. Bring one month of payout files and an ERP export — we'll show you the matches, the breaks and the field that caused each one, on your data, before you sign anything.</p>
+    <div class="cta__btns rv rv-d2">
+      <a class="btn btn--primary btn--lg" href="#demo">Book a demo <svg class="arrow" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3 7h8m0 0L7.5 3.5M11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      <a class="btn btn--onDeepGhost btn--lg" href="#docs">Browse the API docs</a>
+    </div>
+    <p class="cta__mini rv rv-d2">No implementation fee on Starter and Growth · Median time to first reconciled close: 19 days</p>
+  </div>
+</section>
+
+</main>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__top">
+      <div class="foot__brand">
+        <a class="logo" href="#top">
+          <svg class="logo__mark" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <rect x="1" y="1" width="22" height="22" rx="6.5" fill="#fff"/>
+            <path d="M6.5 8.25h7.5M6.5 12h11M6.5 15.75h5" stroke="#0C0F14" stroke-width="1.7" stroke-linecap="round"/>
+            <circle cx="17" cy="16" r="3.1" fill="#2563EB" stroke="#fff" stroke-width="1.4"/>
+          </svg>
+          Ledgerline
+        </a>
+        <p>Revenue reconciliation for subscription businesses. Built in Amsterdam and Lisbon.</p>
+        <a class="status" href="#status"><span class="status__dot"></span> All systems operational</a>
+      </div>
+
+      <div class="fcol">
+        <h5>Product</h5>
+        <ul>
+          <li><a href="#product">Matching engine</a></li>
+          <li><a href="#product">Exceptions queue</a></li>
+          <li><a href="#product">Close calendar</a></li>
+          <li><a href="#docs">Integrations</a></li>
+          <li><a href="#docs">Audit export API</a></li>
+          <li><a href="#product">Changelog</a></li>
+        </ul>
+      </div>
+      <div class="fcol">
+        <h5>Solutions</h5>
+        <ul>
+          <li><a href="#solutions">B2B SaaS</a></li>
+          <li><a href="#solutions">Marketplaces</a></li>
+          <li><a href="#solutions">Fintech &amp; lending</a></li>
+          <li><a href="#solutions">Multi-entity groups</a></li>
+          <li><a href="#solutions">IPO readiness</a></li>
+        </ul>
+      </div>
+      <div class="fcol">
+        <h5>Developers</h5>
+        <ul>
+          <li><a href="#docs">API reference</a></li>
+          <li><a href="#docs">Webhooks</a></li>
+          <li><a href="#docs">Rule DSL</a></li>
+          <li><a href="#docs">Sandbox data</a></li>
+          <li><a href="#status">Status &amp; incidents</a></li>
+        </ul>
+      </div>
+      <div class="fcol">
+        <h5>Company</h5>
+        <ul>
+          <li><a href="#about">About</a></li>
+          <li><a href="#customers">Customers</a></li>
+          <li><a href="#careers">Careers <span style="color:#2563EB">· 7</span></a></li>
+          <li><a href="#blog">The Close, our blog</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="fcol">
+        <h5>Trust</h5>
+        <ul>
+          <li><a href="#trust">Security overview</a></li>
+          <li><a href="#trust">SOC 2 report</a></li>
+          <li><a href="#trust">Sub-processors</a></li>
+          <li><a href="#trust">DPA &amp; GDPR</a></li>
+          <li><a href="#trust">Terms of service</a></li>
+          <li><a href="#trust">Privacy policy</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="foot__bottom">
+      <small>© 2026 Ledgerline B.V. · Keizersgracht 241, 1016 EA Amsterdam · KvK 84120977</small>
+      <div class="badges">
+        <a href="#trust" aria-label="SOC 2 Type II">
+          <svg viewBox="0 0 74 30" fill="none"><rect x=".6" y=".6" width="72.8" height="28.8" rx="6" stroke="currentColor" stroke-width="1.2"/><path d="M12 8l5 2.2v4c0 3-2 5-5 5.8-3-.8-5-2.8-5-5.8v-4L12 8z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M10 14.6l1.5 1.5L14.4 13" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><text x="24" y="14" font-family="Inter, sans-serif" font-size="8" font-weight="600" fill="currentColor">SOC 2</text><text x="24" y="23" font-family="Inter, sans-serif" font-size="7" fill="currentColor">TYPE II</text></svg>
+        </a>
+        <a href="#trust" aria-label="ISO 27001 certified">
+          <svg viewBox="0 0 78 30" fill="none"><rect x=".6" y=".6" width="76.8" height="28.8" rx="6" stroke="currentColor" stroke-width="1.2"/><circle cx="14" cy="15" r="6.2" stroke="currentColor" stroke-width="1.2"/><path d="M14 8.8v12.4M7.8 15h12.4" stroke="currentColor" stroke-width="1"/><text x="25" y="14" font-family="Inter, sans-serif" font-size="8" font-weight="600" fill="currentColor">ISO</text><text x="25" y="23" font-family="Inter, sans-serif" font-size="7" fill="currentColor">27001</text></svg>
+        </a>
+        <a href="#trust" aria-label="GDPR compliant">
+          <svg viewBox="0 0 72 30" fill="none"><rect x=".6" y=".6" width="70.8" height="28.8" rx="6" stroke="currentColor" stroke-width="1.2"/><circle cx="14" cy="15" r="6.4" stroke="currentColor" stroke-width="1.2"/><g fill="currentColor"><circle cx="14" cy="9.6" r=".9"/><circle cx="17.8" cy="11.2" r=".9"/><circle cx="19.4" cy="15" r=".9"/><circle cx="17.8" cy="18.8" r=".9"/><circle cx="14" cy="20.4" r=".9"/><circle cx="10.2" cy="18.8" r=".9"/><circle cx="8.6" cy="15" r=".9"/><circle cx="10.2" cy="11.2" r=".9"/></g><text x="25" y="18.5" font-family="Inter, sans-serif" font-size="8" font-weight="600" fill="currentColor">GDPR</text></svg>
+        </a>
+        <a href="#trust" aria-label="PCI DSS Level 1 service provider">
+          <svg viewBox="0 0 74 30" fill="none"><rect x=".6" y=".6" width="72.8" height="28.8" rx="6" stroke="currentColor" stroke-width="1.2"/><rect x="8" y="10.6" width="13" height="9.4" rx="2" stroke="currentColor" stroke-width="1.2"/><path d="M8 13.6h13" stroke="currentColor" stroke-width="1.2"/><text x="26" y="14" font-family="Inter, sans-serif" font-size="8" font-weight="600" fill="currentColor">PCI DSS</text><text x="26" y="23" font-family="Inter, sans-serif" font-size="7" fill="currentColor">LEVEL 1</text></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+'use strict';
+var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ───── sticky header ───── */
+var hdr = document.getElementById('hdr');
+function onScroll(){
+  if (window.scrollY > 8) hdr.classList.add('is-stuck');
+  else hdr.classList.remove('is-stuck');
+}
+window.addEventListener('scroll', onScroll, {passive:true});
+onScroll();
+
+/* ───── scroll reveal ───── */
+var revealables = document.querySelectorAll('.rv');
+if ('IntersectionObserver' in window && !reduce){
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, {rootMargin:'0px 0px -8% 0px', threshold:.08});
+  revealables.forEach(function(el){ io.observe(el); });
+} else {
+  revealables.forEach(function(el){ el.classList.add('in'); });
+}
+
+/* ───── animated bars + counters (on first view) ───── */
+function animateWidths(root){
+  root.querySelectorAll('[data-w]').forEach(function(el){
+    el.style.width = el.getAttribute('data-w') + '%';
+  });
+}
+function runCount(el){
+  var target = parseFloat(el.getAttribute('data-count'));
+  var pre = el.getAttribute('data-prefix') || '';
+  var suf = el.getAttribute('data-suffix') || '';
+  var dec = (String(target).indexOf('.') > -1) ? 1 : 0;
+  if (reduce){ el.textContent = pre + target.toFixed(dec) + suf; return; }
+  var start = performance.now(), dur = 1150;
+  function frame(t){
+    var p = Math.min(1, (t - start)/dur);
+    var e = 1 - Math.pow(1 - p, 3);
+    el.textContent = pre + (target*e).toFixed(dec) + suf;
+    if (p < 1) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+if ('IntersectionObserver' in window){
+  var io2 = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var el = e.target;
+      if (el.hasAttribute('data-count')) runCount(el);
+      if (el.hasAttribute('data-w')) el.style.width = el.getAttribute('data-w') + '%';
+      io2.unobserve(el);
+    });
+  }, {threshold:.4});
+  document.querySelectorAll('[data-count],[data-w]').forEach(function(el){ io2.observe(el); });
+} else {
+  animateWidths(document);
+  document.querySelectorAll('[data-count]').forEach(runCount);
+}
+
+/* ───── exceptions queue + diff ───── */
+var EXC = [
+  {
+    id:'EXC-2291', reason:'Amount mismatch on Stripe payout', amt:'€47,200.00',
+    title:'Amount mismatch', meta:'EXC-2291 · 2d open · M. Reinholdt',
+    left:'Stripe payout', right:'NetSuite journal',
+    delta:'Difference of <b>€180.00</b> — matches the scheme fee posted on 03 Aug.',
+    rows:[
+      ['reference','po_1QkT8sLm2f','JE-2026-08-114',false],
+      ['customer','Bramble Group BV','Bramble Group BV',false],
+      ['amount','47,020.00','47,200.00',true],
+      ['currency','EUR','EUR',false],
+      ['value_date','2026-08-03','2026-08-03',false],
+      ['fee_total','180.00','0.00',true],
+      ['gl_account','1210 · AR','1210 · AR',false]
+    ]
+  },
+  {
+    id:'EXC-2288', reason:'FX rate applied on the wrong date', amt:'€18,940.12',
+    title:'FX rate variance', meta:'EXC-2288 · 3d open · P. Raghunathan',
+    left:'Adyen settlement', right:'NetSuite journal',
+    delta:'Journal used the <b>D-1</b> ECB rate. Revaluing at booking date clears <b>€212.44</b>.',
+    rows:[
+      ['reference','ady_8811KQ4','JE-2026-08-097',false],
+      ['customer','Ternpoint Ltd','Ternpoint Ltd',false],
+      ['amount_src','16,120.00 GBP','16,120.00 GBP',false],
+      ['fx_rate','1.17493','1.16174',true],
+      ['amount_eur','18,940.12','18,727.68',true],
+      ['value_date','2026-08-04','2026-08-04',false],
+      ['gl_account','1215 · AR GBP','1215 · AR GBP',false]
+    ]
+  },
+  {
+    id:'EXC-2284', reason:'Bank credit with no invoice', amt:'€156,000.00',
+    title:'Unidentified bank credit', meta:'EXC-2284 · 5d open · T. Ekwueme',
+    left:'HSBC MT940', right:'Expected invoice',
+    delta:'No open invoice within tolerance. Nearest candidate is <b>INV-39864</b> at €155,000.00.',
+    rows:[
+      ['reference','MT940/0812/17','—',true],
+      ['counterparty','CADENZA HOLDINGS','Cadenza Holdings AB',true],
+      ['amount','156,000.00','155,000.00',true],
+      ['currency','EUR','EUR',false],
+      ['value_date','2026-08-02','2026-07-29',true],
+      ['remittance','"AUG SUBSCR RENEWAL"','INV-39864',true],
+      ['gl_account','1010 · Bank','1210 · AR',true]
+    ]
+  },
+  {
+    id:'EXC-2279', reason:'Possible duplicate journal', amt:'€6,412.00',
+    title:'Suspected duplicate posting', meta:'EXC-2279 · 6d open · P. Raghunathan',
+    left:'Journal JE-2026-08-041', right:'Journal JE-2026-08-052',
+    delta:'Same invoice referenced twice, 41 minutes apart. Recommend <b>reversing JE-…-052</b>.',
+    rows:[
+      ['reference','INV-40118','INV-40118',false],
+      ['customer','Marlowe Retail SA','Marlowe Retail SA',false],
+      ['amount','6,412.00','6,412.00',false],
+      ['posted_by','a.novak','a.novak',false],
+      ['posted_at','2026-08-05 14:02','2026-08-05 14:43',true],
+      ['journal_id','JE-2026-08-041','JE-2026-08-052',true],
+      ['gl_account','4000 · Revenue','4000 · Revenue',false]
+    ]
+  }
+];
+
+var excList = document.getElementById('excList');
+var diffTable = document.getElementById('diffTable');
+var excTitle = document.getElementById('excTitle');
+var excMeta = document.getElementById('excMeta');
+var diffDelta = document.getElementById('diffDelta');
+var diffHdL = document.getElementById('diffHdL');
+var diffHdR = document.getElementById('diffHdR');
+var activeExc = 0;
+
+EXC.forEach(function(x, i){
+  var b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'exc-item' + (i === 0 ? ' is-active' : '');
+  b.setAttribute('data-i', i);
+  b.innerHTML =
+    '<div class="exc-item__top"><span class="exc-item__id">' + x.id + '</span>' +
+    '<span class="exc-item__amt">' + x.amt + '</span></div>' +
+    '<div class="exc-item__reason">' + x.reason + '</div>';
+  excList.appendChild(b);
+});
+
+function renderDiff(i){
+  var x = EXC[i];
+  activeExc = i;
+  excTitle.textContent = x.title;
+  excMeta.textContent = x.meta;
+  diffDelta.innerHTML = x.delta;
+  diffHdL.textContent = x.left;
+  diffHdR.textContent = x.right;
+
+  // clear all but the 3 header cells
+  while (diffTable.children.length > 3) diffTable.removeChild(diffTable.lastChild);
+
+  x.rows.forEach(function(r){
+    var g = document.createElement('div');
+    g.className = 'diff__row' + (r[3] ? ' is-diff' : '');
+    var k = document.createElement('div'); k.className = 'diff__k'; k.textContent = r[0];
+    var a = document.createElement('div'); a.className = 'diff__v'; a.textContent = r[1]; a.title = r[1];
+    var c = document.createElement('div'); c.className = 'diff__v diff__v--r'; c.textContent = r[2]; c.title = r[2];
+    g.appendChild(k); g.appendChild(a); g.appendChild(c);
+    diffTable.appendChild(g);
+  });
+
+  Array.prototype.forEach.call(excList.children, function(el, j){
+    el.classList.toggle('is-active', j === i);
+  });
+}
+renderDiff(0);
+
+var hoverTimer = null;
+excList.addEventListener('mouseover', function(e){
+  var btn = e.target.closest('.exc-item');
+  if (!btn) return;
+  var i = +btn.getAttribute('data-i');
+  if (i === activeExc) return;
+  clearTimeout(hoverTimer);
+  hoverTimer = setTimeout(function(){ renderDiff(i); }, 90);
+});
+excList.addEventListener('click', function(e){
+  var btn = e.target.closest('.exc-item');
+  if (btn) renderDiff(+btn.getAttribute('data-i'));
+});
+excList.addEventListener('focusin', function(e){
+  var btn = e.target.closest('.exc-item');
+  if (btn) renderDiff(+btn.getAttribute('data-i'));
+});
+
+/* ───── integration tabs ───── */
+var INTEG = {
+  stripe: {
+    name:'Stripe', color:'#635BFF',
+    title:'Stripe Payments & Payouts',
+    desc:'We read balance transactions, payouts and refunds via the Stripe API, then net scheme and processing fees before matching against your AR sub-ledger.',
+    lcol:'Stripe object', rcol:'Ledgerline field',
+    rows:[
+      ['balance_transaction.id','string','ext_txn_id',''],
+      ['payout.id','string','settlement_ref',''],
+      ['charge.metadata.invoice','string','invoice_ref','regex'],
+      ['amount / 100','integer','amount_gross','÷100'],
+      ['fee / 100','integer','fee_total','÷100'],
+      ['available_on','unix ts','value_date','tz:CET'],
+      ['customer.id','string','counterparty_id','']
+    ],
+    side:[
+      ['Auth method','OAuth 2.0 (read)'],
+      ['Sync cadence','Every 15 min'],
+      ['Backfill','36 months'],
+      ['Objects tracked','7']
+    ],
+    log:[
+      ['09:14','payout.paid · 1,284 txns'],
+      ['08:59','charge.refunded · 12'],
+      ['08:44','balance_txn sync · ok'],
+      ['08:29','balance_txn sync · ok']
+    ],
+    volume:'14,206 records this cycle'
+  },
+  adyen: {
+    name:'Adyen', color:'#0ABF53',
+    title:'Adyen Settlement Details',
+    desc:'Settlement detail reports are pulled from the Adyen report SFTP each morning and split into capture, refund, chargeback and markup lines so payout netting stays explainable.',
+    lcol:'Adyen report column', rcol:'Ledgerline field',
+    rows:[
+      ['Psp Reference','string','ext_txn_id',''],
+      ['Merchant Reference','string','invoice_ref','regex'],
+      ['Batch Number','integer','settlement_ref','concat'],
+      ['Gross Debit (GC)','decimal','amount_gross',''],
+      ['Commission (PC)','decimal','fee_commission','FX'],
+      ['Markup (PC)','decimal','fee_markup','FX'],
+      ['Booking Date','date','value_date','']
+    ],
+    side:[
+      ['Auth method','Report SFTP + API key'],
+      ['Sync cadence','Daily 06:00 CET'],
+      ['Backfill','24 months'],
+      ['Objects tracked','5']
+    ],
+    log:[
+      ['06:02','settlement_detail_8814 · ok'],
+      ['06:02','2,411 lines parsed'],
+      ['05:58','sftp handshake · ok'],
+      ['yest.','settlement_detail_8813 · ok']
+    ],
+    volume:'3,908 records this cycle'
+  },
+  netsuite: {
+    name:'NetSuite', color:'#1E3A8A',
+    title:'NetSuite ERP (SuiteTalk)',
+    desc:'Two-way: we read invoices, payments and journal entries by subsidiary, and write back only the adjusting journals you approve — always as a draft awaiting your own approval workflow.',
+    lcol:'NetSuite record', rcol:'Ledgerline field',
+    rows:[
+      ['transaction.tranid','string','invoice_ref',''],
+      ['transaction.entity','recordRef','counterparty_id',''],
+      ['transaction.total','decimal','amount_gross',''],
+      ['transaction.currency','recordRef','currency',''],
+      ['transaction.trandate','date','value_date',''],
+      ['subsidiary.internalid','integer','entity_id','map'],
+      ['account.number','string','gl_account','']
+    ],
+    side:[
+      ['Auth method','Token-based (TBA)'],
+      ['Sync cadence','Hourly + on demand'],
+      ['Write-back','Draft journals only'],
+      ['Subsidiaries','14']
+    ],
+    log:[
+      ['09:00','JE draft posted · JE-…-118'],
+      ['08:00','invoice sync · 942'],
+      ['07:00','invoice sync · 1,107'],
+      ['06:00','saved search refresh · ok']
+    ],
+    volume:'9,744 records this cycle'
+  },
+  xero: {
+    name:'Xero', color:'#0F766E',
+    title:'Xero Accounting',
+    desc:'For smaller entities in the group. We read invoices, credit notes and bank transactions per tenant, and respect Xero API rate limits with per-tenant queueing.',
+    lcol:'Xero endpoint field', rcol:'Ledgerline field',
+    rows:[
+      ['Invoices.InvoiceNumber','string','invoice_ref',''],
+      ['Invoices.Contact.Name','string','counterparty',''],
+      ['Invoices.Total','decimal','amount_gross',''],
+      ['Invoices.CurrencyCode','string','currency',''],
+      ['Invoices.DateString','date','value_date','ISO'],
+      ['BankTransactions.Ref','string','settlement_ref',''],
+      ['TrackingCategory[0]','string','entity_id','map']
+    ],
+    side:[
+      ['Auth method','OAuth 2.0 (multi-tenant)'],
+      ['Sync cadence','Every 30 min'],
+      ['Backfill','18 months'],
+      ['Tenants','3']
+    ],
+    log:[
+      ['09:10','invoice sync · 118'],
+      ['08:40','invoice sync · 96'],
+      ['08:10','rate limit backoff · 4s'],
+      ['07:40','invoice sync · 141']
+    ],
+    volume:'612 records this cycle'
+  }
+};
+
+var panelsEl = document.getElementById('panels');
+Object.keys(INTEG).forEach(function(k, idx){
+  var d = INTEG[k];
+  var p = document.createElement('div');
+  p.className = 'tabpanel' + (idx === 0 ? ' is-active' : '');
+  p.id = 'panel-' + k;
+  p.setAttribute('role','tabpanel');
+  p.setAttribute('aria-labelledby','tab-' + k);
+  if (idx !== 0) p.hidden = true;
+
+  var rows = d.rows.map(function(r){
+    return '<div class="maprow">' +
+      '<div class="mapcell"><span>' + r[0] + '</span><span class="type">' + r[1] + '</span></div>' +
+      '<div class="maparrow"><svg width="16" height="12" viewBox="0 0 18 12" fill="none" aria-hidden="true"><path d="M1 6h14m0 0l-4-4m4 4l-4 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>' +
+      '<div class="mapcell mapcell--tgt"><span>' + r[2] + '</span>' +
+        (r[3] ? '<span class="transform">' + r[3] + '</span>' : '') +
+      '</div></div>';
+  }).join('');
+
+  var side = d.side.map(function(s){
+    return '<div class="kv"><dt>' + s[0] + '</dt><dd>' + s[1] + '</dd></div>';
+  }).join('');
+
+  var log = d.log.map(function(l){
+    return '<li><span class="t">' + l[0] + '</span>' + l[1] + '</li>';
+  }).join('');
+
+  p.innerHTML =
+    '<div class="integ">' +
+      '<div class="integ__main">' +
+        '<div style="display:flex;align-items:center;gap:11px">' +
+          '<span style="width:26px;height:26px;border-radius:7px;background:' + d.color + ';display:block;flex:none"></span>' +
+          '<div><div class="integ__title">' + d.title + '</div></div>' +
+          '<span class="pill pill--ok" style="margin-left:auto"><i></i>Connected</span>' +
+        '</div>' +
+        '<p class="integ__desc">' + d.desc + '</p>' +
+        '<div class="maphead"><div>' + d.lcol + '</div><div></div><div>' + d.rcol + '</div></div>' +
+        rows +
+      '</div>' +
+      '<div class="integ__side">' +
+        '<dl style="margin:0;display:flex;flex-direction:column;gap:16px">' + side + '</dl>' +
+        '<div class="divider"></div>' +
+        '<div>' +
+          '<div class="rail__title" style="margin-bottom:10px">Recent activity</div>' +
+          '<ul class="evlog">' + log + '</ul>' +
+        '</div>' +
+        '<div class="divider"></div>' +
+        '<div class="kv"><dt>Volume</dt><dd style="font-size:12.5px">' + d.volume + '</dd></div>' +
+      '</div>' +
+    '</div>';
+  panelsEl.appendChild(p);
+});
+
+var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab'));
+function selectTab(k, focus){
+  tabs.forEach(function(t){
+    var on = t.getAttribute('data-k') === k;
+    t.setAttribute('aria-selected', on ? 'true' : 'false');
+    t.tabIndex = on ? 0 : -1;
+    if (on && focus) t.focus();
+  });
+  Object.keys(INTEG).forEach(function(key){
+    var p = document.getElementById('panel-' + key);
+    var on = key === k;
+    p.classList.toggle('is-active', on);
+    p.hidden = !on;
+  });
+}
+tabs.forEach(function(t){
+  t.addEventListener('click', function(){ selectTab(t.getAttribute('data-k')); });
+  t.addEventListener('keydown', function(e){
+    var i = tabs.indexOf(t), n = null;
+    if (e.key === 'ArrowRight') n = (i + 1) % tabs.length;
+    else if (e.key === 'ArrowLeft') n = (i - 1 + tabs.length) % tabs.length;
+    else if (e.key === 'Home') n = 0;
+    else if (e.key === 'End') n = tabs.length - 1;
+    if (n !== null){ e.preventDefault(); selectTab(tabs[n].getAttribute('data-k'), true); }
+  });
+});
+
+/* ───── pricing toggle ───── */
+var btnM = document.getElementById('btnMonthly');
+var btnA = document.getElementById('btnAnnual');
+var amts = document.querySelectorAll('.tier__amt');
+var bills = document.querySelectorAll('[data-bill]');
+function fmt(n){ return n.toLocaleString('en-US'); }
+function setPeriod(annual){
+  btnM.setAttribute('aria-pressed', annual ? 'false' : 'true');
+  btnA.setAttribute('aria-pressed', annual ? 'true' : 'false');
+  amts.forEach(function(el){
+    var from = parseInt(el.textContent.replace(/[^0-9]/g,''), 10);
+    var to = parseInt(el.getAttribute(annual ? 'data-a' : 'data-m'), 10);
+    if (reduce || from === to){ el.textContent = fmt(to); return; }
+    var start = performance.now(), dur = 420;
+    (function tick(t){
+      var p = Math.min(1, (t - start)/dur);
+      var e = 1 - Math.pow(1 - p, 3);
+      el.textContent = fmt(Math.round(from + (to - from)*e));
+      if (p < 1) requestAnimationFrame(tick);
+    })(performance.now());
+  });
+  bills.forEach(function(el, i){
+    if (annual){
+      var yr = parseInt(amts[i].getAttribute('data-a'), 10) * 12;
+      el.textContent = '€' + fmt(yr) + ' billed once a year';
+    } else {
+      el.textContent = 'Billed monthly, cancel any time';
+    }
+  });
+}
+btnM.addEventListener('click', function(){ setPeriod(false); });
+btnA.addEventListener('click', function(){ setPeriod(true); });
+
+/* ───── FAQ accordion ───── */
+var FAQ = [
+  ['Do we have to replace our ERP or billing system?',
+   'No, and you shouldn\'t. Ledgerline reads from your PSPs, banks and ERP and writes back only the adjusting journals you approve — as drafts, into your existing approval workflow. If we disappeared tomorrow your books would still be in NetSuite, Xero or SAP where they belong.'],
+  ['What actually happens to the transactions you can\'t match?',
+   'They go to the exceptions queue with a reason code, an owner and an SLA clock. We deliberately don\'t auto-resolve anything below our confidence threshold — a silent bad match is far more expensive than a visible break. In production the residual is typically 0.4–1.4% of records, weighted toward bank credits with poor remittance data.'],
+  ['How long does implementation really take?',
+   'Median time to first reconciled close is 19 days. Connecting sources takes an afternoon; the time goes into mapping your chart of accounts, agreeing tolerances and cleaning historical reference formats. Groups with more than eight entities or a heavy intercompany book should plan for 6–8 weeks.'],
+  ['Do you handle multi-currency and multi-entity groups?',
+   'Yes. Matching runs per entity with its own functional currency, tolerances and calendar, then rolls up to group. FX revaluation uses the rate source you nominate (ECB, your bank, or an uploaded table) and posts the difference to the account you specify. Intercompany elimination pairs are matched on a dedicated rule set.'],
+  ['Where is our data stored, and who can see it?',
+   'EU customers are hosted in AWS eu-central-1 (Frankfurt) with an eu-west-1 replica; UK and US regions are available on Scale. Data is encrypted at rest with AES-256 and in transit with TLS 1.3. Our engineers have no standing production access — break-glass access is time-boxed, requires a second approver and is logged to your audit trail, which you can read.'],
+  ['What does this cost once we grow past a tier?',
+   'Overage is €0.004 per matched transaction, billed monthly in arrears, and we\'ll flag it on your dashboard before it appears on an invoice. Most teams move up a tier rather than pay overage; annual contracts can be re-based mid-term at no penalty if volume moves more than 25%.']
+];
+
+var faqEl = document.getElementById('faq');
+FAQ.forEach(function(f, i){
+  var item = document.createElement('div');
+  item.className = 'faq__item';
+  item.innerHTML =
+    '<h3 style="margin:0"><button class="faq__q" type="button" aria-expanded="' + (i === 0) + '" aria-controls="faq-a-' + i + '" id="faq-q-' + i + '">' +
+      '<span>' + f[0] + '</span>' +
+      '<svg class="faq__ic" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 2.6v10.8M2.6 8h10.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>' +
+    '</button></h3>' +
+    '<div class="faq__a" id="faq-a-' + i + '" role="region" aria-labelledby="faq-q-' + i + '"><div>' + f[1] + '</div></div>';
+  faqEl.appendChild(item);
+});
+
+var qs = faqEl.querySelectorAll('.faq__q');
+function setOpen(btn, open, instant){
+  var panel = document.getElementById(btn.getAttribute('aria-controls'));
+  var inner = panel.firstElementChild;
+  btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  if (open){
+    panel.style.height = inner.offsetHeight + 'px';
+    if (instant) panel.style.height = 'auto';
+  } else {
+    if (panel.style.height === 'auto') panel.style.height = inner.offsetHeight + 'px';
+    void panel.offsetHeight;
+    panel.style.height = '0px';
+  }
+}
+faqEl.addEventListener('transitionend', function(e){
+  if (e.propertyName !== 'height' || !e.target.classList.contains('faq__a')) return;
+  var b = document.getElementById(e.target.getAttribute('aria-labelledby'));
+  if (b && b.getAttribute('aria-expanded') === 'true') e.target.style.height = 'auto';
+});
+qs.forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var open = btn.getAttribute('aria-expanded') === 'true';
+    qs.forEach(function(other){ if (other !== btn) setOpen(other, false); });
+    setOpen(btn, !open);
+  });
+});
+// initial state: first open (measured after fonts settle)
+function initFaq(){ qs.forEach(function(btn, i){ setOpen(btn, i === 0, true); }); }
+requestAnimationFrame(initFaq);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(initFaq);
+
+/* ───── hero table row micro-interaction ───── */
+var heroRows = document.querySelectorAll('.app--hero .tbl tbody tr');
+heroRows.forEach(function(tr){
+  tr.addEventListener('mouseenter', function(){
+    var fill = tr.querySelector('.conf__fill');
+    if (fill) fill.style.filter = 'saturate(1.4)';
+  });
+  tr.addEventListener('mouseleave', function(){
+    var fill = tr.querySelector('.conf__fill');
+    if (fill) fill.style.filter = '';
+  });
+});
+
+/* ───── keep in-page anchors from jumping under sticky header ───── */
+document.querySelectorAll('a[href^="#"]').forEach(function(a){
+  a.addEventListener('click', function(e){
+    var id = a.getAttribute('href');
+    if (id === '#' || id.length < 2) return;
+    var t = document.querySelector(id);
+    if (!t) return;
+    e.preventDefault();
+    var y = t.getBoundingClientRect().top + window.scrollY - 76;
+    window.scrollTo({top:y, behavior: reduce ? 'auto' : 'smooth'});
+  });
+});
+})();
+</script>
+</body>
+</html>
