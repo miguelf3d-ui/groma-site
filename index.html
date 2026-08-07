@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GROMA — Product design for the difficult parts</title>
+<title>BACKSHIFT — Product design for the difficult parts</title>
 <meta name="description" content="We design and build AI systems that run inside your business — back-offices, dashboards and the dense operational screens your team works in all day. Weeks, not months.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --void:#08090A;
@@ -59,7 +59,9 @@ header{position:fixed;top:0;left:0;right:0;z-index:100;transition:.4s}
 .hbar{max-width:var(--maxw);margin:0 auto;padding:16px var(--gut);display:flex;align-items:center;justify-content:space-between;gap:20px}
 .brand{display:flex;align-items:center;gap:10px}
 .brand svg{width:20px;height:20px}
-.brand span{font-family:var(--mono);font-weight:500;font-size:14px;letter-spacing:.26em;text-transform:uppercase}
+.brand span{font-family:var(--mono);font-weight:700;font-size:14px;letter-spacing:.16em;text-transform:uppercase}
+/* the compound shows in the weight: BACK modifies, SHIFT carries the meaning */
+.brand span em{font-style:normal;font-weight:400}
 .pill{display:flex;gap:4px;align-items:center;padding:5px;border:1px solid var(--line);border-radius:999px;
   background:rgba(12,14,16,.6);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
 .pill a{font-size:13px;padding:8px 15px;border-radius:999px;color:var(--muted);transition:.25s;white-space:nowrap}
@@ -250,10 +252,10 @@ footer{border-top:1px solid var(--line);padding:30px 0 44px}
 <header>
   <div class="hbar">
     <a class="brand" href="#top">
-      <svg viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20" stroke="#F1F3EF" stroke-width="1.5"/>
-      <path d="M12 2.6v4M12 21.4v-4M2.6 12h4M21.4 12h-4" stroke="#B8FF3C" stroke-width="1.5"/>
-      <circle cx="12" cy="12" r="2.2" stroke="#F1F3EF" stroke-width="1.5"/></svg>
-      <span>Groma</span>
+      <svg viewBox="0 0 24 24" fill="none">
+      <path d="M11.5 5.5 5.5 12l6 6.5" stroke="#F1F3EF" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M20 5.5 14 12l6 6.5" stroke="#B8FF3C" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span><em>Back</em>shift</span>
     </a>
     <nav class="pill">
       <a href="#services">Services</a><a href="#work">Work</a><a href="#method">Method</a>
@@ -300,7 +302,7 @@ footer{border-top:1px solid var(--line);padding:30px 0 44px}
     <div class="shead rv">
       <h2>Four things,<br>done <span class="it">properly</span>.</h2>
       <p class="lede">Most studios are strong on the first screen and thin everywhere
-      after it. Groma is built the other way round — the harder and more operational
+      after it. BACKSHIFT is built the other way round — the harder and more operational
       the product, the more useful we are.</p>
     </div>
 
@@ -579,7 +581,7 @@ footer{border-top:1px solid var(--line);padding:30px 0 44px}
       <span class="mono-a">For agencies — white label</span>
       <h2 style="margin:22px 0 22px">The capacity you<br>say <span class="it">yes</span> with.</h2>
       <p class="lede" style="max-width:620px">You have the client and the deadline, and not enough
-      people this quarter. Groma works behind agencies: your brand on the deck, your client
+      people this quarter. BACKSHIFT works behind agencies: your brand on the deck, your client
       relationship, your file structure. We are never in the room unless you want us there.</p>
       <div class="ag-l">
         <div><h3>Invisible by default</h3><p>NDA before the first call. No case study, no credit, no mention — unless you decide otherwise. Your client never needs to know we existed.</p></div>
@@ -614,7 +616,7 @@ footer{border-top:1px solid var(--line);padding:30px 0 44px}
     </div>
     <div class="stu rv">
       <div>
-        <p class="lede">Groma designs and builds the systems a business runs on, with twenty
+        <p class="lede">BACKSHIFT designs and builds the systems a business runs on, with twenty
         years of practice in digital product behind it — most recently leading design on a
         virtual-tour platform: the mobile app, the front-end experience and the back-office
         its clients build everything in.</p>
@@ -652,7 +654,7 @@ footer{border-top:1px solid var(--line);padding:30px 0 44px}
   <div class="wrap">
     <span class="mono-a rv">Contact</span>
     <h2 class="big rv" style="margin-top:26px">Tell us what's<br>
-      <a class="ul it acid" href="mailto:miguelf3d@gmail.com?subject=Project%20enquiry%20—%20Groma">difficult</a> about it.</h2>
+      <a class="ul it acid" href="mailto:miguelf3d@gmail.com?subject=Project%20enquiry%20—%20BACKSHIFT">difficult</a> about it.</h2>
     <p class="lede rv" style="margin-top:clamp(26px,4vw,44px);max-width:600px">A paragraph is enough
     to start. What the product is, who it's for, what's blocking it, and roughly when you need
     it. You get a reply within one working day — from the person who would do the work.</p>
@@ -667,10 +669,10 @@ footer{border-top:1px solid var(--line);padding:30px 0 44px}
 
 <footer><div class="wrap fb">
   <div class="brand"><svg viewBox="0 0 24 24" fill="none" style="width:17px;height:17px">
-    <path d="M12 2v20M2 12h20" stroke="#F1F3EF" stroke-width="1.5"/>
-    <path d="M12 2.6v4M12 21.4v-4M2.6 12h4M21.4 12h-4" stroke="#B8FF3C" stroke-width="1.5"/>
-    <circle cx="12" cy="12" r="2.2" stroke="#F1F3EF" stroke-width="1.5"/></svg><span style="font-size:12px">Groma</span></div>
-  <span class="mono" style="text-transform:none">Groma — the Roman surveyor's instrument. Nothing was built before the lines were set.</span>
+    <path d="M11.5 5.5 5.5 12l6 6.5" stroke="#F1F3EF" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M20 5.5 14 12l6 6.5" stroke="#B8FF3C" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg><span style="font-size:12px"><em>Back</em>shift</span></div>
+  <span class="mono" style="text-transform:none">Backshift — the shift that runs while the building sleeps. Nothing opens in the morning without it.</span>
   <span class="mono">© 2026</span>
 </div></footer>
 

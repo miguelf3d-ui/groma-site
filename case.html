@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GROMA — Case study</title>
+<title>BACKSHIFT — Case study</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{--void:#08090A;--deep:#0C0E10;--line:rgba(255,255,255,.10);--text:#F1F3EF;--muted:#878D93;
   --dim:#5D6369;--acid:#B8FF3C;--sans:"Archivo",system-ui,sans-serif;--serif:"Instrument Serif",serif;
@@ -24,7 +24,8 @@ a{color:inherit;text-decoration:none}
 .back:hover{color:var(--text);border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.05)}
 .brand{display:flex;align-items:center;gap:9px}
 .brand svg{width:17px;height:17px}
-.brand b{font-family:var(--mono);font-weight:500;font-size:12px;letter-spacing:.24em;text-transform:uppercase}
+.brand b{font-family:var(--mono);font-weight:700;font-size:12px;letter-spacing:.15em;text-transform:uppercase}
+.brand b em{font-style:normal;font-weight:400}
 .ttl{display:flex;align-items:baseline;gap:12px;min-width:0}
 .ttl h1{font-size:15px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ttl .n{font-family:var(--mono);font-size:11px;color:var(--acid)}
@@ -73,9 +74,9 @@ a{color:inherit;text-decoration:none}
   <div class="bl">
     <a class="back" href="index.html#work">← <span class="hide-s">Back to work</span></a>
     <a class="brand hide-s" href="index.html">
-      <svg viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20" stroke="#F1F3EF" stroke-width="1.5"/>
-      <path d="M12 2.6v4M12 21.4v-4M2.6 12h4M21.4 12h-4" stroke="#B8FF3C" stroke-width="1.5"/>
-      <circle cx="12" cy="12" r="2.2" stroke="#F1F3EF" stroke-width="1.5"/></svg><b>Groma</b></a>
+      <svg viewBox="0 0 24 24" fill="none">
+      <path d="M11.5 5.5 5.5 12l6 6.5" stroke="#F1F3EF" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M20 5.5 14 12l6 6.5" stroke="#B8FF3C" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg><b><em>Back</em>shift</b></a>
   </div>
   <div class="ttl"><span class="n" id="pn">—</span><h1 id="pt">Loading</h1></div>
   <div class="br">
@@ -232,7 +233,7 @@ const id=(new URLSearchParams(location.search).get('p')||"02");
 const d=P[id]||P["02"];
 const i=ORDER.indexOf(id), prev=ORDER[(i-1+ORDER.length)%ORDER.length], next=ORDER[(i+1)%ORDER.length];
 
-document.title="GROMA — "+d.t;
+document.title="BACKSHIFT — "+d.t;
 pn.textContent=d.n; pt.textContent=d.t; op.href=d.f;
 f.src=d.f;
 f.addEventListener('load',()=>ld.classList.add('gone'));
