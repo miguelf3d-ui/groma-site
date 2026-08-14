@@ -1,6 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" role="img" aria-label="Backshift">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" role="img" aria-label="Backshift">
   <title>Backshift</title>
-  <!-- The left-shift operator. Two chevrons: the shift handing over. -->
-  <path d="M11.5 5.5 5.5 12l6 6.5" stroke="#EEF1F7" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M20 5.5 14 12l6 6.5" stroke="#F2E7A9" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- back is the arrow pointing left, shift the arrow pointing up. Joined at
+       the corner they read as one arrow: the name drawn instead of written. -->
+  <path d="M40 40V12" stroke="#F2E7A9" stroke-width="8" stroke-linecap="square"/>
+  <path d="M40 40H12" stroke="#F2E7A9" stroke-width="8" stroke-linecap="square"/>
+  <path d="M28 24 40 12 52 24" stroke="#F2E7A9" stroke-width="8" stroke-linejoin="miter"/>
+  <path d="M24 28 12 40 24 52" stroke="#F2E7A9" stroke-width="8" stroke-linejoin="miter"/>
 </svg>
