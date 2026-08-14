@@ -65,9 +65,8 @@ header{position:fixed;top:0;left:0;right:0;z-index:100;transition:.4s}
 /* the k carries the mark: its own diagonals are the arrow back, this is the
    arrow up. Anchored to the letter, so it travels with it at any size. */
 .brand span i{position:relative;font-style:normal}
-.brand span i::before{content:"";position:absolute;left:50%;top:-.10em;width:.34em;height:.34em;
-  border-top:.115em solid var(--acid);border-right:.115em solid var(--acid);
-  transform:translateX(-62%) rotate(-45deg)}
+.brand span i svg{position:absolute;left:50%;top:-.08em;width:.58em;height:.32em;overflow:visible;
+  transform:translateX(-54%);color:var(--acid)}
 .pill{display:flex;gap:4px;align-items:center;padding:5px;border:1px solid var(--line);border-radius:999px;
   background:rgba(13,21,38,.6);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
 .pill a{font-size:13px;padding:8px 15px;border-radius:999px;color:var(--muted);transition:.25s;white-space:nowrap}
@@ -265,7 +264,7 @@ footer{border-top:1px solid var(--line);padding:30px 0 44px}
 <header>
   <div class="hbar">
     <a class="brand" href="#top">
-      <span>bac<i>k</i>shift</span>
+      <span>bac<i>k<svg viewBox="0 0 40 22" fill="none" aria-hidden="true"><path d="M4 18 20 4 36 18" stroke="currentColor" stroke-width="7" stroke-linejoin="bevel" stroke-linecap="butt"/></svg></i>shift</span>
     </a>
     <nav class="pill">
       <a href="#services" data-i18n="nav.services">Serviços</a><a href="#work" data-i18n="nav.work">Trabalho</a><a href="#method" data-i18n="nav.method">Método</a>
@@ -693,7 +692,7 @@ footer{border-top:1px solid var(--line);padding:30px 0 44px}
 </main>
 
 <footer><div class="wrap fb">
-  <div class="brand"><span style="font-size:15px">bac<i>k</i>shift</span></div>
+  <div class="brand"><span style="font-size:15px">bac<i>k<svg viewBox="0 0 40 22" fill="none" aria-hidden="true"><path d="M4 18 20 4 36 18" stroke="currentColor" stroke-width="7" stroke-linejoin="bevel" stroke-linecap="butt"/></svg></i>shift</span></div>
   <span class="mono" style="text-transform:none" data-i18n="ft.tag">Backshift — o turno que trabalha enquanto o edifício dorme. Sem ele, nada abre de manhã.</span>
   <span class="mono">© 2026</span>
 </div></footer>
