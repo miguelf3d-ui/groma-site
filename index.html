@@ -61,7 +61,13 @@ header{position:fixed;top:0;left:0;right:0;z-index:100;transition:.4s}
 .hbar{max-width:var(--maxw);margin:0 auto;padding:16px var(--gut);display:flex;align-items:center;justify-content:space-between;gap:20px}
 .brand{display:flex;align-items:center;gap:10px}
 .brand svg{width:27px;height:27px}
-.brand span{font-family:var(--wordmark);font-weight:700;font-size:17px;letter-spacing:-.012em}
+.brand span{font-family:var(--wordmark);font-weight:700;font-size:19px;letter-spacing:-.012em}
+/* the k carries the mark: its own diagonals are the arrow back, this is the
+   arrow up. Anchored to the letter, so it travels with it at any size. */
+.brand span i{position:relative;font-style:normal}
+.brand span i::before{content:"";position:absolute;left:50%;top:-.10em;width:.34em;height:.34em;
+  border-top:.115em solid var(--acid);border-right:.115em solid var(--acid);
+  transform:translateX(-62%) rotate(-45deg)}
 .pill{display:flex;gap:4px;align-items:center;padding:5px;border:1px solid var(--line);border-radius:999px;
   background:rgba(13,21,38,.6);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
 .pill a{font-size:13px;padding:8px 15px;border-radius:999px;color:var(--muted);transition:.25s;white-space:nowrap}
@@ -259,8 +265,7 @@ footer{border-top:1px solid var(--line);padding:30px 0 44px}
 <header>
   <div class="hbar">
     <a class="brand" href="#top">
-      <svg viewBox="0 0 64 64" aria-hidden="true" fill="none"><path d="M40 40V12" stroke="#F2E7A9" stroke-width="8" stroke-linecap="square"/><path d="M40 40H12" stroke="#F2E7A9" stroke-width="8" stroke-linecap="square"/><path d="M28 24 40 12 52 24" stroke="#F2E7A9" stroke-width="8" stroke-linejoin="miter" fill="none"/><path d="M24 28 12 40 24 52" stroke="#F2E7A9" stroke-width="8" stroke-linejoin="miter" fill="none"/></svg>
-      <span>backshift</span>
+      <span>bac<i>k</i>shift</span>
     </a>
     <nav class="pill">
       <a href="#services" data-i18n="nav.services">Serviços</a><a href="#work" data-i18n="nav.work">Trabalho</a><a href="#method" data-i18n="nav.method">Método</a>
@@ -688,9 +693,7 @@ footer{border-top:1px solid var(--line);padding:30px 0 44px}
 </main>
 
 <footer><div class="wrap fb">
-  <div class="brand"><svg viewBox="0 0 64 64" aria-hidden="true" fill="none" style="width:22px;height:22px">
-    <path d="M40 40V12" stroke="#F2E7A9" stroke-width="8" stroke-linecap="square"/><path d="M40 40H12" stroke="#F2E7A9" stroke-width="8" stroke-linecap="square"/><path d="M28 24 40 12 52 24" stroke="#F2E7A9" stroke-width="8" stroke-linejoin="miter" fill="none"/><path d="M24 28 12 40 24 52" stroke="#F2E7A9" stroke-width="8" stroke-linejoin="miter" fill="none"/>
-    </svg><span style="font-size:15px">backshift</span></div>
+  <div class="brand"><span style="font-size:15px">bac<i>k</i>shift</span></div>
   <span class="mono" style="text-transform:none" data-i18n="ft.tag">Backshift — o turno que trabalha enquanto o edifício dorme. Sem ele, nada abre de manhã.</span>
   <span class="mono">© 2026</span>
 </div></footer>
