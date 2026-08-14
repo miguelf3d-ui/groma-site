@@ -87,9 +87,19 @@ header{position:fixed;top:0;left:0;right:0;z-index:100;transition:.4s}
 /* hero */
 .hero{position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;
   padding-bottom:clamp(28px,4vh,54px);overflow:hidden}
-#bg{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+#bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;
+  filter:saturate(.72) brightness(.88)}
+/* no video for anyone who asked the system for less motion — the poster still
+   carries the frame, so the hero never falls back to flat colour */
+@media(prefers-reduced-motion:reduce){
+  #bg{display:none}
+  .hero{background:url("assets/hero/hero-poster.jpg") center/cover no-repeat}
+}
 .hero::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
-  background:linear-gradient(180deg,rgba(10,16,32,.72) 0%,rgba(10,16,32,.28) 34%,rgba(10,16,32,.86) 82%,var(--void) 100%)}
+  background:
+    /* the text is all left-aligned, so the left side carries the heavier scrim */
+    linear-gradient(90deg,rgba(10,16,32,.86) 0%,rgba(10,16,32,.55) 42%,rgba(10,16,32,.12) 78%,rgba(10,16,32,0) 100%),
+    linear-gradient(180deg,rgba(10,16,32,.80) 0%,rgba(10,16,32,.42) 30%,rgba(10,16,32,.88) 80%,var(--void) 100%)}
 .hero .wrap{z-index:2}
 
 .brackets{position:absolute;inset:clamp(70px,10vh,120px) var(--gut) clamp(120px,16vh,180px);z-index:2;pointer-events:none}
@@ -283,7 +293,11 @@ footer{border-top:1px solid var(--line);padding:30px 0 44px}
 
 <!-- HERO -->
 <section class="hero">
-  <canvas id="bg"></canvas>
+  <video id="bg" autoplay muted loop playsinline preload="metadata"
+         poster="assets/hero/hero-poster.jpg" aria-hidden="true" tabindex="-1">
+    <source src="assets/hero/hero.webm" type="video/webm">
+    <source src="assets/hero/hero.mp4" type="video/mp4">
+  </video>
   <div class="brackets"><i></i><i></i><i></i><i></i></div>
   <div class="wrap">
     <div class="tagline">
@@ -832,32 +846,13 @@ const MQ = {
   apply(start);
 })();
 
-// hero backdrop — animated field
+// the hero video pauses itself when the tab is hidden, so a backgrounded tab
+// stops decoding frames
 (()=>{
-  const c=document.getElementById('bg'),x=c.getContext('2d');let w,h,t=0,raf;
-  const blobs=[{r:.58,cx:.74,cy:.30,c:[58,96,148],a:.62,s:.00021},
-               {r:.66,cx:.24,cy:.66,c:[38,68,112],a:.80,s:-.00016},
-               {r:.44,cx:.52,cy:.14,c:[150,142,104],a:.34,s:.00027},
-               {r:.52,cx:.88,cy:.80,c:[46,60,92],a:.62,s:-.00023},
-               {r:.34,cx:.40,cy:.44,c:[242,231,169],a:.26,s:.00033}];
-  function size(){w=c.width=innerWidth*Math.min(devicePixelRatio,1.6);h=c.height=innerHeight*Math.min(devicePixelRatio,1.6)}
-  function draw(){
-    t++;x.clearRect(0,0,w,h);
-    x.fillStyle='#0B0E10';x.fillRect(0,0,w,h);
-    x.globalCompositeOperation='lighter';
-    blobs.forEach((b,i)=>{
-      const px=(b.cx+Math.sin(t*b.s*7+i)*.11)*w, py=(b.cy+Math.cos(t*b.s*5+i*2)*.09)*h, r=b.r*Math.max(w,h)*.62;
-      const g=x.createRadialGradient(px,py,0,px,py,r);
-      g.addColorStop(0,`rgba(${b.c[0]},${b.c[1]},${b.c[2]},${b.a*.55})`);
-      g.addColorStop(.45,`rgba(${b.c[0]},${b.c[1]},${b.c[2]},${b.a*.16})`);
-      g.addColorStop(1,'rgba(0,0,0,0)');
-      x.fillStyle=g;x.beginPath();x.arc(px,py,r,0,6.2832);x.fill();
-    });
-    x.globalCompositeOperation='source-over';
-    raf=requestAnimationFrame(draw);
-  }
-  size();draw();addEventListener('resize',size);
-  document.addEventListener('visibilitychange',()=>document.hidden?cancelAnimationFrame(raf):draw());
+  const v=document.getElementById('bg'); if(!v) return;
+  document.addEventListener('visibilitychange',()=>{
+    if(document.hidden) v.pause(); else v.play().catch(()=>{});
+  });
 })();
 
 // card spotlight
