@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96" role="img" aria-label="Backshift">
+  <title>Backshift</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@1&amp;display=swap');
+    .b{font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-size:72px}
+  </style>
+  <rect width="96" height="96" rx="18" fill="#F2E7A9"></rect>
+  <text class="b" x="48" y="72" text-anchor="middle" fill="#16170F">b</text>
+</svg>

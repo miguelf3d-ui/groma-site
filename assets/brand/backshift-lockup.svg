@@ -2,9 +2,9 @@
   <title>Backshift</title>
   <!-- Horizontal lockup. The wordmark is live text in JetBrains Mono; convert it
        to outlines before sending this anywhere the font is not installed. -->
-  <path d="M28.5 13.5 20 24l8.5 10.5" stroke="#F1F3EF" stroke-width="2.9" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M38.5 13.5 30 24l8.5 10.5" stroke="#B8FF3C" stroke-width="2.9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M28.5 13.5 20 24l8.5 10.5" stroke="#EEF1F7" stroke-width="2.9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M38.5 13.5 30 24l8.5 10.5" stroke="#F2E7A9" stroke-width="2.9" stroke-linecap="round" stroke-linejoin="round"/>
   <text x="58" y="30.5"
         font-family="'JetBrains Mono', ui-monospace, Menlo, monospace"
-        font-size="19" letter-spacing="3.1" fill="#F1F3EF"><tspan font-weight="400">BACK</tspan><tspan font-weight="700">SHIFT</tspan></text>
+        font-size="19" letter-spacing="3.1" fill="#EEF1F7"><tspan font-weight="400">BACK</tspan><tspan font-weight="700">SHIFT</tspan></text>
 </svg>

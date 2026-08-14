@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 302 84" width="302" height="84" role="img" aria-label="Backshift">
+  <title>Backshift</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@1&amp;family=Karla:wght@700&amp;display=swap');
+    .b{font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-size:62px}
+    .w{font-family:'Karla',system-ui,sans-serif;font-weight:700;font-size:27px;letter-spacing:1.6px}
+    .t{font-family:'Karla',system-ui,sans-serif;font-weight:700;font-size:9.5px;letter-spacing:2.4px}
+  </style>
+  <rect width="84" height="84" rx="10" fill="#F2E7A9"></rect>
+  <text class="b" x="42" y="62" text-anchor="middle" fill="#16170F">b</text>
+  <text class="w" x="102" y="45" fill="#F4F1EA">BACKSHIFT</text>
+  <text class="t" x="103" y="62" fill="#8B8579">AI · PRODUCT · SYSTEMS</text>
+</svg>
