@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" role="img" aria-label="Backshift">
   <title>Backshift</title>
-  <!-- back is the arrow pointing left, shift the arrow pointing up. Joined at
-       the corner they read as one arrow: the name drawn instead of written. -->
-  <path d="M40 40V12" stroke="#F2E7A9" stroke-width="8" stroke-linecap="square"/>
-  <path d="M40 40H12" stroke="#F2E7A9" stroke-width="8" stroke-linecap="square"/>
-  <path d="M28 24 40 12 52 24" stroke="#F2E7A9" stroke-width="8" stroke-linejoin="miter"/>
-  <path d="M24 28 12 40 24 52" stroke="#F2E7A9" stroke-width="8" stroke-linejoin="miter"/>
+  <!-- Bare mark, for dark grounds: the k in the text colour, the arrowhead in
+       acid, exactly as they sit inside the wordmark. -->
+  <path d="M29 22V56" stroke="#EEF1F7" stroke-width="7"/>
+  <path d="M29 42 45 28" stroke="#EEF1F7" stroke-width="7"/>
+  <path d="M29 42 45 56" stroke="#EEF1F7" stroke-width="7"/>
+  <path d="M19 18 29 8 39 18" stroke="#F2E7A9" stroke-width="7" stroke-linejoin="bevel"/>
 </svg>

@@ -1,8 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 40" width="200" height="40" role="img" aria-label="Backshift">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 170 46" width="170" height="46" role="img" aria-label="Backshift">
   <title>Backshift</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Karla:wght@700&amp;display=swap');
-    .w{font-family:'Karla',system-ui,sans-serif;font-weight:700;font-size:27px;letter-spacing:1.6px}
+    .w{font-family:'Karla',system-ui,sans-serif;font-weight:700;font-size:30px;letter-spacing:-.4px}
   </style>
-  <text class="w" x="0" y="30" fill="#16170F">BACKSHIFT</text>
+  <!-- Wordmark alone, with the arrowhead over the k. -->
+  <text class="w" x="0" y="38" fill="#16170F">backshift</text>
+  <path d="M55 16 62 8 69 16" stroke="#F2E7A9" stroke-width="5.5" fill="none" stroke-linejoin="bevel"/>
 </svg>
