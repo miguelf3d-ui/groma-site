@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BACKSHIFT — Product design for the difficult parts</title>
-<meta name="description" content="We design and build AI systems that run inside your business — back-offices, dashboards and the dense operational screens your team works in all day. Weeks, not months.">
+<title>BACKSHIFT — Design de produto para as partes difíceis</title>
+<meta name="description" content="Desenhamos e construímos os sistemas em que um negócio assenta — back-offices, dashboards e os ecrãs operacionais densos onde a tua equipa trabalha todos os dias. Semanas, não meses.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&family=Karla:wght@700&display=swap" rel="stylesheet">
@@ -71,6 +71,13 @@ header{position:fixed;top:0;left:0;right:0;z-index:100;transition:.4s}
 .cta:hover{background:#F8F1C8;transform:translateY(-1px)}
 .cta .dot{width:6px;height:6px;border-radius:50%;background:#0A1020}
 @media(max-width:1080px){.pill{display:none}}
+/* language switch */
+.hright{display:flex;align-items:center;gap:10px}
+.lang{display:flex;border:1px solid var(--line-2);border-radius:999px;overflow:hidden}
+.lang button{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;padding:7px 10px;background:none;
+  border:0;color:var(--dim);cursor:pointer;transition:.25s}
+.lang button:hover{color:var(--text)}
+.lang button[aria-current="true"]{background:var(--acid);color:#0A1020}
 
 /* hero */
 .hero{position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;
@@ -258,10 +265,15 @@ footer{border-top:1px solid var(--line);padding:30px 0 44px}
       <span>Backshift</span>
     </a>
     <nav class="pill">
-      <a href="#services">Services</a><a href="#work">Work</a><a href="#method">Method</a>
-      <a href="#agencies">For agencies</a><a href="#studio">Studio</a>
+      <a href="#services" data-i18n="nav.services">Serviços</a><a href="#work" data-i18n="nav.work">Trabalho</a><a href="#method" data-i18n="nav.method">Método</a>
+      <a href="#agencies" data-i18n="nav.agencies">Para agências</a><a href="#studio" data-i18n="nav.studio">Estúdio</a>
     </nav>
-    <a class="cta" href="#contact"><span class="dot"></span>Start a project</a>
+    <div class="hright">
+      <div class="lang" role="group" aria-label="Idioma">
+        <button type="button" data-lang="pt">PT</button><button type="button" data-lang="en">EN</button>
+      </div>
+      <a class="cta" href="#contact"><span class="dot"></span><span data-i18n="nav.cta">Começar um projeto</span></a>
+    </div>
   </div>
 </header>
 
@@ -274,21 +286,21 @@ footer{border-top:1px solid var(--line);padding:30px 0 44px}
   <div class="wrap">
     <div class="tagline">
       <span class="led"></span>
-      <span class="mono">Available — Q3 2026</span>
-      <span class="mono" style="color:var(--dim)">/ Portugal · EU · UK · US</span>
+      <span class="mono" data-i18n="hero.avail">Disponível — Q3 2026</span>
+      <span class="mono" style="color:var(--dim)" data-i18n="hero.geo">/ Portugal · UE · Reino Unido · EUA</span>
     </div>
-    <h1>
-      <span class="l"><i>Product design</i></span>
-      <span class="l"><i>for the <span class="it acid">difficult</span></i></span>
-      <span class="l"><i>parts.</i></span>
+    <h1 data-i18n-html="hero.h1">
+      <span class="l"><i>Design de produto</i></span>
+      <span class="l"><i>para as partes</i></span>
+      <span class="l"><i><span class="it acid">difíceis.</span></i></span>
     </h1>
     <div class="hbot">
-      <p class="lede">Back-offices, dashboards and the dense operational screens that actually
-      run a business. Someone stays with your project from the first conversation to the last
-      handover — using whatever tools serve the work, and the judgement none of them replace.</p>
+      <p class="lede" data-i18n="hero.lede">Back-offices, dashboards e os ecrãs operacionais densos
+      que fazem um negócio andar. Alguém fica com o teu projeto da primeira conversa à última
+      entrega — usando as ferramentas que servirem o trabalho, e o critério que nenhuma delas substitui.</p>
       <div class="hactions">
-        <a class="btn btn-a" href="#work">See the work <span class="ar">→</span></a>
-        <a class="btn btn-g" href="#agencies">Agencies — white label</a>
+        <a class="btn btn-a" href="#work"><span data-i18n="hero.cta1">Ver o trabalho</span> <span class="ar">→</span></a>
+        <a class="btn btn-g" href="#agencies" data-i18n="hero.cta2">Agências — marca branca</a>
       </div>
     </div>
   </div>
@@ -300,10 +312,10 @@ footer{border-top:1px solid var(--line);padding:30px 0 44px}
 <section class="band" id="services">
   <div class="wrap">
     <div class="shead rv">
-      <h2>Four things,<br>done <span class="it">properly</span>.</h2>
-      <p class="lede">Most studios are strong on the first screen and thin everywhere
-      after it. BACKSHIFT is built the other way round — the harder and more operational
-      the product, the more useful we are.</p>
+      <h2 data-i18n-html="svc.h2">Quatro coisas,<br>bem <span class="it">feitas</span>.</h2>
+      <p class="lede" data-i18n="svc.lede">A maioria dos estúdios é forte no primeiro ecrã e fraca
+      em tudo o que vem depois. A Backshift é construída ao contrário — quanto mais difícil e mais
+      operacional for o produto, mais úteis somos.</p>
     </div>
 
     <div class="cards">
@@ -312,11 +324,11 @@ footer{border-top:1px solid var(--line);padding:30px 0 44px}
         <div class="ico"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.3">
           <rect x="3" y="7" width="42" height="34" rx="3"/><path d="M3 16h42M15 16v25"/>
           <path d="M21 23h18M21 29h18M21 35h11"/></svg></div>
-        <h3>Back-office &amp; dashboards</h3>
-        <p>The screens people stare at for eight hours a day. Dense tables, deep hierarchies,
-        permissions, bulk actions, filters that survive real data. The work most studios
-        quietly avoid — and where a bad interface costs real money every week.</p>
-        <div class="chips"><b>Admin systems</b><b>Data tables</b><b>Analytics</b><b>Internal tools</b><b>Workflow UX</b></div>
+        <h3 data-i18n="svc.c1.h">Back-office e dashboards</h3>
+        <p data-i18n="svc.c1.p">Os ecrãs em que as pessoas olham oito horas por dia. Tabelas densas,
+        hierarquias profundas, permissões, ações em massa, filtros que aguentam dados reais. O trabalho
+        que a maioria dos estúdios evita em silêncio — e onde uma interface má custa dinheiro todas as semanas.</p>
+        <div class="chips" data-i18n-html="svc.c1.chips"><b>Sistemas de gestão</b><b>Tabelas de dados</b><b>Analítica</b><b>Ferramentas internas</b><b>UX de fluxo</b></div>
       </article>
 
       <article class="card rv">
@@ -325,11 +337,11 @@ footer{border-top:1px solid var(--line);padding:30px 0 44px}
           <rect x="4" y="4" width="16" height="16" rx="3"/><rect x="28" y="4" width="16" height="16" rx="3"/>
           <rect x="4" y="28" width="16" height="16" rx="3"/><rect x="28" y="28" width="16" height="16" rx="3"/>
           <path d="M20 12h8M12 20v8M36 20v8M20 36h8"/></svg></div>
-        <h3>Design systems</h3>
-        <p>Tokens, component libraries, documentation and the governance that keeps them
-        alive after handover. Built so a developer can ship a screen without asking a
-        single question — and so the system still holds three product managers later.</p>
-        <div class="chips"><b>Tokens</b><b>Component libraries</b><b>Docs</b><b>Theming</b><b>Governance</b></div>
+        <h3 data-i18n="svc.c2.h">Design systems</h3>
+        <p data-i18n="svc.c2.p">Tokens, bibliotecas de componentes, documentação e a governação que
+        os mantém vivos depois da entrega. Feitos para que um programador consiga publicar um ecrã
+        sem fazer uma única pergunta — e para que o sistema aguente três gestores de produto depois.</p>
+        <div class="chips" data-i18n-html="svc.c2.chips"><b>Tokens</b><b>Bibliotecas de componentes</b><b>Documentação</b><b>Temas</b><b>Governação</b></div>
       </article>
 
       <article class="card rv">
@@ -337,24 +349,24 @@ footer{border-top:1px solid var(--line);padding:30px 0 44px}
         <div class="ico"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.3">
           <rect x="4" y="5" width="26" height="38" rx="4"/><rect x="34" y="14" width="10" height="20" rx="3"/>
           <path d="M4 14h26M11 22h13M11 28h9"/><circle cx="17" cy="37" r="1.7"/></svg></div>
-        <h3>Product &amp; interface</h3>
-        <p>End-to-end product work for web and mobile: flows, prototypes, interface and
-        the marketing site that sells it. From first sketch to a build-ready file with
-        every state, error and empty screen already answered.</p>
-        <div class="chips"><b>Web apps</b><b>iOS / Android</b><b>SaaS</b><b>Prototyping</b><b>Marketing sites</b></div>
+        <h3 data-i18n="svc.c3.h">Produto e interface</h3>
+        <p data-i18n="svc.c3.p">Trabalho de produto de ponta a ponta, para web e mobile: fluxos,
+        protótipos, interface e o site que o vende. Do primeiro esboço a um ficheiro pronto a construir,
+        com todos os estados, erros e ecrãs vazios já resolvidos.</p>
+        <div class="chips" data-i18n-html="svc.c3.chips"><b>Aplicações web</b><b>iOS / Android</b><b>SaaS</b><b>Prototipagem</b><b>Sites institucionais</b></div>
       </article>
 
       <article class="card feat rv">
-        <span class="badge">Differentiator</span>
-        <span class="num" style="color:rgba(10,11,12,.5)">04 / Signature</span>
+        <span class="badge" data-i18n="svc.c4.badge">Diferenciador</span>
+        <span class="num" style="color:var(--acid);opacity:.85">04 / Signature</span>
         <div class="ico"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.3">
           <path d="M24 3 44 14v20L24 45 4 34V14z"/><path d="M24 3v21M24 24 4 14M24 24l20-10M24 24v21"/></svg></div>
-        <h3>AI inside the workflow</h3>
-        <p>Not a chatbot bolted to a website. The document that gets read and filed, the enquiry
-        that gets qualified before anyone picks up the phone, the report someone rebuilds by hand
-        every Monday — moved into the software your team already opens every morning. This is
-        where other studios hand you a licence and wish you luck.</p>
-        <div class="chips"><b>Document extraction</b><b>Enquiry triage</b><b>Drafting</b><b>Internal search</b><b>Reporting</b></div>
+        <h3 data-i18n="svc.c4.h">IA dentro do fluxo de trabalho</h3>
+        <p data-i18n="svc.c4.p">Não é um chatbot pregado a um site. O documento que alguém lê e arquiva,
+        o pedido que é qualificado antes de alguém pegar no telefone, o relatório que se refaz à mão
+        todas as segundas-feiras — passados para o software que a tua equipa já abre todas as manhãs.
+        É aqui que os outros estúdios te entregam uma licença e te desejam boa sorte.</p>
+        <div class="chips" data-i18n-html="svc.c4.chips"><b>Extração de documentos</b><b>Triagem de pedidos</b><b>Redação</b><b>Pesquisa interna</b><b>Relatórios</b></div>
       </article>
     </div>
   </div>
@@ -364,16 +376,17 @@ footer{border-top:1px solid var(--line);padding:30px 0 44px}
 <section class="band" id="work">
   <div class="wrap">
     <div class="shead rv">
-      <h2>Ten products.<br>Not ten <span class="it">screenshots</span>.</h2>
-      <p class="lede">Every project below is a working product you can open, scroll and
-      click — not a flat mockup floating in a device frame. Nine were designed and built
-      by the studio to show exactly what we do. One is client work.</p>
+      <h2 data-i18n-html="work.h2">Dez produtos.<br>Não dez <span class="it">imagens</span>.</h2>
+      <p class="lede" data-i18n="work.lede">Cada projeto aqui em baixo é um produto a funcionar,
+      que podes abrir, percorrer e clicar — não é uma maqueta chapada dentro de um ecrã de telemóvel.
+      Nove foram desenhados e construídos pelo estúdio para mostrar exatamente o que fazemos.
+      Um é trabalho de cliente.</p>
     </div>
 
     <div class="works">
       <a class="w wide rv" href="case-comapre.html"><div class="shot" data-l="Client project">
         <img src="assets/comapre/01-hero.jpg" alt="Comapre website" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center;transition:transform .7s cubic-bezier(.2,.7,.3,1)"></div>
-        <div class="meta"><div><h3>Comapre</h3><p>Industrial floor coatings — website, quote engine and content back-office.</p></div><span class="idx">01</span></div></a>
+        <div class="meta"><div><h3 data-i18n="w1.h">Comapre</h3><p data-i18n="w1.p">Revestimentos industriais — site, motor de orçamentos e back-office de conteúdos.</p></div><span class="idx">01</span></div></a>
 
       <a class="w rv" href="case.html?p=02" data-src="demos/02-operations.html"><div class="shot" data-l="Live demo">
         <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
@@ -393,7 +406,7 @@ footer{border-top:1px solid var(--line);padding:30px 0 44px}
             <rect x="260" y="46" width="22" height="16" rx="3"/><rect x="330" y="46" width="28" height="16" rx="3"/>
             <rect x="120" y="210" width="88" height="6" rx="3"/><rect x="120" y="238" width="104" height="6" rx="3"/><rect x="120" y="266" width="72" height="6" rx="3"/></g>
         </svg></div>
-        <div class="meta"><div><h3>Operations console</h3><p>SaaS back-office — dense tables, saved views, bulk actions, roles.</p></div><span class="idx">02</span></div></a>
+        <div class="meta"><div><h3 data-i18n="w2.h">Consola de operações</h3><p data-i18n="w2.p">Back-office SaaS — tabelas densas, vistas guardadas, ações em massa, perfis.</p></div><span class="idx">02</span></div></a>
 
       <a class="w rv" href="case.html?p=03" data-src="demos/03-system.html"><div class="shot" data-l="Live demo">
         <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
@@ -411,7 +424,7 @@ footer{border-top:1px solid var(--line);padding:30px 0 44px}
             <rect x="48" y="234" width="70" height="6" rx="3"/><rect x="224" y="234" width="86" height="6" rx="3"/></g>
           <rect x="316" y="102" width="50" height="30" rx="15" fill="rgba(242,231,169,.22)"/>
         </svg></div>
-        <div class="meta"><div><h3>Design system</h3><p>Navigable tokens, components and documentation.</p></div><span class="idx">03</span></div></a>
+        <div class="meta"><div><h3 data-i18n="w3.h">Design system</h3><p data-i18n="w3.p">Tokens, componentes e documentação navegáveis.</p></div><span class="idx">03</span></div></a>
 
       <a class="w rv" href="case.html?p=04" data-src="demos/04-commerce.html"><div class="shot" data-l="Live demo">
         <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
@@ -427,7 +440,7 @@ footer{border-top:1px solid var(--line);padding:30px 0 44px}
           <g fill="rgba(255,255,255,.17)"><rect x="40" y="252" width="52" height="6" rx="3"/><rect x="162" y="252" width="62" height="6" rx="3"/><rect x="284" y="252" width="44" height="6" rx="3"/></g>
           <g fill="rgba(242,231,169,.55)"><rect x="40" y="264" width="26" height="5" rx="2.5"/><rect x="162" y="264" width="26" height="5" rx="2.5"/><rect x="284" y="264" width="26" height="5" rx="2.5"/></g>
         </svg></div>
-        <div class="meta"><div><h3>Fashion commerce</h3><p>Storefront, product page and checkout built for conversion.</p></div><span class="idx">04</span></div></a>
+        <div class="meta"><div><h3 data-i18n="w4.h">Comércio de moda</h3><p data-i18n="w4.p">Montra, página de produto e checkout pensados para converter.</p></div><span class="idx">04</span></div></a>
 
       <a class="w rv" href="case.html?p=05" data-src="demos/05-banking.html"><div class="shot" data-l="Live demo">
         <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
@@ -444,7 +457,7 @@ footer{border-top:1px solid var(--line);padding:30px 0 44px}
             <circle cx="163" cy="231" r="6"/><rect x="176" y="228" width="46" height="5" rx="2.5"/></g>
           <rect x="168" y="252" width="64" height="4" rx="2" fill="rgba(255,255,255,.2)"/>
         </svg></div>
-        <div class="meta"><div><h3>Banking app</h3><p>Mobile fintech — onboarding, dark UI, micro-motion.</p></div><span class="idx">05</span></div></a>
+        <div class="meta"><div><h3 data-i18n="w5.h">Aplicação bancária</h3><p data-i18n="w5.p">Fintech mobile — adesão, interface escura, micro-animação.</p></div><span class="idx">05</span></div></a>
 
       <a class="w rv" href="case.html?p=06" data-src="demos/06-clinic.html"><div class="shot" data-l="Live demo">
         <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
@@ -462,7 +475,7 @@ footer{border-top:1px solid var(--line);padding:30px 0 44px}
             <rect x="282" y="100" width="72" height="16" rx="4"/><rect x="282" y="126" width="72" height="16" rx="4"/><rect x="282" y="152" width="72" height="16" rx="4"/></g>
           <rect x="282" y="188" width="72" height="20" rx="10" fill="rgba(242,231,169,.5)"/>
         </svg></div>
-        <div class="meta"><div><h3>Clinic platform</h3><p>Appointments and records — accessibility and trust.</p></div><span class="idx">06</span></div></a>
+        <div class="meta"><div><h3 data-i18n="w6.h">Plataforma de clínica</h3><p data-i18n="w6.p">Marcações e registos — acessibilidade e confiança.</p></div><span class="idx">06</span></div></a>
 
       <a class="w rv" href="case.html?p=07" data-src="demos/07-property.html"><div class="shot" data-l="Live demo">
         <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
@@ -478,7 +491,7 @@ footer{border-top:1px solid var(--line);padding:30px 0 44px}
           <g fill="rgba(242,231,169,.7)"><rect x="230" y="186" width="52" height="7" rx="3.5"/></g>
           <g fill="none" stroke="rgba(255,255,255,.13)"><rect x="298" y="34" width="72" height="18" rx="9"/></g>
         </svg></div>
-        <div class="meta"><div><h3>Property &amp; plans</h3><p>Navigable floor plans and 3D visualisation in-browser.</p></div><span class="idx">07</span></div></a>
+        <div class="meta"><div><h3 data-i18n="w7.h">Imobiliário e plantas</h3><p data-i18n="w7.p">Plantas navegáveis e visualização tridimensional no browser.</p></div><span class="idx">07</span></div></a>
 
       <a class="w wide rv" href="case.html?p=08" data-src="demos/08-heritage.html"><div class="shot" data-l="Live demo — immersive">
         <svg viewBox="0 0 800 300" preserveAspectRatio="xMidYMid slice">
@@ -498,7 +511,7 @@ footer{border-top:1px solid var(--line);padding:30px 0 44px}
           <g fill="rgba(255,255,255,.2)"><circle cx="346" cy="265" r="4"/><circle cx="378" cy="265" r="4"/><circle cx="410" cy="265" r="4"/></g>
           <circle cx="442" cy="265" r="4" fill="rgba(242,231,169,.85)"/>
         </svg></div>
-        <div class="meta"><div><h3>Heritage experience</h3><p>A guided immersive visit — points of interest, media, spatial navigation.</p></div><span class="idx">08</span></div></a>
+        <div class="meta"><div><h3 data-i18n="w8.h">Experiência patrimonial</h3><p data-i18n="w8.p">Visita guiada e imersiva — pontos de interesse, media, navegação espacial.</p></div><span class="idx">08</span></div></a>
 
       <a class="w rv" href="case.html?p=09" data-src="demos/09-restaurant.html"><div class="shot" data-l="Live demo">
         <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
@@ -511,7 +524,7 @@ footer{border-top:1px solid var(--line);padding:30px 0 44px}
           <rect x="176" y="205" width="48" height="5" rx="2.5" fill="rgba(242,231,169,.7)"/>
           <g fill="rgba(255,255,255,.13)"><rect x="28" y="26" width="42" height="6" rx="3"/><rect x="300" y="26" width="30" height="6" rx="3"/><rect x="344" y="26" width="28" height="6" rx="3"/></g>
         </svg></div>
-        <div class="meta"><div><h3>Restaurant</h3><p>Brand-led, photographic, reservation-first.</p></div><span class="idx">09</span></div></a>
+        <div class="meta"><div><h3 data-i18n="w9.h">Restaurante</h3><p data-i18n="w9.p">Guiado pela marca, fotográfico, reserva em primeiro lugar.</p></div><span class="idx">09</span></div></a>
 
       <a class="w rv" href="case.html?p=10" data-src="demos/10-saas.html"><div class="shot" data-l="Live demo">
         <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
@@ -528,7 +541,7 @@ footer{border-top:1px solid var(--line);padding:30px 0 44px}
             <rect x="282" y="212" width="40" height="6" rx="3"/><rect x="282" y="228" width="56" height="12" rx="3"/></g>
           <g fill="rgba(242,231,169,.7)"><rect x="163" y="206" width="40" height="6" rx="3"/><rect x="163" y="222" width="60" height="14" rx="3"/></g>
         </svg></div>
-        <div class="meta"><div><h3>B2B SaaS site</h3><p>Positioning, pricing and proof — a page sales can use.</p></div><span class="idx">10</span></div></a>
+        <div class="meta"><div><h3 data-i18n="w10.h">Site SaaS B2B</h3><p data-i18n="w10.p">Posicionamento, preços e prova — uma página que a equipa comercial usa.</p></div><span class="idx">10</span></div></a>
     </div>
   </div>
 </section>
@@ -537,10 +550,10 @@ footer{border-top:1px solid var(--line);padding:30px 0 44px}
 <section class="band">
   <div class="wrap">
     <div class="stats rv">
-      <div class="st"><div class="v">20<em>+</em></div><div class="k">Years designing and building digital product</div></div>
-      <div class="st"><div class="v">4</div><div class="k">Disciplines under one roof, not four separate hires</div></div>
-      <div class="st"><div class="v">10</div><div class="k">Complete products designed and built for this site</div></div>
-      <div class="st"><div class="v">72<em>h</em></div><div class="k">From brief to a prototype you can click</div></div>
+      <div class="st"><div class="v">20<em>+</em></div><div class="k" data-i18n="st.1">Anos a desenhar e a construir produto digital</div></div>
+      <div class="st"><div class="v">4</div><div class="k" data-i18n="st.2">Disciplinas sob o mesmo teto, em vez de quatro contratações</div></div>
+      <div class="st"><div class="v">10</div><div class="k" data-i18n="st.3">Produtos completos desenhados e construídos para este site</div></div>
+      <div class="st"><div class="v">72<em>h</em></div><div class="k" data-i18n="st.4">Do briefing a um protótipo que se clica</div></div>
     </div>
   </div>
 </section>
@@ -549,27 +562,27 @@ footer{border-top:1px solid var(--line);padding:30px 0 44px}
 <section class="band band-g" id="method">
   <div class="wrap">
     <div class="shead rv">
-      <h2>From diagnostic<br>to <span class="it">running</span>.</h2>
-      <p class="lede">Nothing for you to specify, nothing to migrate, no twelve-month programme.
-      Weeks from the first conversation to a system working inside your business — connected to
-      the software you already pay for, run by the people already there.</p>
+      <h2 data-i18n-html="mt.h2">Do diagnóstico<br>ao <span class="it">funcionar</span>.</h2>
+      <p class="lede" data-i18n="mt.lede">Nada para tu especificares, nada para migrar, nenhum programa
+      de doze meses. Semanas entre a primeira conversa e um sistema a funcionar dentro do teu negócio —
+      ligado ao software que já pagas, usado pelas pessoas que já lá estão.</p>
     </div>
     <div class="steps rv">
-      <div class="sp"><span class="k">01</span><h3>Diagnostic</h3><p>Forty-five minutes, free, no deck. We walk the real process — the spreadsheet one person maintains by hand, the inbox that is actually a queue, the report that eats a morning every week. You leave knowing what is worth automating and what is not.</p></div>
-      <div class="sp"><span class="k">02</span><h3>Scope</h3><p>Exact deliverable, exact date, exact price, and the one number we agree to be judged on. If the payback is not there, we say so before you have spent anything.</p></div>
-      <div class="sp"><span class="k">03</span><h3>Something you can click</h3><p>Within days, a working interface in your browser — real states, real data shapes, the awkward cases included. Approving a picture of a system is how projects fall apart in month three.</p></div>
-      <div class="sp"><span class="k">04</span><h3>Build and connect</h3><p>We build it and wire it into what you already run: your ERP, your inbox, your invoicing, your spreadsheets. No migration project, no "first you need to replace X".</p></div>
-      <div class="sp"><span class="k">05</span><h3>Hand over</h3><p>Your team is trained on the thing they will actually use, with documentation written for them rather than for a developer. You own the code, the data and the accounts. Nothing is held hostage.</p></div>
-      <div class="sp"><span class="k">06</span><h3>Measure and extend</h3><p>We track the number from step two. What earns its keep gets extended; what does not gets cut. Most systems justify a second phase — and when one does not, you will hear it from us first.</p></div>
+      <div class="sp"><span class="k">01</span><h3 data-i18n="mt.1h">Diagnóstico</h3><p data-i18n="mt.1p">Quarenta e cinco minutos, sem custo e sem apresentação. Percorremos o processo real — a folha de cálculo que alguém mantém à mão, a caixa de correio que é afinal uma fila de espera, o relatório que come uma manhã por semana. Sais a saber o que vale a pena automatizar e o que não vale.</p></div>
+      <div class="sp"><span class="k">02</span><h3 data-i18n="mt.2h">Âmbito</h3><p data-i18n="mt.2p">Entregável exato, data exata, preço exato, e o número pelo qual aceitamos ser julgados. Se o retorno não estiver lá, dizemo-lo antes de teres gasto o que quer que seja.</p></div>
+      <div class="sp"><span class="k">03</span><h3 data-i18n="mt.3h">Algo que se clica</h3><p data-i18n="mt.3p">Em dias, uma interface a funcionar no teu browser — estados reais, dados com a forma real, casos complicados incluídos. Aprovar a fotografia de um sistema é como os projetos se desfazem ao terceiro mês.</p></div>
+      <div class="sp"><span class="k">04</span><h3 data-i18n="mt.4h">Construir e ligar</h3><p data-i18n="mt.4p">Construímos e ligamos ao que já tens a andar: o teu ERP, o teu email, a tua faturação, as tuas folhas de cálculo. Sem projeto de migração e sem "primeiro tens de substituir o X".</p></div>
+      <div class="sp"><span class="k">05</span><h3 data-i18n="mt.5h">Entregar</h3><p data-i18n="mt.5p">A tua equipa é formada na coisa que vai mesmo usar, com documentação escrita para ela e não para um programador. O código, os dados e as contas são teus. Nada fica refém.</p></div>
+      <div class="sp"><span class="k">06</span><h3 data-i18n="mt.6h">Medir e alargar</h3><p data-i18n="mt.6p">Acompanhamos o número do passo dois. O que se paga é alargado; o que não se paga é cortado. A maioria dos sistemas justifica uma segunda fase — e quando um não justifica, és o primeiro a saber por nós.</p></div>
     </div>
     <div class="rv" style="margin-top:clamp(30px,4vw,48px);border-top:1px solid var(--line);padding-top:26px">
-      <span class="mono-a">In practice</span>
-      <p style="margin-top:16px;max-width:70ch;font-size:15.5px">An industrial flooring
-      applicator was fielding "how much per square metre?" by phone — a question nobody can
-      answer honestly without seeing the floor. Sales time went into visits that were never
-      going to convert. We replaced the call with a five-question intake that qualifies the
-      enquiry before anyone gets in a van, and a back-office the team edits without calling
-      us. Same trade, same people, one fewer wasted morning per week.</p>
+      <span class="mono-a" data-i18n="mt.pr">Na prática</span>
+      <p style="margin-top:16px;max-width:70ch;font-size:15.5px" data-i18n="mt.prp">Um aplicador de
+      pavimentos industriais respondia ao telefone a "quanto custa o metro quadrado?" — uma pergunta
+      a que ninguém responde com honestidade sem ver o pavimento. O tempo comercial ia em visitas que
+      nunca iam converter. Substituímos a chamada por um formulário de cinco perguntas que qualifica
+      o pedido antes de alguém entrar na carrinha, e por um back-office que a equipa edita sem nos
+      ligar. O mesmo ofício, as mesmas pessoas, menos uma manhã perdida por semana.</p>
     </div>
   </div>
 </section>
@@ -578,17 +591,18 @@ footer{border-top:1px solid var(--line);padding:30px 0 44px}
 <section class="band" id="agencies">
   <div class="wrap">
     <div class="ag-box rv"><div class="ag-in">
-      <span class="mono-a">For agencies — white label</span>
-      <h2 style="margin:22px 0 22px">The capacity you<br>say <span class="it">yes</span> with.</h2>
-      <p class="lede" style="max-width:620px">You have the client and the deadline, and not enough
-      people this quarter. BACKSHIFT works behind agencies: your brand on the deck, your client
-      relationship, your file structure. We are never in the room unless you want us there.</p>
+      <span class="mono-a" data-i18n="ag.k">Para agências — marca branca</span>
+      <h2 style="margin:22px 0 22px" data-i18n-html="ag.h2">A capacidade com que<br>dizes <span class="it">sim</span>.</h2>
+      <p class="lede" style="max-width:620px" data-i18n="ag.lede">Tens o cliente e o prazo, e não tens
+      gente que chegue este trimestre. A Backshift trabalha por trás das agências: a tua marca na
+      apresentação, a tua relação com o cliente, a tua estrutura de ficheiros. Nunca estamos na sala
+      a não ser que nos queiras lá.</p>
       <div class="ag-l">
-        <div><h3>Invisible by default</h3><p>NDA before the first call. No case study, no credit, no mention — unless you decide otherwise. Your client never needs to know we existed.</p></div>
-        <div><h3>We work in your file</h3><p>Your Figma, your naming, your component library, your branch. We adapt to how your team already works instead of exporting a foreign system into it.</p></div>
-        <div><h3>Scoped, not staffed</h3><p>Per-project or per-sprint, starting inside a week. For larger scopes we assemble specialists from a vetted network — you still deal with one point of contact.</p></div>
+        <div><h3 data-i18n="ag.1h">Invisíveis por omissão</h3><p data-i18n="ag.1p">Acordo de confidencialidade antes da primeira chamada. Sem caso de estudo, sem crédito, sem menção — a não ser que decidas o contrário. O teu cliente nunca precisa de saber que existimos.</p></div>
+        <div><h3 data-i18n="ag.2h">Trabalhamos no teu ficheiro</h3><p data-i18n="ag.2p">O teu Figma, a tua nomenclatura, a tua biblioteca de componentes, o teu branch. Adaptamo-nos à forma como a tua equipa já trabalha, em vez de lhe exportar um sistema estranho.</p></div>
+        <div><h3 data-i18n="ag.3h">Por âmbito, não por alocação</h3><p data-i18n="ag.3p">Por projeto ou por sprint, a começar dentro de uma semana. Para âmbitos maiores reunimos especialistas de uma rede validada — continuas a falar com um único ponto de contacto.</p></div>
       </div>
-      <div style="margin-top:clamp(30px,4vw,48px)"><a class="btn btn-a" href="#contact">Talk about capacity <span class="ar">→</span></a></div>
+      <div style="margin-top:clamp(30px,4vw,48px)"><a class="btn btn-a" href="#contact"><span data-i18n="ag.btn">Falar sobre capacidade</span> <span class="ar">→</span></a></div>
     </div></div>
   </div>
 </section>
@@ -597,9 +611,9 @@ footer{border-top:1px solid var(--line);padding:30px 0 44px}
 <section class="band">
   <div class="wrap">
     <div class="shead rv" style="margin-bottom:30px">
-      <div><span class="mono-a">Stack</span><h2 style="margin-top:18px">The tools behind<br>the <span class="it">output</span>.</h2></div>
-      <p class="lede">Design, engineering and AI in one pipeline. No handoffs
-      between four different suppliers, because there aren't four suppliers.</p>
+      <div><span class="mono-a" data-i18n="tl.k">Stack</span><h2 style="margin-top:18px" data-i18n-html="tl.h2">As ferramentas por trás<br>do <span class="it">resultado</span>.</h2></div>
+      <p class="lede" data-i18n="tl.lede">Design, engenharia e IA num só pipeline. Sem passagens
+      de testemunho entre quatro fornecedores, porque não há quatro fornecedores.</p>
     </div>
     <div class="tools rv">
       <div>Figma</div><div>Claude Code</div><div>Next.js</div><div>React</div><div>TypeScript</div><div>Node</div>
@@ -612,37 +626,37 @@ footer{border-top:1px solid var(--line);padding:30px 0 44px}
 <section class="band band-g" id="studio">
   <div class="wrap">
     <div class="shead rv">
-      <h2>One studio.<br>Every <span class="it">layer</span> of it.</h2>
+      <h2 data-i18n-html="su.h2">Um estúdio.<br>Todas as <span class="it">camadas</span>.</h2>
     </div>
     <div class="stu rv">
       <div>
-        <p class="lede">BACKSHIFT designs and builds the systems a business runs on, with twenty
-        years of practice in digital product behind it — most recently leading design on a
-        virtual-tour platform: the mobile app, the front-end experience and the back-office
-        its clients build everything in.</p>
-        <p style="margin-top:22px;max-width:62ch;font-size:15.5px">That range is the point: whoever
-        draws the system architecture also draws the button, and knows why one constrains the
-        other. When a project needs more hands — complex front-end, backend, extra production —
-        they come from a vetted network, coordinated in-house. You brief the studio. You approve
-        one body of work.</p>
-        <div style="margin-top:32px"><a class="btn btn-g" href="#contact">Work with the studio <span class="ar">→</span></a></div>
+        <p class="lede" data-i18n="su.lede">A Backshift desenha e constrói os sistemas em que um
+        negócio assenta, com vinte anos de prática em produto digital por trás — mais recentemente
+        a liderar o design de uma plataforma de visitas virtuais: a aplicação móvel, a experiência
+        de front-end e o back-office onde os clientes constroem tudo.</p>
+        <p style="margin-top:22px;max-width:62ch;font-size:15.5px" data-i18n="su.p2">É essa amplitude
+        que importa: quem desenha a arquitetura do sistema desenha também o botão, e sabe porque é
+        que um condiciona o outro. Quando um projeto precisa de mais mãos — front-end complexo,
+        backend, produção extra — vêm de uma rede validada, coordenada internamente. Fazes o briefing
+        ao estúdio. Aprovas um único corpo de trabalho.</p>
+        <div style="margin-top:32px"><a class="btn btn-g" href="#contact"><span data-i18n="su.btn">Trabalhar com o estúdio</span> <span class="ar">→</span></a></div>
       </div>
       <div>
-        <span class="mono" style="display:block;margin-bottom:14px">In-house</span>
+        <span class="mono" style="display:block;margin-bottom:14px" data-i18n="su.in">Interno</span>
         <div class="dl">
-          <div><b>Product design</b><span>UX · UI · Systems</span></div>
-          <div><b>Back-office UX</b><span>Data · Workflow</span></div>
-          <div><b>Mobile</b><span>iOS · Android</span></div>
-          <div><b>AI systems</b><span>Extraction · Agents</span></div>
-          <div><b>Automation</b><span>Workflow · Integrations</span></div>
-          <div><b>Brand</b><span>Identity · Direction</span></div>
-          <div><b>Data</b><span>Pipelines · Reporting</span></div>
+          <div data-i18n-html="su.r1"><b>Design de produto</b><span>UX · UI · Sistemas</span></div>
+          <div data-i18n-html="su.r2"><b>UX de back-office</b><span>Dados · Fluxo</span></div>
+          <div data-i18n-html="su.r3"><b>Mobile</b><span>iOS · Android</span></div>
+          <div data-i18n-html="su.r4"><b>Sistemas de IA</b><span>Extração · Agentes</span></div>
+          <div data-i18n-html="su.r5"><b>Automação</b><span>Fluxo · Integrações</span></div>
+          <div data-i18n-html="su.r6"><b>Marca</b><span>Identidade · Direção</span></div>
+          <div data-i18n-html="su.r7"><b>Dados</b><span>Pipelines · Relatórios</span></div>
         </div>
-        <span class="mono" style="display:block;margin:26px 0 14px">Extended network</span>
+        <span class="mono" style="display:block;margin:26px 0 14px" data-i18n="su.ext">Rede alargada</span>
         <div class="dl">
-          <div><b>Front-end</b><span>React · Next</span></div>
-          <div><b>Backend</b><span>API · Infra</span></div>
-          <div><b>Copy · Sound · QA</b><span>On demand</span></div>
+          <div data-i18n-html="su.r8"><b>Front-end</b><span>React · Next</span></div>
+          <div data-i18n-html="su.r9"><b>Backend</b><span>API · Infraestrutura</span></div>
+          <div data-i18n-html="su.r10"><b>Texto · Som · QA</b><span>A pedido</span></div>
         </div>
       </div>
     </div>
@@ -652,17 +666,17 @@ footer{border-top:1px solid var(--line);padding:30px 0 44px}
 <!-- CONTACT -->
 <section class="band" id="contact">
   <div class="wrap">
-    <span class="mono-a rv">Contact</span>
-    <h2 class="big rv" style="margin-top:26px">Tell us what's<br>
-      <a class="ul it acid" href="mailto:miguelf3d@gmail.com?subject=Project%20enquiry%20—%20BACKSHIFT">difficult</a> about it.</h2>
-    <p class="lede rv" style="margin-top:clamp(26px,4vw,44px);max-width:600px">A paragraph is enough
-    to start. What the product is, who it's for, what's blocking it, and roughly when you need
-    it. You get a reply within one working day — from whoever would do the work, not an
-    account manager.</p>
+    <span class="mono-a rv" data-i18n="ct.k">Contacto</span>
+    <h2 class="big rv" style="margin-top:26px" data-i18n-html="ct.h2">Diz-nos o que tem de<br>
+      <a class="ul it acid" href="mailto:miguelf3d@gmail.com?subject=Pedido%20de%20projeto%20—%20Backshift">difícil</a>.</h2>
+    <p class="lede rv" style="margin-top:clamp(26px,4vw,44px);max-width:600px" data-i18n="ct.lede">Um
+    parágrafo chega para começar. O que é o produto, para quem é, o que está a travá-lo e mais ou
+    menos para quando precisas dele. Tens resposta dentro de um dia útil — de quem faria o trabalho,
+    não de um gestor de conta.</p>
     <div class="cgrid rv">
-      <div class="st"><span class="mono">Email</span><div style="margin-top:12px"><a class="ul" href="mailto:miguelf3d@gmail.com" style="font-size:18px">miguelf3d@gmail.com</a></div></div>
-      <div class="st"><span class="mono">Phone</span><div style="margin-top:12px"><a class="ul" href="tel:+351916700674" style="font-size:18px">+351 916 700 674</a></div></div>
-      <div class="st"><span class="mono">Based</span><div style="margin-top:12px;font-size:18px">Portugal — Porto</div></div>
+      <div class="st"><span class="mono" data-i18n="ct.email">Email</span><div style="margin-top:12px"><a class="ul" href="mailto:miguelf3d@gmail.com" style="font-size:18px">miguelf3d@gmail.com</a></div></div>
+      <div class="st"><span class="mono" data-i18n="ct.phone">Telefone</span><div style="margin-top:12px"><a class="ul" href="tel:+351916700674" style="font-size:18px">+351 916 700 674</a></div></div>
+      <div class="st"><span class="mono" data-i18n="ct.based">Sediados</span><div style="margin-top:12px;font-size:18px">Portugal — Porto</div></div>
     </div>
   </div>
 </section>
@@ -674,16 +688,136 @@ footer{border-top:1px solid var(--line);padding:30px 0 44px}
     <text x="42" y="62" text-anchor="middle" fill="#16170F" font-family="Instrument Serif,Georgia,serif"
     font-style="italic" font-size="62">b</text>
     </svg><span style="font-size:13px">Backshift</span></div>
-  <span class="mono" style="text-transform:none">Backshift — the shift that runs while the building sleeps. Nothing opens in the morning without it.</span>
+  <span class="mono" style="text-transform:none" data-i18n="ft.tag">Backshift — o turno que trabalha enquanto o edifício dorme. Sem ele, nada abre de manhã.</span>
   <span class="mono">© 2026</span>
 </div></footer>
 
 <script>
-// marquee content
-const items=['Back-office & dashboards','Design systems','Product design','AI automation',
-'Workflow systems','Mobile apps','Data visualisation','Prototyping','White label for agencies','Creative direction'];
-const mq=document.getElementById('mq');
-mq.innerHTML=(items.map(i=>`<span>${i}</span>`).join('')).repeat(2);
+/* ---------------------------------------------------------------------------
+   Language. Portuguese is the source of truth: it lives in the markup, so the
+   page is correct before any script runs and stays correct if none does.
+   The dictionary only carries the English side.
+   --------------------------------------------------------------------------- */
+const EN = {
+  'nav.services':'Services','nav.work':'Work','nav.method':'Method','nav.agencies':'For agencies',
+  'nav.studio':'Studio','nav.cta':'Start a project',
+  'hero.avail':'Available — Q3 2026','hero.geo':'/ Portugal · EU · UK · US',
+  'hero.h1':'<span class="l"><i>Product design</i></span><span class="l"><i>for the <span class="it acid">difficult</span></i></span><span class="l"><i>parts.</i></span>',
+  'hero.lede':'Back-offices, dashboards and the dense operational screens that actually run a business. Someone stays with your project from the first conversation to the last handover — using whatever tools serve the work, and the judgement none of them replace.',
+  'hero.cta1':'See the work','hero.cta2':'Agencies — white label',
+  'svc.h2':'Four things,<br>done <span class="it">properly</span>.',
+  'svc.lede':'Most studios are strong on the first screen and thin everywhere after it. Backshift is built the other way round — the harder and more operational the product, the more useful we are.',
+  'svc.c1.h':'Back-office & dashboards',
+  'svc.c1.p':'The screens people stare at for eight hours a day. Dense tables, deep hierarchies, permissions, bulk actions, filters that survive real data. The work most studios quietly avoid — and where a bad interface costs real money every week.',
+  'svc.c1.chips':'<b>Admin systems</b><b>Data tables</b><b>Analytics</b><b>Internal tools</b><b>Workflow UX</b>',
+  'svc.c2.h':'Design systems',
+  'svc.c2.p':'Tokens, component libraries, documentation and the governance that keeps them alive after handover. Built so a developer can ship a screen without asking a single question — and so the system still holds three product managers later.',
+  'svc.c2.chips':'<b>Tokens</b><b>Component libraries</b><b>Docs</b><b>Theming</b><b>Governance</b>',
+  'svc.c3.h':'Product & interface',
+  'svc.c3.p':'End-to-end product work for web and mobile: flows, prototypes, interface and the marketing site that sells it. From first sketch to a build-ready file with every state, error and empty screen already answered.',
+  'svc.c3.chips':'<b>Web apps</b><b>iOS / Android</b><b>SaaS</b><b>Prototyping</b><b>Marketing sites</b>',
+  'svc.c4.badge':'Differentiator','svc.c4.h':'AI inside the workflow',
+  'svc.c4.p':'Not a chatbot bolted to a website. The document that gets read and filed, the enquiry that gets qualified before anyone picks up the phone, the report someone rebuilds by hand every Monday — moved into the software your team already opens every morning. This is where other studios hand you a licence and wish you luck.',
+  'svc.c4.chips':'<b>Document extraction</b><b>Enquiry triage</b><b>Drafting</b><b>Internal search</b><b>Reporting</b>',
+  'work.h2':'Ten products.<br>Not ten <span class="it">screenshots</span>.',
+  'work.lede':'Every project below is a working product you can open, scroll and click — not a flat mockup floating in a device frame. Nine were designed and built by the studio to show exactly what we do. One is client work.',
+  'w1.h':'Comapre','w1.p':'Industrial floor coatings — website, quote engine and content back-office.',
+  'w2.h':'Operations console','w2.p':'SaaS back-office — dense tables, saved views, bulk actions, roles.',
+  'w3.h':'Design system','w3.p':'Navigable tokens, components and documentation.',
+  'w4.h':'Fashion commerce','w4.p':'Storefront, product page and checkout built for conversion.',
+  'w5.h':'Banking app','w5.p':'Mobile fintech — onboarding, dark UI, micro-motion.',
+  'w6.h':'Clinic platform','w6.p':'Appointments and records — accessibility and trust.',
+  'w7.h':'Property & plans','w7.p':'Navigable floor plans and 3D visualisation in-browser.',
+  'w8.h':'Heritage experience','w8.p':'A guided immersive visit — points of interest, media, spatial navigation.',
+  'w9.h':'Restaurant','w9.p':'Brand-led, photographic, reservation-first.',
+  'w10.h':'B2B SaaS site','w10.p':'Positioning, pricing and proof — a page sales can use.',
+  'st.1':'Years designing and building digital product',
+  'st.2':'Disciplines under one roof, not four separate hires',
+  'st.3':'Complete products designed and built for this site',
+  'st.4':'From brief to a prototype you can click',
+  'mt.h2':'From diagnostic<br>to <span class="it">running</span>.',
+  'mt.lede':'Nothing for you to specify, nothing to migrate, no twelve-month programme. Weeks from the first conversation to a system working inside your business — connected to the software you already pay for, run by the people already there.',
+  'mt.1h':'Diagnostic','mt.1p':'Forty-five minutes, free, no deck. We walk the real process — the spreadsheet one person maintains by hand, the inbox that is actually a queue, the report that eats a morning every week. You leave knowing what is worth automating and what is not.',
+  'mt.2h':'Scope','mt.2p':'Exact deliverable, exact date, exact price, and the one number we agree to be judged on. If the payback is not there, we say so before you have spent anything.',
+  'mt.3h':'Something you can click','mt.3p':'Within days, a working interface in your browser — real states, real data shapes, the awkward cases included. Approving a picture of a system is how projects fall apart in month three.',
+  'mt.4h':'Build and connect','mt.4p':'We build it and wire it into what you already run: your ERP, your inbox, your invoicing, your spreadsheets. No migration project, no "first you need to replace X".',
+  'mt.5h':'Hand over','mt.5p':'Your team is trained on the thing they will actually use, with documentation written for them rather than for a developer. You own the code, the data and the accounts. Nothing is held hostage.',
+  'mt.6h':'Measure and extend','mt.6p':'We track the number from step two. What earns its keep gets extended; what does not gets cut. Most systems justify a second phase — and when one does not, you will hear it from us first.',
+  'mt.pr':'In practice',
+  'mt.prp':'An industrial flooring applicator was fielding "how much per square metre?" by phone — a question nobody can answer honestly without seeing the floor. Sales time went into visits that were never going to convert. We replaced the call with a five-question intake that qualifies the enquiry before anyone gets in a van, and a back-office the team edits without calling us. Same trade, same people, one fewer wasted morning per week.',
+  'ag.k':'For agencies — white label',
+  'ag.h2':'The capacity you<br>say <span class="it">yes</span> with.',
+  'ag.lede':'You have the client and the deadline, and not enough people this quarter. Backshift works behind agencies: your brand on the deck, your client relationship, your file structure. We are never in the room unless you want us there.',
+  'ag.1h':'Invisible by default','ag.1p':'NDA before the first call. No case study, no credit, no mention — unless you decide otherwise. Your client never needs to know we existed.',
+  'ag.2h':'We work in your file','ag.2p':'Your Figma, your naming, your component library, your branch. We adapt to how your team already works instead of exporting a foreign system into it.',
+  'ag.3h':'Scoped, not staffed','ag.3p':'Per-project or per-sprint, starting inside a week. For larger scopes we assemble specialists from a vetted network — you still deal with one point of contact.',
+  'ag.btn':'Talk about capacity',
+  'tl.k':'Stack','tl.h2':'The tools behind<br>the <span class="it">output</span>.',
+  'tl.lede':"Design, engineering and AI in one pipeline. No handoffs between four different suppliers, because there aren't four suppliers.",
+  'su.h2':'One studio.<br>Every <span class="it">layer</span> of it.',
+  'su.lede':'Backshift designs and builds the systems a business runs on, with twenty years of practice in digital product behind it — most recently leading design on a virtual-tour platform: the mobile app, the front-end experience and the back-office its clients build everything in.',
+  'su.p2':'That range is the point: whoever draws the system architecture also draws the button, and knows why one constrains the other. When a project needs more hands — complex front-end, backend, extra production — they come from a vetted network, coordinated in-house. You brief the studio. You approve one body of work.',
+  'su.btn':'Work with the studio','su.in':'In-house','su.ext':'Extended network',
+  'su.r1':'<b>Product design</b><span>UX · UI · Systems</span>',
+  'su.r2':'<b>Back-office UX</b><span>Data · Workflow</span>',
+  'su.r3':'<b>Mobile</b><span>iOS · Android</span>',
+  'su.r4':'<b>AI systems</b><span>Extraction · Agents</span>',
+  'su.r5':'<b>Automation</b><span>Workflow · Integrations</span>',
+  'su.r6':'<b>Brand</b><span>Identity · Direction</span>',
+  'su.r7':'<b>Data</b><span>Pipelines · Reporting</span>',
+  'su.r8':'<b>Front-end</b><span>React · Next</span>',
+  'su.r9':'<b>Backend</b><span>API · Infra</span>',
+  'su.r10':'<b>Copy · Sound · QA</b><span>On demand</span>',
+  'ct.k':'Contact','ct.h2':'Tell us what\'s<br>\n      <a class="ul it acid" href="mailto:miguelf3d@gmail.com?subject=Project%20enquiry%20—%20Backshift">difficult</a> about it.',
+  'ct.lede':"A paragraph is enough to start. What the product is, who it's for, what's blocking it, and roughly when you need it. You get a reply within one working day — from whoever would do the work, not an account manager.",
+  'ct.email':'Email','ct.phone':'Phone','ct.based':'Based',
+  'ft.tag':'Backshift — the shift that runs while the building sleeps. Nothing opens in the morning without it.',
+  'doc.title':'BACKSHIFT — Product design for the difficult parts',
+  'doc.desc':'We design and build AI systems that run inside your business — back-offices, dashboards and the dense operational screens your team works in all day. Weeks, not months.'
+};
+
+const MQ = {
+  pt:['Back-office e dashboards','Design systems','Design de produto','Automação com IA',
+      'Sistemas de fluxo','Aplicações móveis','Visualização de dados','Prototipagem',
+      'Marca branca para agências','Direção criativa'],
+  en:['Back-office & dashboards','Design systems','Product design','AI automation',
+      'Workflow systems','Mobile apps','Data visualisation','Prototyping',
+      'White label for agencies','Creative direction']
+};
+
+(()=>{
+  // The Portuguese original is read off the DOM once, so PT needs no dictionary.
+  const PT = {};
+  document.querySelectorAll('[data-i18n]').forEach(el=>PT[el.dataset.i18n]=el.textContent);
+  document.querySelectorAll('[data-i18n-html]').forEach(el=>PT[el.dataset.i18nHtml]=el.innerHTML);
+  PT['doc.title']=document.title;
+  const desc=document.querySelector('meta[name="description"]');
+  PT['doc.desc']=desc?desc.content:'';
+
+  const mq=document.getElementById('mq');
+  const buttons=document.querySelectorAll('.lang button');
+
+  function apply(lang){
+    const dict = lang==='en' ? EN : PT;
+    document.querySelectorAll('[data-i18n]').forEach(el=>{
+      const v=dict[el.dataset.i18n]; if(v!=null) el.textContent=v;
+    });
+    document.querySelectorAll('[data-i18n-html]').forEach(el=>{
+      const v=dict[el.dataset.i18nHtml]; if(v!=null) el.innerHTML=v;
+    });
+    document.documentElement.lang = lang;
+    if(dict['doc.title']) document.title=dict['doc.title'];
+    if(desc && dict['doc.desc']) desc.content=dict['doc.desc'];
+    mq.innerHTML=(MQ[lang].map(i=>`<span>${i}</span>`).join('')).repeat(2);
+    buttons.forEach(b=>b.setAttribute('aria-current', String(b.dataset.lang===lang)));
+    try{ localStorage.setItem('lang', lang); }catch(e){}
+  }
+
+  let start='pt';
+  try{ const saved=localStorage.getItem('lang'); if(saved==='en'||saved==='pt') start=saved; }catch(e){}
+  buttons.forEach(b=>b.addEventListener('click',()=>apply(b.dataset.lang)));
+  apply(start);
+})();
 
 // hero backdrop — animated field
 (()=>{
