@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BACKSHIFT — Simone Academy, formação online</title>
+<meta name="description" content="Marca, site e fluxo de inscrição para a Simone Academy: formação online certificada para profissionais do lar. Astro estático, sem framework de interface, inscrição sem JavaScript.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&family=Karla:wght@700&display=swap" rel="stylesheet">
+<link rel="icon" href="assets/brand/Color and type pairings/logo/backshift-appmark.svg">
+<style>
+:root{--void:#0A1020;--deep:#0D1526;--line:rgba(255,255,255,.10);--text:#EEF1F7;--muted:#939DB4;
+  --dim:#5E6A82;--acid:#F2E7A9;--sans:"Archivo",system-ui,sans-serif;--serif:"Instrument Serif",serif;
+  --mono:"JetBrains Mono",ui-monospace,monospace;--gut:clamp(18px,4vw,60px);--maxw:1240px}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+body{background:var(--void);color:var(--text);font-family:var(--sans);font-size:16.5px;line-height:1.62;overflow-x:hidden}
+::selection{background:var(--acid);color:#0A1020}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--gut)}
+.grain{position:fixed;inset:0;z-index:200;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E")}
+.mono{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.mono-a{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--acid)}
+.it{font-family:var(--serif);font-style:italic;font-weight:400;letter-spacing:-.01em}
+h1{font-size:clamp(38px,6.6vw,96px);line-height:.96;letter-spacing:-.034em;font-weight:600}
+h2{font-size:clamp(26px,3.6vw,50px);line-height:1.02;letter-spacing:-.03em;font-weight:600}
+h3{font-size:clamp(18px,1.6vw,23px);letter-spacing:-.016em;font-weight:500;line-height:1.26}
+.lede{font-size:clamp(17px,1.5vw,22px);line-height:1.6;color:var(--muted);font-weight:300}
+p{color:var(--muted);line-height:1.66}
+
+.bar{position:sticky;top:0;z-index:50;background:rgba(10,16,32,.86);backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
+.bin{max-width:var(--maxw);margin:0 auto;padding:13px var(--gut);display:flex;align-items:center;justify-content:space-between;gap:16px}
+.back{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);padding:8px 14px;
+  border:1px solid var(--line);border-radius:999px;transition:.25s}
+.back:hover{color:var(--text);background:rgba(255,255,255,.06)}
+.brand{display:flex;align-items:center;gap:9px}
+.brand svg{width:22px;height:22px;border-radius:5px}
+.brand b{font-family:"Karla",system-ui,sans-serif;font-weight:700;font-size:13px;letter-spacing:.085em;text-transform:uppercase}
+
+.hero{padding:clamp(56px,10vw,132px) 0 clamp(36px,5vw,64px)}
+.kick{display:flex;align-items:center;gap:12px;margin-bottom:26px;flex-wrap:wrap}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--acid);box-shadow:0 0 12px var(--acid)}
+.hero .lede{max-width:660px;margin-top:clamp(24px,3vw,36px)}
+.facts{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);margin-top:clamp(38px,5vw,60px)}
+@media(max-width:760px){.facts{grid-template-columns:repeat(2,1fr)}}
+.facts div{padding:20px 18px 22px 0;border-right:1px solid var(--line)}
+.facts div:last-child{border-right:0}
+@media(max-width:760px){.facts div:nth-child(2n){border-right:0}.facts div:nth-child(n+3){border-top:1px solid var(--line)}}
+.facts b{display:block;font-weight:500;font-size:15px;margin-top:9px}
+
+.shot{margin:clamp(28px,4vw,56px) 0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--deep)}
+.shot .chrome{display:flex;align-items:center;gap:8px;padding:11px 14px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.025)}
+.shot .chrome i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.14)}
+.shot .chrome span{margin-left:8px;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--dim)}
+.shot img{width:100%;display:block}
+.cap{padding:14px 16px 18px;border-top:1px solid var(--line);font-size:13.5px;color:var(--muted);line-height:1.6;background:rgba(255,255,255,.015)}
+.cap b{color:var(--text);font-weight:500}
+
+.band{padding:clamp(46px,6vw,90px) 0;border-top:1px solid var(--line)}
+.two{display:grid;grid-template-columns:220px 1fr;gap:clamp(20px,4vw,60px);align-items:start}
+@media(max-width:820px){.two{grid-template-columns:1fr;gap:16px}}
+.body p+p{margin-top:18px}
+.body p{font-size:16.5px;line-height:1.7;max-width:64ch}
+.body .q{font-family:var(--serif);font-style:italic;font-size:clamp(21px,2.4vw,32px);line-height:1.3;
+  color:var(--text);letter-spacing:-.02em;border-left:2px solid var(--acid);padding-left:22px;margin:30px 0;max-width:28ch}
+ul.dec{list-style:none;margin-top:6px}
+ul.dec li{padding-left:20px;position:relative;margin-bottom:22px;font-size:16px;line-height:1.66;color:var(--muted);max-width:66ch}
+ul.dec li::before{content:"";position:absolute;left:0;top:.66em;width:8px;height:1px;background:var(--acid)}
+ul.dec li b{color:var(--text);font-weight:500}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:820px){.grid2{grid-template-columns:1fr}}
+.credit{border-top:1px solid var(--line);margin-top:30px;padding-top:22px;display:grid;
+  grid-template-columns:repeat(2,1fr);gap:18px;max-width:640px}
+@media(max-width:620px){.credit{grid-template-columns:1fr}}
+.credit b{display:block;font-weight:500;font-size:15px;margin-top:8px;color:var(--text)}
+.foot{border-top:1px solid var(--line);padding:30px 0 46px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:9px;font-size:14px;font-weight:600;padding:13px 22px;
+  border-radius:999px;background:var(--acid);color:#0A1020;transition:.3s}
+.btn:hover{background:#F8F1C8;transform:translateY(-2px)}
+.rv{opacity:0;transform:translateY(22px);transition:opacity .8s cubic-bezier(.2,.7,.3,1),transform .8s cubic-bezier(.2,.7,.3,1)}
+.rv.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}*{transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+
+<div class="bar"><div class="bin">
+  <a class="back" href="index.html#work">← Voltar ao trabalho</a>
+  <a class="brand" href="index.html">
+    <svg viewBox="0 0 84 84" aria-hidden="true"><rect width="84" height="84" rx="10" fill="#F2E7A9"/>
+    <text x="42" y="62" text-anchor="middle" fill="#16170F" font-family="Instrument Serif,Georgia,serif"
+    font-style="italic" font-size="62">b</text></svg><b>Backshift</b></a>
+</div></div>
+
+<header class="hero"><div class="wrap">
+  <div class="kick"><span class="dot"></span><span class="mono-a">12 — Projeto de cliente</span>
+    <span class="mono" style="color:var(--dim)">Portugal · 2026</span></div>
+  <h1>Simone Academy.<br>Dar estatuto a uma<br>profissão <span class="it acid">desvalorizada</span>.</h1>
+  <p class="lede">Marca, site e fluxo de inscrição para uma academia de formação online certificada
+  em limpeza, organização e lavandaria — desenhados e construídos de ponta a ponta.</p>
+
+  <div class="facts">
+    <div><span class="mono">Cliente</span><b>Simone Academy® — Cláudia Guimarães</b></div>
+    <div><span class="mono">Setor</span><b>Formação profissional online</b></div>
+    <div><span class="mono">Papel</span><b>Design · Interface · Desenvolvimento · Copy</b></div>
+    <div><span class="mono">Stack</span><b>Astro estático · Tailwind v4 · Netlify</b></div>
+  </div>
+</div></header>
+
+<section class="wrap">
+  <figure class="shot rv">
+    <div class="chrome"><i></i><i></i><i></i><span>simone-academy.pt</span></div>
+    <img src="assets/simone/01-home.jpg" alt="Página inicial da Simone Academy: uma profissional de costas a abrir uma janela, com o título Elevamos a qualidade do serviço doméstico">
+    <figcaption class="cap"><b>A página inicial.</b> A fotografia é de uma profissional a trabalhar,
+    vista de costas e a abrir uma janela — não de uma casa arrumada. A diferença é a tese do
+    projeto: o assunto é quem faz o trabalho, não o resultado dele.</figcaption>
+  </figure>
+</section>
+
+<section class="band"><div class="wrap two">
+  <div class="mono-a">O briefing</div>
+  <div class="body">
+    <p>A Simone Academy ensina limpeza, organização e lavandaria a profissionais do lar, com o
+    método da hotelaria de cinco estrelas aplicado à realidade das casas particulares. Formação
+    séria, com certificado, num setor onde quase toda a aprendizagem acontece por imitação.</p>
+    <p>O problema de comunicação não era explicar o conteúdo. Era o <em>estatuto</em>. Vender
+    formação a quem raramente se vê descrito como profissional obriga primeiro a tratá-lo como
+    tal — e a maior parte da linguagem que existe neste setor faz o contrário.</p>
+    <p class="q">Se o site parecer um catálogo de produtos de limpeza, a formação vale o que vale
+    um produto de limpeza.</p>
+    <p>Daí a decisão que governa tudo o resto: uma serifada de editorial, muito espaço, fotografia
+    documental e nem um único ícone de balde. O registo é o de uma escola, não o de um serviço.</p>
+  </div>
+</div></section>
+
+<section class="wrap">
+  <div class="grid2">
+    <figure class="shot rv" style="margin:0">
+      <div class="chrome"><i></i><i></i><i></i><span>/formacoes</span></div>
+      <img src="assets/simone/02-formacoes.jpg" alt="Página das formações, com o título Três percursos, a mesma exigência">
+      <figcaption class="cap"><b>Três percursos, a mesma exigência.</b> A frase resolve o problema
+      comercial de ter três preços muito diferentes: o que varia é a profundidade, não o critério.
+      Sem isso, o percurso mais barato leria como a versão fraca.</figcaption>
+    </figure>
+    <figure class="shot rv" style="margin:0">
+      <div class="chrome"><i></i><i></i><i></i><span>/certificado</span></div>
+      <img src="assets/simone/04-certificado.jpg" alt="Página dedicada ao certificado emitido no final da formação">
+      <figcaption class="cap"><b>O certificado tem página própria.</b> É o que a aluna mostra a
+      quem a contrata, e por isso é um argumento de venda e não um detalhe do rodapé. Numa decisão
+      de formação, a pergunta que trava a compra é sempre "isto serve-me para quê".</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="band"><div class="wrap two">
+  <div class="mono-a">Decisões</div>
+  <div class="body"><ul class="dec">
+    <li><b>A inscrição funciona sem JavaScript nenhum.</b> Todo o fluxo — escolher o percurso,
+    confirmar, preencher — é feito em CSS, com o seletor <code>:has()</code>. Não é exibicionismo
+    técnico: é a garantia de que a página onde entra o dinheiro não parte por causa de um script
+    que falhou a carregar, de uma extensão do browser ou de uma ligação má. O caminho crítico não
+    depende de nada opcional.</li>
+    <li><b>Sem framework de interface, sem biblioteca de animação, sem jQuery.</b> Astro gera
+    HTML estático e o que chega ao browser é isso. Num público que acede sobretudo por telemóvel,
+    muitas vezes com dados móveis, cada biblioteca poupada é tempo de carregamento que não se
+    perde.</li>
+    <li><b>Os tipos são servidos do próprio domínio.</b> Cormorant Garamond e Jost em ficheiros
+    locais, não do Google Fonts. Poupa uma ligação a terceiros e evita passar os dados de quem
+    visita para fora, sem que ninguém tenha de o consentir.</li>
+    <li><b>O aviso de cookies bloqueia mesmo.</b> "Sem autorização, nada é carregado" — e é
+    literal: o Google só entra depois do sim. A maioria dos sites carrega tudo primeiro e pergunta
+    depois, o que torna o aviso decorativo e ilegal ao mesmo tempo.</li>
+    <li><b>Preços à vista, sem formulário pelo meio.</b> Os três percursos mostram o valor e a
+    duração antes de pedir seja o que for. Esconder o preço atrás de um contacto funciona em
+    consultoria; em formação, só faz o aluno fechar o separador.</li>
+    <li><b>Um ramo para empresas, separado do resto.</b> Hotéis e empresas de limpeza compram por
+    razões diferentes e em quantidades diferentes. Misturar os dois discursos na mesma página
+    enfraquece os dois.</li>
+  </ul></div>
+</div></section>
+
+<section class="wrap">
+  <figure class="shot rv">
+    <div class="chrome"><i></i><i></i><i></i><span>/formacoes/completa/inscricao</span></div>
+    <img src="assets/simone/03-inscricao.jpg" alt="Página de inscrição: Confirme a sua escolha, com os três percursos e o preço de cada um">
+    <figcaption class="cap"><b>A inscrição.</b> Chega com o percurso já escolhido e deixa trocá-lo
+    ali mesmo, sem voltar atrás — o passo onde mais gente desiste. Os três preços ficam à vista
+    durante a decisão, e tudo isto acontece sem uma linha de JavaScript.</figcaption>
+  </figure>
+</section>
+
+<section class="band"><div class="wrap two">
+  <div class="mono-a">Resultado</div>
+  <div class="body">
+    <p>A Simone Academy tem uma marca que trata a profissão como profissão, três percursos que se
+    distinguem sem se desvalorizarem entre si, e um site que carrega depressa em telemóvel com
+    dados móveis — que é como a maioria das alunas o vai abrir.</p>
+    <p>Estratégia, identidade, texto, interface e código vieram do mesmo sítio. Não houve agência,
+    nem copywriter à parte, nem programador à espera de um ficheiro. É esse o argumento que este
+    caso está mesmo a fazer.</p>
+    <div class="credit">
+      <div><span class="mono">Design e desenvolvimento</span><b>Backshift</b></div>
+      <div><span class="mono">Ano</span><b>2026</b></div>
+      <div><span class="mono">Stack</span><b>Astro · Tailwind v4 · Netlify</b></div>
+      <div><span class="mono">Online</span><b><a href="https://www.simone-academy.pt" target="_blank" rel="noopener" style="text-decoration:underline;text-underline-offset:4px">simone-academy.pt</a></b></div>
+    </div>
+  </div>
+</div></section>
+
+<footer class="wrap foot">
+  <span class="mono">11 · Clínica Pedro Braga, ortodontia</span>
+  <a class="btn" href="case-pedrobraga.html">Ver o caso →</a>
+</footer>
+
+<script>
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),
+  {threshold:.08,rootMargin:'0px 0px -5% 0px'});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
