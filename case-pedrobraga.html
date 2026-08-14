@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BACKSHIFT — Clínica Pedro Braga, ortodontia</title>
+<meta name="description" content="Renovação do site da Clínica Pedro Braga, em Braga: direção visual, arquitetura de informação, casos reais, blog e reforço da consulta online.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&family=Karla:wght@700&display=swap" rel="stylesheet">
+<link rel="icon" href="assets/brand/Color and type pairings/logo/backshift-appmark.svg">
+<style>
+:root{--void:#0A1020;--deep:#0D1526;--line:rgba(255,255,255,.10);--text:#EEF1F7;--muted:#939DB4;
+  --dim:#5E6A82;--acid:#F2E7A9;--sans:"Archivo",system-ui,sans-serif;--serif:"Instrument Serif",serif;
+  --mono:"JetBrains Mono",ui-monospace,monospace;--gut:clamp(18px,4vw,60px);--maxw:1240px}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+body{background:var(--void);color:var(--text);font-family:var(--sans);font-size:16.5px;line-height:1.62;overflow-x:hidden}
+::selection{background:var(--acid);color:#0A1020}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--gut)}
+.grain{position:fixed;inset:0;z-index:200;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E")}
+.mono{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.mono-a{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--acid)}
+.it{font-family:var(--serif);font-style:italic;font-weight:400;letter-spacing:-.01em}
+h1{font-size:clamp(38px,6.6vw,96px);line-height:.96;letter-spacing:-.034em;font-weight:600}
+h2{font-size:clamp(26px,3.6vw,50px);line-height:1.02;letter-spacing:-.03em;font-weight:600}
+h3{font-size:clamp(18px,1.6vw,23px);letter-spacing:-.016em;font-weight:500;line-height:1.26}
+.lede{font-size:clamp(17px,1.5vw,22px);line-height:1.6;color:var(--muted);font-weight:300}
+p{color:var(--muted);line-height:1.66}
+
+.bar{position:sticky;top:0;z-index:50;background:rgba(10,16,32,.86);backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
+.bin{max-width:var(--maxw);margin:0 auto;padding:13px var(--gut);display:flex;align-items:center;justify-content:space-between;gap:16px}
+.back{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);padding:8px 14px;
+  border:1px solid var(--line);border-radius:999px;transition:.25s}
+.back:hover{color:var(--text);background:rgba(255,255,255,.06)}
+.brand{display:flex;align-items:center;gap:9px}
+.brand svg{width:22px;height:22px;border-radius:5px}
+.brand b{font-family:"Karla",system-ui,sans-serif;font-weight:700;font-size:13px;letter-spacing:.085em;text-transform:uppercase}
+
+.hero{padding:clamp(56px,10vw,132px) 0 clamp(36px,5vw,64px)}
+.kick{display:flex;align-items:center;gap:12px;margin-bottom:26px;flex-wrap:wrap}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--acid);box-shadow:0 0 12px var(--acid)}
+.hero .lede{max-width:660px;margin-top:clamp(24px,3vw,36px)}
+.facts{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);margin-top:clamp(38px,5vw,60px)}
+@media(max-width:760px){.facts{grid-template-columns:repeat(2,1fr)}}
+.facts div{padding:20px 18px 22px 0;border-right:1px solid var(--line)}
+.facts div:last-child{border-right:0}
+@media(max-width:760px){.facts div:nth-child(2n){border-right:0}.facts div:nth-child(n+3){border-top:1px solid var(--line)}}
+.facts b{display:block;font-weight:500;font-size:15px;margin-top:9px}
+
+.shot{margin:clamp(28px,4vw,56px) 0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--deep)}
+.shot .chrome{display:flex;align-items:center;gap:8px;padding:11px 14px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.025)}
+.shot .chrome i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.14)}
+.shot .chrome span{margin-left:8px;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--dim)}
+.shot img{width:100%;display:block}
+.cap{padding:14px 16px 18px;border-top:1px solid var(--line);font-size:13.5px;color:var(--muted);line-height:1.6;background:rgba(255,255,255,.015)}
+.cap b{color:var(--text);font-weight:500}
+
+.band{padding:clamp(46px,6vw,90px) 0;border-top:1px solid var(--line)}
+.two{display:grid;grid-template-columns:220px 1fr;gap:clamp(20px,4vw,60px);align-items:start}
+@media(max-width:820px){.two{grid-template-columns:1fr;gap:16px}}
+.body p+p{margin-top:18px}
+.body p{font-size:16.5px;line-height:1.7;max-width:64ch}
+.body .q{font-family:var(--serif);font-style:italic;font-size:clamp(21px,2.4vw,32px);line-height:1.3;
+  color:var(--text);letter-spacing:-.02em;border-left:2px solid var(--acid);padding-left:22px;margin:30px 0;max-width:28ch}
+ul.dec{list-style:none;margin-top:6px}
+ul.dec li{padding-left:20px;position:relative;margin-bottom:22px;font-size:16px;line-height:1.66;color:var(--muted);max-width:66ch}
+ul.dec li::before{content:"";position:absolute;left:0;top:.66em;width:8px;height:1px;background:var(--acid)}
+ul.dec li b{color:var(--text);font-weight:500}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:820px){.grid2{grid-template-columns:1fr}}
+.credit{border-top:1px solid var(--line);margin-top:30px;padding-top:22px;display:grid;
+  grid-template-columns:repeat(2,1fr);gap:18px;max-width:640px}
+@media(max-width:620px){.credit{grid-template-columns:1fr}}
+.credit b{display:block;font-weight:500;font-size:15px;margin-top:8px;color:var(--text)}
+.foot{border-top:1px solid var(--line);padding:30px 0 46px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:9px;font-size:14px;font-weight:600;padding:13px 22px;
+  border-radius:999px;background:var(--acid);color:#0A1020;transition:.3s}
+.btn:hover{background:#F8F1C8;transform:translateY(-2px)}
+.rv{opacity:0;transform:translateY(22px);transition:opacity .8s cubic-bezier(.2,.7,.3,1),transform .8s cubic-bezier(.2,.7,.3,1)}
+.rv.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}*{transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+
+<div class="bar"><div class="bin">
+  <a class="back" href="index.html#work">← Voltar ao trabalho</a>
+  <a class="brand" href="index.html">
+    <svg viewBox="0 0 84 84" aria-hidden="true"><rect width="84" height="84" rx="10" fill="#F2E7A9"/>
+    <text x="42" y="62" text-anchor="middle" fill="#16170F" font-family="Instrument Serif,Georgia,serif"
+    font-style="italic" font-size="62">b</text></svg><b>Backshift</b></a>
+</div></div>
+
+<header class="hero"><div class="wrap">
+  <div class="kick"><span class="dot"></span><span class="mono-a">11 — Projeto de cliente</span>
+    <span class="mono" style="color:var(--dim)">Braga, Portugal · 2024</span></div>
+  <h1>Clínica Pedro Braga.<br>Escolher o médico,<br>não o <span class="it acid">aparelho</span>.</h1>
+  <p class="lede">Renovação do site de uma clínica de ortodontia e medicina dentária em Braga:
+  direção visual, arquitetura de informação, casos reais, blog e o reforço da consulta online.</p>
+
+  <div class="facts">
+    <div><span class="mono">Cliente</span><b>Clínica Pedro Braga — Ortodontia Invisível</b></div>
+    <div><span class="mono">Setor</span><b>Ortodontia e medicina dentária</b></div>
+    <div><span class="mono">Papel</span><b>Direção visual · UI · Arquitetura de informação</b></div>
+    <div><span class="mono">Desenvolvimento</span><b>Filipe Murteira</b></div>
+  </div>
+</div></header>
+
+<section class="wrap">
+  <figure class="shot rv">
+    <div class="chrome"><i></i><i></i><i></i><span>pedrobragaortodontia.pt</span></div>
+    <img src="assets/pedrobraga/01-home.jpg" alt="Página inicial da Clínica Pedro Braga: fotografia do médico na clínica, com o texto de apresentação sobreposto">
+    <figcaption class="cap"><b>A página inicial.</b> Uma fotografia real do médico na clínica, não
+    uma imagem de banco. Numa decisão de saúde, a cara de quem vai tratar vale mais do que qualquer
+    fotografia de dentes perfeitos — e o botão de consulta online está lá desde o primeiro ecrã.</figcaption>
+  </figure>
+</section>
+
+<section class="band"><div class="wrap two">
+  <div class="mono-a">O briefing</div>
+  <div class="body">
+    <p>A clínica já tinha site. O problema não era não existir — era ter envelhecido. O aspeto
+    já não correspondia ao nível dos tratamentos que a clínica pratica, e isso, num setor onde
+    o doente escolhe sobretudo por confiança, é um custo comercial silencioso.</p>
+    <p>O pedido tinha uma parte estética e três funcionais: renovar a imagem, publicar
+    <em>casos reais</em>, criar um espaço de notícias, e reforçar a consulta online — que
+    existia, mas passava despercebida.</p>
+    <p class="q">Na ortodontia, o doente não escolhe o aparelho. Escolhe a pessoa que lho vai pôr.</p>
+    <p>Foi esse o eixo do projeto. Todo o site passou a trabalhar para a mesma conclusão: mostrar
+    competência com evidência em vez de a afirmar com adjetivos.</p>
+  </div>
+</div></section>
+
+<section class="wrap">
+  <div class="grid2">
+    <figure class="shot rv" style="margin:0">
+      <div class="chrome"><i></i><i></i><i></i><span>/pt/casos-reais</span></div>
+      <img src="assets/pedrobraga/03-casos.jpg" alt="Página de casos reais: fotografias clínicas antes e depois, com filtro por tipo de tratamento">
+      <figcaption class="cap"><b>Casos reais, filtrados por tratamento.</b> Fotografias clínicas
+      verdadeiras, organizadas por tipo de caso e com a contagem à frente de cada categoria.
+      O número diz mais do que a descrição: vinte e oito casos de adolescentes e adultos é uma
+      afirmação de experiência que nenhuma frase substitui.</figcaption>
+    </figure>
+    <figure class="shot rv" style="margin:0">
+      <div class="chrome"><i></i><i></i><i></i><span>/pt/precos</span></div>
+      <img src="assets/pedrobraga/02-precos.jpg" alt="Página de preços, com o título Quanto custa um tratamento de Ortodontia?">
+      <figcaption class="cap"><b>A pergunta que ninguém no setor quer responder.</b> Uma página
+      inteira sobre quanto custa um tratamento, escrita como artigo em vez de tabela. Responde à
+      dúvida que faz o doente adiar a marcação, e a honestidade em si é argumento.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="band"><div class="wrap two">
+  <div class="mono-a">Decisões</div>
+  <div class="body"><ul class="dec">
+    <li><b>O menu segue o vocabulário do doente, não o da clínica.</b> A ortodontia abre em
+    brackets, Invisalign, lingual e crianças; as restantes especialidades ficam noutro ramo. Quem
+    procura chega com o nome do tratamento na cabeça — "aparelho invisível", "implante" — e tem de
+    encontrar essa palavra no menu, não uma categoria clínica.</li>
+    <li><b>Publicar preços foi uma decisão comercial, não de transparência.</b> Num setor que
+    responde "depende, venha cá", explicar o custo por escrito filtra quem nunca ia avançar e
+    tranquiliza quem ia. A página está escrita para ser lida, não para ser consultada.</li>
+    <li><b>Casos reais em vez de testemunhos.</b> Fotografias clínicas de antes e depois, do
+    próprio consultório. É a única prova que um doente sabe avaliar sozinho — e a única que um
+    concorrente não consegue inventar.</li>
+    <li><b>A consulta online passou a estar em todo o lado.</b> No menu principal, no botão do
+    primeiro ecrã e no fim das páginas de tratamento. É triagem à distância, sem compromisso, e
+    baixa a barreira de entrada para quem hesita em marcar uma consulta presencial.</li>
+    <li><b>Um blog para durar.</b> A secção de notícias existe para que a clínica publique sem
+    depender de ninguém — e para que o site continue a ganhar pesquisa orgânica anos depois da
+    entrega, que é quando a maioria dos sites de clínica estagna.</li>
+  </ul></div>
+</div></section>
+
+<section class="wrap">
+  <figure class="shot rv">
+    <div class="chrome"><i></i><i></i><i></i><span>/pt/consulta-online</span></div>
+    <img src="assets/pedrobraga/04-consulta.jpg" alt="Página de consulta online, com fotografia do médico e explicação da avaliação preliminar">
+    <figcaption class="cap"><b>A consulta online.</b> Chama-se avaliação preliminar e diz com
+    todas as letras que não substitui a consulta presencial. Essa honestidade é o que a torna
+    credível — e o que evita a promessa exagerada que faria o doente desconfiar de tudo o resto.</figcaption>
+  </figure>
+</section>
+
+<section class="band"><div class="wrap two">
+  <div class="mono-a">Créditos</div>
+  <div class="body">
+    <p>O design é da Backshift: direção visual, interface, arquitetura de informação e a
+    estrutura editorial dos casos, dos preços e do blog.</p>
+    <p>O desenvolvimento é de <a href="http://www.murteira.pt" target="_blank" rel="noopener"
+    class="it acid" style="text-decoration:underline;text-underline-offset:4px">Filipe Murteira</a>,
+    e o site é dele tanto quanto é nosso. Dizê-lo aqui custa nada e evita a coisa que mais
+    depressa destrói a credibilidade de um portefólio: assinar trabalho de outra pessoa.</p>
+    <div class="credit">
+      <div><span class="mono">Design</span><b>Backshift</b></div>
+      <div><span class="mono">Desenvolvimento</span><b>Filipe Murteira · murteira.pt</b></div>
+      <div><span class="mono">Ano</span><b>2024</b></div>
+      <div><span class="mono">Online</span><b><a href="https://www.pedrobragaortodontia.pt/" target="_blank" rel="noopener" style="text-decoration:underline;text-underline-offset:4px">pedrobragaortodontia.pt</a></b></div>
+    </div>
+  </div>
+</div></section>
+
+<footer class="wrap foot">
+  <span class="mono">01 · Comapre, revestimentos industriais</span>
+  <a class="btn" href="case-comapre.html">Ver o caso →</a>
+</footer>
+
+<script>
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),
+  {threshold:.08,rootMargin:'0px 0px -5% 0px'});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
