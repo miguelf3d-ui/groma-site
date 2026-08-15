@@ -1,0 +1,29 @@
+/* QUEM FEZ */
+
+    Desenho e desenvolvimento: Miguel Figueiredo
+    Contacto: miguelf3d@gmail.com
+    De: Porto, Portugal
+
+/* CRÉDITOS DE TERCEIROS */
+
+    Clínica Pedro Braga — desenvolvimento de Filipe Murteira
+    https://www.murteira.pt
+    O design é nosso; o site é dele tanto quanto é nosso.
+
+    Vídeo do herói: Pexels, licença livre para uso comercial
+    https://www.pexels.com/video/34160315/
+
+/* COMO FOI FEITO */
+
+    HTML estático, sem framework e sem passo de compilação
+    Tipografia: Archivo, Instrument Serif, JetBrains Mono e Karla
+    Alojamento: GitHub Pages, servido do branch
+    Português por defeito, com seletor para inglês em dicionário JavaScript
+    O texto português vive na marcação, não no dicionário — a página está
+    correta antes de qualquer script correr, e continua correta se nenhum correr
+
+/* O QUE ISTO É */
+
+    humans.txt — a convenção que existe para creditar as pessoas por trás de
+    um site, ao lado do robots.txt que fala com as máquinas.
+    Mais em https://humanstxt.org
